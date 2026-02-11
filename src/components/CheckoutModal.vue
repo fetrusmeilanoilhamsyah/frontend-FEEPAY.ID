@@ -11,7 +11,6 @@
               <X :size="20" />
             </button>
 
-            <!-- Step 1: Order Confirmation -->
             <div v-if="step === 1">
               <h2 class="text-2xl font-bold text-dark-950 dark:text-white mb-6 text-left">
                 Konfirmasi Pesanan
@@ -49,17 +48,23 @@
               </form>
             </div>
 
-            <!-- Step 2: Payment -->
             <div v-else-if="step === 2">
               <h2 class="text-2xl font-bold text-dark-950 dark:text-white mb-6 text-center">
                 Pembayaran
               </h2>
 
               <div class="bg-dark-50 dark:bg-dark-900 border-2 border-border rounded-xl p-5 mb-6 text-left">
-                <div class="flex justify-between items-center mb-3">
-                  <span class="text-xs font-semibold uppercase text-dark-500">Order ID</span>
-                  <span class="font-mono font-semibold text-primary-600">{{ orderData.order_id }}</span>
+                <div class="space-y-2 mb-3">
+                  <div class="flex justify-between items-center">
+                    <span class="text-xs font-semibold uppercase text-dark-500">Order ID</span>
+                    <span class="font-mono font-semibold text-primary-600">{{ orderData.order_id }}</span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-xs font-semibold uppercase text-dark-500">Status</span>
+                    <StatusBadge :status="orderData.status" />
+                  </div>
                 </div>
+
                 <div class="flex justify-between items-end border-t border-dark-200 pt-3">
                   <span class="text-xs font-semibold uppercase text-dark-500">Total Tagihan</span>
                   <span class="text-xl font-bold text-dark-950 dark:text-white">Rp {{ formatPrice(orderData.total_price) }}</span>
@@ -128,7 +133,6 @@
               </form>
             </div>
 
-            <!-- Step 3: Success -->
             <div v-else-if="step === 3" class="text-center py-8">
               <CheckCircle class="text-green-500 w-20 h-20 mx-auto mb-6" />
               <h2 class="text-3xl font-bold mb-2">Pembayaran Diterima</h2>
@@ -152,6 +156,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { X, Loader, QrCode, Building2, Upload, CheckCircle } from 'lucide-vue-next'
 import { useOrderStore } from '@/stores/orderStore'
+import StatusBadge from './StatusBadge.vue' // Tambah Import ini
 import api from '../services/api'
 
 const props = defineProps({
