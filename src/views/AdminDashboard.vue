@@ -40,31 +40,47 @@
     </div>
 
     <!-- Products Tab -->
-    <div v-if="activeTab === 'products'" class="card overflow-x-auto border border-border rounded-xl shadow-sm">
-      <table class="w-full text-sm text-left">
-        <thead class="bg-muted/50 border-b border-border">
-          <tr>
-            <th class="p-4 font-semibold">Nama Produk</th>
-            <th class="p-4 font-semibold">Kategori</th>
-            <th class="p-4 font-semibold">Harga Modal</th>
-            <th class="p-4 font-semibold">Harga Jual</th>
-            <th class="p-4 font-semibold">Aksi</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="product in products" :key="product.id" class="border-b border-border hover:bg-muted/10">
-            <td class="p-4 font-medium">{{ product.name }}</td>
-            <td class="p-4">{{ product.category }}</td>
-            <td class="p-4 text-muted-foreground">Rp {{ formatPrice(product.cost_price) }}</td>
-            <td class="p-4 font-bold text-primary">Rp {{ formatPrice(product.selling_price) }}</td>
-            <td class="p-4">
-              <button @click="openEditPriceModal(product)" class="text-primary font-semibold hover:underline">
-                Edit Harga
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <div v-if="activeTab === 'products'">
+      <!-- Tombol Sync Products -->
+      <div class="mb-4 flex justify-end">
+        <button @click="handleSyncProducts" 
+          :disabled="isSyncing"
+          class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+          <svg v-if="isSyncing" class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          {{ isSyncing ? 'Syncing...' : 'Sync Products' }}
+        </button>
+      </div>
+
+      <!-- Tabel Products -->
+      <div class="card overflow-x-auto border border-border rounded-xl shadow-sm">
+        <table class="w-full text-sm text-left">
+          <thead class="bg-muted/50 border-b border-border">
+            <tr>
+              <th class="p-4 font-semibold">Nama Produk</th>
+              <th class="p-4 font-semibold">Kategori</th>
+              <th class="p-4 font-semibold">Harga Modal</th>
+              <th class="p-4 font-semibold">Harga Jual</th>
+              <th class="p-4 font-semibold">Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="product in products" :key="product.id" class="border-b border-border hover:bg-muted/10">
+              <td class="p-4 font-medium">{{ product.name }}</td>
+              <td class="p-4">{{ product.category }}</td>
+              <td class="p-4 text-muted-foreground">Rp {{ formatPrice(product.cost_price) }}</td>
+              <td class="p-4 font-bold text-primary">Rp {{ formatPrice(product.selling_price) }}</td>
+              <td class="p-4">
+                <button @click="openEditPriceModal(product)" class="text-primary font-semibold hover:underline">
+                  Edit Harga
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <!-- Orders Tab -->
@@ -246,6 +262,7 @@ const orders = ref([])
 const payments = ref([])
 const usdtConversions = ref([])
 const lastOrderCount = ref(0) 
+const isSyncing = ref(false) // State untuk tombol sync
 
 const showPinModal = ref(false)
 const pinModalTitle = ref('')
@@ -305,6 +322,25 @@ const fetchAllData = async () => {
     console.error('Fetch Error:', e) 
   } finally { 
     loadingStats.value = false 
+  }
+}
+
+// Sync Products Handler - BARU
+const handleSyncProducts = async () => {
+  if (isSyncing.value) return
+  
+  isSyncing.value = true
+  showToastNotification('Memulai sinkronisasi produk...')
+  
+  try {
+    const result = await api.products.sync()
+    showToastNotification(result.message || 'Produk berhasil disinkronkan!')
+    await fetchAllData() // Refresh data produk
+  } catch (e) {
+    console.error('Sync Error:', e)
+    showToastNotification(e.message || 'Gagal sinkronisasi produk')
+  } finally {
+    isSyncing.value = false
   }
 }
 

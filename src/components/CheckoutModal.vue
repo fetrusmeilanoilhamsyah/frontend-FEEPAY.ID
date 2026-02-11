@@ -149,7 +149,9 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { X, Loader, QrCode, Building2, Upload, CheckCircle } from 'lucide-vue-next'
+import { useOrderStore } from '@/stores/orderStore'
 import api from '../services/api'
 
 const props = defineProps({
@@ -157,6 +159,8 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['close'])
+const router = useRouter()
+const orderStore = useOrderStore()
 
 const bankInfo = {
   name: import.meta.env.VITE_BANK_NAME || 'BCA',
@@ -195,12 +199,12 @@ const handleSubmitOrder = async () => {
   submitting.value = true
   errorMessage.value = ''
   try {
-    const response = await api.orders.create({
+    const order = await orderStore.createOrder({
       sku: props.product.sku,
       target_number: formData.value.target_number,
       customer_email: formData.value.customer_email
     })
-    orderData.value = response
+    orderData.value = order
     step.value = 2
   } catch (error) {
     errorMessage.value = error.message || 'Gagal membuat pesanan'
@@ -227,8 +231,8 @@ const handleSubmitPayment = async () => {
     fd.append('amount', orderData.value.total_price)
     fd.append('proof', uploadedFile.value)
     
-    const response = await api.payments.submit(fd)
-    paymentData.value = response
+    await orderStore.submitPayment(orderData.value.order_id, fd)
+    
     step.value = 3
   } catch (error) {
     alert('Gagal mengirim bukti pembayaran. Silakan coba lagi.')

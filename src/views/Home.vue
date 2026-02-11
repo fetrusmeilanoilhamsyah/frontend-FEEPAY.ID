@@ -1,225 +1,250 @@
 <template>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <!-- Hero Section -->
-    <div class="text-center mb-16 relative">
-      <div class="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent rounded-3xl -z-10"></div>
-      <div class="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 px-6 py-2 rounded-full text-primary text-sm font-bold mb-8">
-        LAYANAN TERPERCAYA SEJAK 2020
-      </div>
-      <h1 class="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-foreground mb-6 leading-tight">
-        FEEPAY<span class="text-primary">.ID</span>
-      </h1>
-      <p class="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed font-medium">
-        Platform Profesional untuk Layanan Digital & Konversi USDT. Transaksi Cepat, Aman, dan Terpercaya
-      </p>
-    </div>
-
-    <!-- Main Navigation Tabs -->
-    <div class="mb-12 text-center">
-      <nav class="inline-flex p-1 bg-muted rounded-xl border border-border shadow-sm">
-        <button @click="activeTab = 'products'" class="px-8 py-3 font-bold text-sm rounded-lg transition-all"
-          :class="activeTab === 'products' ? 'bg-background text-primary shadow-sm' : 'text-muted-foreground hover:text-foreground'">
-          LAYANAN DIGITAL
-        </button>
-        <button @click="activeTab = 'usdt'" class="px-8 py-3 font-bold text-sm rounded-lg transition-all"
-          :class="activeTab === 'usdt' ? 'bg-background text-primary shadow-sm' : 'text-muted-foreground hover:text-foreground'">
-          KONVERSI USDT
-        </button>
-      </nav>
-    </div>
-
-    <!-- Products Tab -->
-    <div v-if="activeTab === 'products'">
-      <!-- Search Bar -->
-      <div class="max-w-2xl mx-auto mb-10">
-        <div class="relative group">
-          <input v-model="searchQuery" type="text" placeholder="Cari produk: Telkomsel, Dana, Mobile Legends..." 
-            class="w-full h-14 bg-muted border-2 border-border rounded-2xl px-6 pl-14 font-bold focus:border-primary outline-none transition-all" />
-          <Search class="absolute left-5 top-1/2 -translate-y-1/2 text-muted-foreground" :size="24" />
-        </div>
-      </div>
-
-      <!-- Category Filter -->
-      <div class="flex flex-wrap justify-center gap-3 mb-12">
-        <button v-for="cat in categories" :key="cat"
-          @click="selectedCategory = cat"
-          class="px-6 py-2.5 rounded-full text-xs font-bold border-2 transition-all"
-          :class="selectedCategory === cat ? 'bg-primary border-primary text-white shadow-lg scale-105' : 'bg-transparent border-border text-muted-foreground hover:border-primary/50 hover:text-foreground'">
-          {{ cat.toUpperCase() }}
-        </button>
-      </div>
-
-      <!-- Loading State -->
-      <div v-if="loading" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        <div v-for="i in 8" :key="i" class="h-48 bg-muted animate-pulse rounded-2xl"></div>
-      </div>
-
-      <!-- Products by Category -->
-      <div v-else class="space-y-16">
-        <!-- Pulsa Section -->
-        <section v-if="showCategory('Pulsa')" class="space-y-6">
-          <div class="flex items-center gap-3 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-950/20 dark:to-cyan-950/20 px-6 py-4 rounded-xl border border-blue-100 dark:border-blue-900/30">
-            <Smartphone class="text-blue-600" :size="28" />
-            <h2 class="text-3xl font-bold tracking-tight text-blue-900 dark:text-blue-100">PULSA</h2>
+  <div class="min-h-screen bg-stone-50">
+    <!-- Header Section -->
+    <div class="border-b border-stone-200 bg-white">
+      <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
+        <div class="flex items-center justify-between">
+          <h1 class="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight">
+            <span class="text-stone-800">FEE</span><span class="text-emerald-600">PAY.ID</span>
+          </h1>
+          <div class="hidden sm:block">
+            <p class="text-xs font-semibold text-stone-500">Transaksi Digital Mudah & Aman</p>
           </div>
-          <transition-group name="list" tag="div" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-            <ProductCard v-for="product in getProductsByCategory('Pulsa')" :key="product.id" :product="product" @select="openCheckout" />
-          </transition-group>
-        </section>
-
-        <!-- Paket Data Section -->
-        <section v-if="showCategory('Data')" class="space-y-6">
-          <div class="flex items-center gap-3 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20 px-6 py-4 rounded-xl border border-purple-100 dark:border-purple-900/30">
-            <Globe class="text-purple-600" :size="28" />
-            <h2 class="text-3xl font-bold tracking-tight text-purple-900 dark:text-purple-100">PAKET DATA</h2>
-          </div>
-          <transition-group name="list" tag="div" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-            <ProductCard v-for="product in getProductsByCategory('Data')" :key="product.id" :product="product" @select="openCheckout" />
-          </transition-group>
-        </section>
-
-        <!-- E-Wallet Section -->
-        <section v-if="showCategory('E-Wallet')" class="space-y-6">
-          <div class="flex items-center gap-3 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 px-6 py-4 rounded-xl border border-green-100 dark:border-green-900/30">
-            <CreditCard class="text-green-600" :size="28" />
-            <h2 class="text-3xl font-bold tracking-tight text-green-900 dark:text-green-100">E-WALLET</h2>
-          </div>
-          <transition-group name="list" tag="div" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-            <ProductCard v-for="product in getProductsByCategory('E-Wallet')" :key="product.id" :product="product" @select="openCheckout" />
-          </transition-group>
-        </section>
-
-        <!-- Voucher Game Section -->
-        <section v-if="showCategory('Game')" class="space-y-6">
-          <div class="flex items-center gap-3 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-950/20 dark:to-red-950/20 px-6 py-4 rounded-xl border border-orange-100 dark:border-orange-900/30">
-            <Gamepad2 class="text-orange-600" :size="28" />
-            <h2 class="text-3xl font-bold tracking-tight text-orange-900 dark:text-orange-100">VOUCHER GAME</h2>
-          </div>
-          <transition-group name="list" tag="div" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-            <ProductCard v-for="product in getProductsByCategory('Game')" :key="product.id" :product="product" @select="openCheckout" />
-          </transition-group>
-        </section>
-
-        <!-- Empty State -->
-        <div v-if="filteredProducts.length === 0" class="text-center py-16">
-          <Package class="mx-auto mb-4 text-muted-foreground opacity-30" :size="64" />
-          <p class="text-muted-foreground font-bold">Produk tidak ditemukan</p>
         </div>
       </div>
     </div>
 
-    <!-- USDT Conversion Tab -->
-    <div v-if="activeTab === 'usdt'">
-      <div class="max-w-3xl mx-auto">
-        <!-- Feature Badge -->
-        <div class="text-center mb-8">
-          <span class="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 px-4 py-2 rounded-full text-primary text-xs font-black">
-            FITUR UNGGULAN
-          </span>
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
+      <!-- Main Tabs -->
+      <div class="mb-4 sm:mb-6">
+        <div class="inline-flex w-full sm:w-auto bg-white p-1 rounded-xl border border-stone-200 shadow-sm">
+          <button @click="activeTab = 'products'" 
+            class="flex-1 sm:flex-initial px-4 sm:px-8 py-2.5 sm:py-3 font-semibold text-xs sm:text-sm rounded-lg transition-all"
+            :class="activeTab === 'products' ? 'bg-emerald-50 text-emerald-700 shadow-sm' : 'text-stone-600'">
+            Layanan Digital
+          </button>
+          <button @click="activeTab = 'usdt'" 
+            class="flex-1 sm:flex-initial px-4 sm:px-8 py-2.5 sm:py-3 font-semibold text-xs sm:text-sm rounded-lg transition-all"
+            :class="activeTab === 'usdt' ? 'bg-emerald-50 text-emerald-700 shadow-sm' : 'text-stone-600'">
+            Konversi USDT
+          </button>
+        </div>
+      </div>
+
+      <!-- Products Tab -->
+      <div v-if="activeTab === 'products'">
+        <!-- Search -->
+        <div class="mb-4 sm:mb-6">
+          <div class="relative">
+            <Search class="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-stone-400" :size="18" />
+            <input v-model="searchQuery" type="text" 
+              placeholder="Cari produk..." 
+              class="w-full h-11 sm:h-12 bg-white border border-stone-200 rounded-xl pl-10 sm:pl-12 pr-3 sm:pr-4 text-sm font-medium text-stone-700 placeholder:text-stone-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none transition-all" />
+          </div>
         </div>
 
-        <div class="card bg-gradient-to-br from-card via-card to-primary/5 border-2 border-border shadow-2xl p-8 rounded-3xl relative overflow-hidden text-left">
-          <div class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -z-0"></div>
-          <div class="relative z-10">
-            <h2 class="text-3xl font-bold mb-2">KONVERSI USDT KE RUPIAH</h2>
-            <p class="text-muted-foreground mb-8 font-medium">Proses pencairan cepat langsung ke rekening bank atau e-wallet Anda</p>
+        <!-- Category Pills -->
+        <div class="flex gap-2 overflow-x-auto pb-3 mb-4 sm:mb-6 scrollbar-hide -mx-3 px-3 sm:mx-0 sm:px-0">
+          <button v-for="cat in productStore.categories" :key="cat" @click="selectedCategory = cat"
+            class="flex-shrink-0 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold border transition-all"
+            :class="selectedCategory === cat 
+              ? 'bg-emerald-600 border-emerald-600 text-white shadow-sm' 
+              : 'bg-white border-stone-200 text-stone-600 hover:border-emerald-300'">
+            {{ cat }}
+          </button>
+        </div>
 
-          <form @submit.prevent="handleUsdtSubmit" class="space-y-6">
-            <!-- Amount & Network -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label class="block text-xs font-bold uppercase mb-3 text-muted-foreground">JUMLAH USDT</label>
-                <input v-model="usdtForm.amount" type="number" step="0.01" 
-                  class="w-full h-14 bg-muted rounded-xl px-4 font-semibold outline-none border-2 border-transparent focus:border-primary transition-colors" 
-                  placeholder="Contoh: 100.00" required />
-              </div>
-              <div>
-                <label class="block text-xs font-bold uppercase mb-3 text-muted-foreground">JARINGAN BLOCKCHAIN</label>
-                <div class="flex gap-2">
-                  <button type="button" v-for="net in ['TRC20', 'BEP20']" :key="net" @click="usdtForm.network = net"
-                    class="flex-1 h-14 border-2 rounded-xl font-bold text-sm transition-all"
-                    :class="usdtForm.network === net ? 'border-primary bg-primary/5 text-primary' : 'border-border text-muted-foreground hover:border-primary/30'">
-                    {{ net }}
-                  </button>
+        <!-- Loading State -->
+        <div v-if="productStore.loading" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+          <div v-for="i in 8" :key="i" class="h-36 sm:h-40 bg-white border border-stone-200 animate-pulse rounded-xl"></div>
+        </div>
+
+        <!-- Products Grid -->
+        <div v-else class="space-y-8 sm:space-y-12">
+          <!-- Pulsa -->
+          <section v-if="showCategory('Pulsa')" class="space-y-3 sm:space-y-4">
+            <div class="flex items-center gap-2 sm:gap-3 pb-2 sm:pb-3 border-b-2 border-emerald-600">
+              <Smartphone class="text-stone-700" :size="18" />
+              <h2 class="text-base sm:text-lg font-bold text-stone-800">Pulsa</h2>
+              <span class="ml-auto text-xs text-stone-500 font-medium hidden sm:inline">Semua operator tersedia</span>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+              <ProductCard v-for="product in getDisplayedProducts('Pulsa')" 
+                :key="product.id" :product="product" @select="openCheckout" />
+            </div>
+            <button v-if="hasMoreProducts('Pulsa')" @click="loadMore('Pulsa')"
+              class="w-full py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-emerald-600 hover:bg-emerald-50 border border-stone-200 rounded-lg transition-all">
+              Tampilkan Produk Lainnya
+            </button>
+          </section>
+
+          <!-- Data -->
+          <section v-if="showCategory('Data')" class="space-y-3 sm:space-y-4">
+            <div class="flex items-center gap-2 sm:gap-3 pb-2 sm:pb-3 border-b-2 border-emerald-600">
+              <Globe class="text-stone-700" :size="18" />
+              <h2 class="text-base sm:text-lg font-bold text-stone-800">Paket Data</h2>
+              <span class="ml-auto text-xs text-stone-500 font-medium hidden sm:inline">Aktif otomatis</span>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+              <ProductCard v-for="product in getDisplayedProducts('Data')" 
+                :key="product.id" :product="product" @select="openCheckout" />
+            </div>
+            <button v-if="hasMoreProducts('Data')" @click="loadMore('Data')"
+              class="w-full py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-emerald-600 hover:bg-emerald-50 border border-stone-200 rounded-lg transition-all">
+              Tampilkan Produk Lainnya
+            </button>
+          </section>
+
+          <!-- E-Wallet -->
+          <section v-if="showCategory('E-Wallet')" class="space-y-3 sm:space-y-4">
+            <div class="flex items-center gap-2 sm:gap-3 pb-2 sm:pb-3 border-b-2 border-emerald-600">
+              <CreditCard class="text-stone-700" :size="18" />
+              <h2 class="text-base sm:text-lg font-bold text-stone-800">E-Wallet</h2>
+              <span class="ml-auto text-xs text-stone-500 font-medium hidden sm:inline">Proses instan</span>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+              <ProductCard v-for="product in getDisplayedProducts('E-Wallet')" 
+                :key="product.id" :product="product" @select="openCheckout" />
+            </div>
+            <button v-if="hasMoreProducts('E-Wallet')" @click="loadMore('E-Wallet')"
+              class="w-full py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-emerald-600 hover:bg-emerald-50 border border-stone-200 rounded-lg transition-all">
+              Tampilkan Produk Lainnya
+            </button>
+          </section>
+
+          <!-- Game -->
+          <section v-if="showCategory('Game')" class="space-y-3 sm:space-y-4">
+            <div class="flex items-center gap-2 sm:gap-3 pb-2 sm:pb-3 border-b-2 border-emerald-600">
+              <Gamepad2 class="text-stone-700" :size="18" />
+              <h2 class="text-base sm:text-lg font-bold text-stone-800">Voucher Game</h2>
+              <span class="ml-auto text-xs text-stone-500 font-medium hidden sm:inline">Harga kompetitif</span>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+              <ProductCard v-for="product in getDisplayedProducts('Game')" 
+                :key="product.id" :product="product" @select="openCheckout" />
+            </div>
+            <button v-if="hasMoreProducts('Game')" @click="loadMore('Game')"
+              class="w-full py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-emerald-600 hover:bg-emerald-50 border border-stone-200 rounded-lg transition-all">
+              Tampilkan Produk Lainnya
+            </button>
+          </section>
+
+          <!-- Empty State -->
+          <div v-if="filteredProducts.length === 0" class="text-center py-12">
+            <Package class="mx-auto mb-3 text-stone-300" :size="48" />
+            <p class="text-sm text-stone-500 font-medium">Produk tidak ditemukan</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- USDT Tab -->
+      <div v-if="activeTab === 'usdt'">
+        <div class="max-w-2xl mx-auto">
+          <div class="bg-white border border-stone-200 rounded-2xl p-4 sm:p-6 lg:p-8 shadow-sm">
+            <div class="text-center mb-5 sm:mb-6">
+              <h2 class="text-xl sm:text-2xl lg:text-3xl font-bold text-stone-800 mb-2">Konversi USDT ke Rupiah</h2>
+              <p class="text-xs sm:text-sm text-stone-500">Proses pencairan cepat langsung ke rekening bank atau e-wallet Anda</p>
+            </div>
+
+            <form @submit.prevent="handleUsdtSubmit" class="space-y-4 sm:space-y-5">
+              <!-- Amount & Network -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                <div>
+                  <label class="block text-xs font-semibold mb-2 text-stone-600">Jumlah USDT</label>
+                  <input v-model="usdtForm.amount" type="number" step="0.01" 
+                    class="w-full h-11 sm:h-12 bg-white border border-stone-200 rounded-lg px-3 sm:px-4 text-sm font-medium text-stone-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none transition-all" 
+                    placeholder="100.00" required />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold mb-2 text-stone-600">Jaringan Blockchain</label>
+                  <div class="flex gap-2">
+                    <button type="button" v-for="net in ['TRC20', 'BEP20']" :key="net" @click="usdtForm.network = net"
+                      class="flex-1 h-11 sm:h-12 border rounded-lg font-semibold text-xs sm:text-sm transition-all"
+                      :class="usdtForm.network === net 
+                        ? 'border-emerald-600 bg-emerald-50 text-emerald-700' 
+                        : 'border-stone-200 text-stone-600 hover:border-emerald-300'">
+                      {{ net }}
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Wallet Address Display -->
-            <div class="bg-muted p-5 rounded-2xl border border-border">
-              <div class="flex justify-between items-center mb-3">
-                <span class="text-xs font-bold uppercase text-muted-foreground">ALAMAT TUJUAN TRANSFER:</span>
-                <button type="button" @click="copyWalletAddress" 
-                  class="text-primary text-xs font-bold uppercase hover:underline flex items-center gap-1 transition-colors">
-                  <Copy :size="14" />
-                  SALIN
-                </button>
+              <!-- Wallet Address -->
+              <div class="bg-stone-50 p-3 sm:p-4 rounded-xl border border-stone-200">
+                <div class="flex justify-between items-center mb-2">
+                  <span class="text-xs font-semibold text-stone-600">Alamat Wallet Tujuan Transfer</span>
+                  <button type="button" @click="copyWalletAddress" 
+                    class="text-emerald-600 text-xs font-semibold hover:underline flex items-center gap-1">
+                    <Copy :size="13" /> Salin
+                  </button>
+                </div>
+                <div class="bg-white p-2.5 sm:p-3 rounded-lg font-mono text-xs break-all border border-stone-200 text-stone-700">
+                  {{ walletAddresses[usdtForm.network] }}
+                </div>
               </div>
-              <div class="bg-background p-4 rounded-xl font-mono text-sm break-all border border-border text-center font-semibold">
-                {{ walletAddresses[usdtForm.network] }}
-              </div>
-            </div>
 
-            <!-- Bank Details -->
-            <div class="space-y-4">
-              <label class="block text-xs font-bold uppercase text-muted-foreground">INFORMASI REKENING PENERIMA</label>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Bank Details -->
+              <div class="space-y-3">
+                <label class="block text-xs font-semibold text-stone-600">Informasi Rekening Penerima Dana</label>
                 <input v-model="usdtForm.customer_email" type="email" 
-                  class="w-full h-12 bg-muted rounded-xl px-4 font-medium outline-none border-2 border-transparent focus:border-primary transition-colors" 
-                  placeholder="Email Anda" required />
-                <input v-model="usdtForm.bank_name" type="text" 
-                  class="w-full h-12 bg-muted rounded-xl px-4 font-medium outline-none border-2 border-transparent focus:border-primary transition-colors" 
-                  placeholder="Bank/E-Wallet (Contoh: BCA)" required />
-                <input v-model="usdtForm.account_number" type="text" 
-                  class="w-full h-12 bg-muted rounded-xl px-4 font-medium outline-none border-2 border-transparent focus:border-primary transition-colors" 
-                  placeholder="Nomor Rekening" required />
+                  class="w-full h-10 sm:h-11 bg-white border border-stone-200 rounded-lg px-3 sm:px-4 text-sm text-stone-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none transition-all" 
+                  placeholder="Alamat email Anda" required />
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <input v-model="usdtForm.bank_name" type="text" 
+                    class="w-full h-10 sm:h-11 bg-white border border-stone-200 rounded-lg px-3 sm:px-4 text-sm text-stone-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none transition-all" 
+                    placeholder="Nama Bank atau E-Wallet" required />
+                  <input v-model="usdtForm.account_number" type="text" 
+                    class="w-full h-10 sm:h-11 bg-white border border-stone-200 rounded-lg px-3 sm:px-4 text-sm text-stone-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none transition-all" 
+                    placeholder="Nomor Rekening" required />
+                </div>
                 <input v-model="usdtForm.account_name" type="text" 
-                  class="w-full h-12 bg-muted rounded-xl px-4 font-medium outline-none border-2 border-transparent focus:border-primary transition-colors" 
+                  class="w-full h-10 sm:h-11 bg-white border border-stone-200 rounded-lg px-3 sm:px-4 text-sm text-stone-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none transition-all" 
                   placeholder="Nama Pemilik Rekening" required />
               </div>
-            </div>
 
-            <!-- Proof Upload -->
-            <div>
-              <label class="block text-xs font-bold uppercase mb-3 text-center text-muted-foreground">BUKTI TRANSFER</label>
-              <div @click="triggerUsdtFileInput" 
-                class="border-2 border-dashed border-border rounded-2xl p-8 text-center cursor-pointer hover:border-primary hover:bg-primary/5 bg-muted/30 transition-all">
-                <Upload class="mx-auto mb-2 opacity-50" :size="32" />
-                <p class="text-sm font-semibold">{{ usdtForm.proof ? usdtForm.proof.name : 'Klik untuk upload screenshot bukti transfer' }}</p>
-                <p class="text-xs text-muted-foreground mt-2">Format: JPG, PNG (Max 5MB)</p>
+              <!-- Proof Upload -->
+              <div>
+                <label class="block text-xs font-semibold mb-2 text-stone-600">Bukti Transfer USDT</label>
+                <div @click="triggerUsdtFileInput" 
+                  class="border-2 border-dashed border-stone-300 rounded-xl p-5 sm:p-6 text-center cursor-pointer hover:border-emerald-500 hover:bg-emerald-50 transition-all">
+                  <Upload class="mx-auto mb-2 text-stone-400" :size="26" />
+                  <p class="text-sm font-medium text-stone-600">
+                    {{ usdtForm.proof ? usdtForm.proof.name : 'Klik untuk upload screenshot' }}
+                  </p>
+                  <p class="text-xs text-stone-400 mt-1">Format JPG atau PNG, maksimal 5MB</p>
+                </div>
+                <input ref="usdtFileInput" type="file" class="hidden" @change="handleUsdtFileSelect" accept="image/*" required />
               </div>
-              <input ref="usdtFileInput" type="file" class="hidden" @change="handleUsdtFileSelect" accept="image/*" required />
+
+              <!-- Submit -->
+              <button type="submit" 
+                class="w-full h-11 sm:h-12 bg-emerald-600 text-white rounded-xl font-semibold text-sm shadow-sm hover:bg-emerald-700 transition-all disabled:opacity-50" 
+                :disabled="usdtSubmitting">
+                <Loader v-if="usdtSubmitting" class="inline animate-spin mr-2" :size="16" />
+                {{ usdtSubmitting ? 'Sedang Memproses...' : 'Kirim Permintaan Konversi' }}
+              </button>
+            </form>
+
+            <!-- Info -->
+            <div class="mt-4 sm:mt-5 bg-emerald-50 border border-emerald-200 rounded-lg p-3">
+              <p class="text-xs text-center text-emerald-700 font-medium">
+                Pencairan akan diproses dalam waktu 5-15 menit setelah verifikasi transfer
+              </p>
             </div>
-
-            <!-- Submit Button -->
-            <button type="submit" 
-              class="w-full h-14 bg-primary text-white rounded-2xl font-bold text-lg shadow-lg hover:shadow-xl hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed" 
-              :disabled="usdtSubmitting">
-              <Loader v-if="usdtSubmitting" class="inline animate-spin mr-2" :size="20" />
-              {{ usdtSubmitting ? 'MEMPROSES...' : 'KIRIM PERMINTAAN' }}
-            </button>
-          </form>
-
-          <!-- Info Box -->
-          <div class="mt-6 bg-primary/5 border border-primary/20 rounded-xl p-4">
-            <p class="text-xs font-bold text-center text-primary">
-              Pencairan diproses dalam 5-15 menit setelah konfirmasi transfer
-            </p>
-          </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Checkout Modal -->
+    <!-- Modals -->
     <CheckoutModal v-if="selectedProduct" :product="selectedProduct" @close="closeCheckout" />
     
-    <!-- Toast Notification -->
+    <!-- Toast -->
     <transition name="toast">
-      <div v-if="showToast" class="fixed bottom-6 right-6 bg-card border-2 border-primary rounded-xl shadow-2xl p-5 z-50 max-w-sm">
-        <div class="flex items-center gap-3">
-          <Check class="text-primary" :size="20" />
-          <span class="text-sm font-semibold">{{ toastMessage }}</span>
+      <div v-if="showToast" class="fixed bottom-4 right-4 bg-white border border-emerald-600 rounded-xl shadow-lg p-3 sm:p-4 z-50 max-w-sm">
+        <div class="flex items-center gap-2">
+          <Check class="text-emerald-600 flex-shrink-0" :size="18" />
+          <span class="text-sm font-semibold text-stone-800">{{ toastMessage }}</span>
         </div>
       </div>
     </transition>
@@ -231,22 +256,28 @@ import { ref, onMounted, computed } from 'vue'
 import { Search, Smartphone, Globe, CreditCard, Gamepad2, Package, Check, Upload, Loader, Copy } from 'lucide-vue-next'
 import ProductCard from '../components/ProductCard.vue'
 import CheckoutModal from '../components/CheckoutModal.vue'
+import { useProductStore } from '@/stores/productStore'
 import api from '../services/api'
+
+// STORES
+const productStore = useProductStore()
 
 // STATE
 const activeTab = ref('products')
 const selectedCategory = ref('Semua')
 const searchQuery = ref('')
-const products = ref([])
-const loading = ref(true)
 const selectedProduct = ref(null)
 const usdtSubmitting = ref(false)
 const showToast = ref(false)
 const toastMessage = ref('')
 const usdtFileInput = ref(null)
 
-// Categories
-const categories = ['Semua', 'Pulsa', 'Data', 'E-Wallet', 'Game']
+const loadLimits = ref({
+  Pulsa: 20,
+  Data: 20,
+  'E-Wallet': 20,
+  Game: 20
+})
 
 const usdtForm = ref({
   amount: '', 
@@ -258,81 +289,37 @@ const usdtForm = ref({
   proof: null
 })
 
-// Wallet Addresses from ENV
 const walletAddresses = {
   TRC20: import.meta.env.VITE_WALLET_TRC20 || 'TSetWalletAddressInENV',
   BEP20: import.meta.env.VITE_WALLET_BEP20 || 'BSetWalletAddressInENV'
 }
 
-// Computed: Filtered Products
+// COMPUTED
 const filteredProducts = computed(() => {
-  let results = [...products.value]
-  
-  // Search Filter
   if (searchQuery.value) {
-    const q = searchQuery.value.toLowerCase()
-    results = results.filter(p => 
-      p.name.toLowerCase().includes(q) || 
-      p.category.toLowerCase().includes(q)
-    )
+    return productStore.searchProducts(searchQuery.value)
   }
-  
-  // Category Filter
-  if (selectedCategory.value !== 'Semua') {
-    const s = selectedCategory.value.toLowerCase()
-    results = results.filter(p => {
-      const cat = p.category.toLowerCase()
-      const name = p.name.toLowerCase()
-      
-      if (s === 'e-wallet') {
-        // Check both category AND name for e-wallet keywords
-        return cat.includes('wallet') || 
-               cat.includes('dana') || 
-               cat.includes('ovo') || 
-               cat.includes('gopay') || 
-               cat.includes('shopeepay') ||
-               cat.includes('linkaja') ||
-               cat.includes('e-money') ||
-               name.includes('dana') || 
-               name.includes('ovo') || 
-               name.includes('gopay') ||
-               name.includes('shopeepay') ||
-               name.includes('linkaja')
-      }
-      return cat.includes(s)
-    })
-  }
-  
-  return results.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }))
+  return productStore.productsByCategory(selectedCategory.value)
 })
 
-// Get products by specific category
 const getProductsByCategory = (category) => {
-  const cat = category.toLowerCase()
-  return products.value.filter(p => {
-    const pCat = p.category.toLowerCase()
-    const pName = p.name.toLowerCase()
-    
-    if (cat === 'e-wallet') {
-      // Check category OR product name for e-wallet keywords
-      return pCat.includes('wallet') || 
-             pCat.includes('dana') || 
-             pCat.includes('ovo') || 
-             pCat.includes('gopay') || 
-             pCat.includes('shopeepay') ||
-             pCat.includes('linkaja') ||
-             pCat.includes('e-money') ||
-             pName.includes('dana') || 
-             pName.includes('ovo') || 
-             pName.includes('gopay') ||
-             pName.includes('shopeepay') ||
-             pName.includes('linkaja')
-    }
-    return pCat.includes(cat)
-  }).sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }))
+  return productStore.productsByCategory(category)
 }
 
-// Show category section based on filters
+const getDisplayedProducts = (category) => {
+  const allProducts = getProductsByCategory(category)
+  return allProducts.slice(0, loadLimits.value[category])
+}
+
+const hasMoreProducts = (category) => {
+  const total = getProductsByCategory(category).length
+  return loadLimits.value[category] < total
+}
+
+const loadMore = (category) => {
+  loadLimits.value[category] += 20
+}
+
 const showCategory = (category) => {
   if (selectedCategory.value !== 'Semua' && selectedCategory.value !== category) {
     return false
@@ -343,26 +330,19 @@ const showCategory = (category) => {
   return true
 }
 
-// Fetch Products
-const fetchProducts = async () => {
-  loading.value = true
-  try { 
-    products.value = await api.products.getAll() 
-  } catch (e) { 
-    console.error('Error fetching products:', e) 
-  } finally { 
-    loading.value = false 
-  }
-}
+// LIFECYCLE
+onMounted(async () => {
+  await productStore.fetchProducts()
+})
 
-// USDT Form Handlers
+// USDT HANDLERS
 const triggerUsdtFileInput = () => { usdtFileInput.value?.click() }
 const handleUsdtFileSelect = (e) => { usdtForm.value.proof = e.target.files[0] }
 
 const copyWalletAddress = async () => { 
   try {
     await navigator.clipboard.writeText(walletAddresses[usdtForm.value.network])
-    toastMessage.value = 'ALAMAT BERHASIL DISALIN'
+    toastMessage.value = 'Alamat berhasil disalin'
     showToast.value = true
     setTimeout(() => showToast.value = false, 2000)
   } catch (err) {
@@ -372,14 +352,14 @@ const copyWalletAddress = async () => {
 
 const handleUsdtSubmit = async () => {
   if (!usdtForm.value.proof) {
-    alert('Silakan upload bukti transfer terlebih dahulu')
+    alert('Upload bukti transfer terlebih dahulu')
     return
   }
   
   usdtSubmitting.value = true
   try {
     const fd = new FormData()
-    const rate = 16000 // Rate USDT to IDR
+    const rate = 16000
     
     fd.append('amount', usdtForm.value.amount)
     fd.append('network', usdtForm.value.network)
@@ -392,11 +372,10 @@ const handleUsdtSubmit = async () => {
 
     await api.usdt.submit(fd)
     
-    toastMessage.value = 'PERMINTAAN BERHASIL DIKIRIM'
+    toastMessage.value = 'Permintaan berhasil dikirim'
     showToast.value = true
     setTimeout(() => showToast.value = false, 3000)
     
-    // Reset form
     usdtForm.value = {
       amount: '', 
       network: 'TRC20', 
@@ -407,32 +386,23 @@ const handleUsdtSubmit = async () => {
       proof: null
     }
   } catch (e) { 
-    alert('Gagal mengirim permintaan. Silakan coba lagi.')
+    alert('Gagal mengirim permintaan')
   } finally { 
     usdtSubmitting.value = false 
   }
 }
 
-// Lifecycle
-onMounted(fetchProducts)
-
-// Modal Handlers
 const openCheckout = (p) => { selectedProduct.value = p }
 const closeCheckout = () => { selectedProduct.value = null }
 </script>
 
 <style scoped>
-.list-enter-active,
-.list-leave-active {
-  transition: all 0.3s ease;
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
-.list-enter-from {
-  opacity: 0;
-  transform: translateY(20px);
-}
-.list-leave-to {
-  opacity: 0;
-  transform: scale(0.9);
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .toast-enter-active,
