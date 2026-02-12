@@ -8,6 +8,36 @@ const routes = [
     component: () => import('../views/Home.vue'),
   },
   {
+    path: '/checkout/:productId',
+    name: 'checkout',
+    component: () => import('../views/CheckoutView.vue'),
+  },
+  {
+    path: '/payment/:orderId',
+    name: 'payment',
+    component: () => import('../views/PaymentView.vue'),
+  },
+  {
+    path: '/payment/:orderId/pending',
+    name: 'payment-pending',
+    component: () => import('../views/PaymentPendingView.vue'),
+  },
+  {
+    path: '/payment/:orderId/success',
+    name: 'payment-success',
+    component: () => import('../views/PaymentSuccessView.vue'),
+  },
+  {
+    path: '/transactions',
+    name: 'transactions',
+    component: () => import('../views/TransactionHistoryView.vue'),
+  },
+  {
+    path: '/usdt-history',
+    name: 'usdt-history',
+    component: () => import('../views/UsdtHistoryView.vue'),
+  },
+  {
     path: '/admin/login',
     name: 'admin-login',
     component: () => import('../views/AdminLogin.vue'),
@@ -31,7 +61,6 @@ const router = createRouter({
   routes,
 })
 
-// Navigation guards
 router.beforeEach(async (to, from, next) => {
   const { checkAuth, isAuthenticated } = useAuth()
 
@@ -56,4 +85,4 @@ router.beforeEach(async (to, from, next) => {
   }
 })
 
-export default router 
+export default router

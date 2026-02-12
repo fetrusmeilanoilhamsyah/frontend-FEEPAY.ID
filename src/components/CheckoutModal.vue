@@ -3,7 +3,6 @@
     <transition name="modal">
       <div v-if="isOpen" class="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true">
         <div class="fixed inset-0 bg-black/70 backdrop-blur-md transition-opacity" @click="handleClose"></div>
-
         <div class="flex min-h-full items-center justify-center p-4">
           <div class="relative bg-white dark:bg-dark-950 rounded-2xl shadow-2xl max-w-md w-full p-8 transform transition-all border border-border" @click.stop>
             
@@ -15,7 +14,6 @@
               <h2 class="text-2xl font-bold text-dark-950 dark:text-white mb-6 text-left">
                 Konfirmasi Pesanan
               </h2>
-
               <div class="bg-dark-50 dark:bg-dark-900 border border-border rounded-xl p-5 mb-8 text-left">
                 <div class="text-xs font-semibold uppercase text-dark-500 mb-2">Produk Dipilih</div>
                 <div class="font-bold text-lg text-dark-950 dark:text-white mb-2">{{ product.name }}</div>
@@ -23,7 +21,6 @@
                   Rp {{ formatPrice(product.selling_price) }}
                 </div>
               </div>
-
               <form @submit.prevent="handleSubmitOrder">
                 <div class="space-y-5 mb-8 text-left">
                   <div>
@@ -33,8 +30,7 @@
                       placeholder="Contoh: 081234567890" required />
                   </div>
                   <div>
-                    <label class="block text-xs font-semibold text-dark-700 dark:text-dark-300 mb-2 uppercase">Email</label>
-                    <input v-model="formData.customer_email" type="email" 
+                    <label class="block text-xs font-semibold text-dark-700 dark:text-dark-300 mb-2 uppercase">Email</label>                    <input v-model="formData.customer_email" type="email" 
                       class="w-full bg-dark-50 dark:bg-dark-900 border-2 border-border rounded-lg h-12 px-4 font-medium outline-none focus:border-primary-600 transition-colors" 
                       placeholder="email@example.com" required />
                   </div>
@@ -52,7 +48,6 @@
               <h2 class="text-2xl font-bold text-dark-950 dark:text-white mb-6 text-center">
                 Pembayaran
               </h2>
-
               <div class="bg-dark-50 dark:bg-dark-900 border-2 border-border rounded-xl p-5 mb-6 text-left">
                 <div class="space-y-2 mb-3">
                   <div class="flex justify-between items-center">
@@ -64,13 +59,11 @@
                     <StatusBadge :status="orderData.status" />
                   </div>
                 </div>
-
                 <div class="flex justify-between items-end border-t border-dark-200 pt-3">
                   <span class="text-xs font-semibold uppercase text-dark-500">Total Tagihan</span>
                   <span class="text-xl font-bold text-dark-950 dark:text-white">Rp {{ formatPrice(orderData.total_price) }}</span>
                 </div>
               </div>
-
               <div class="grid grid-cols-2 gap-4 mb-6">
                 <button @click="paymentType = 'qris'" type="button" 
                   class="p-4 border-2 rounded-xl transition-all" 
@@ -85,7 +78,6 @@
                   <div class="text-xs font-semibold uppercase">Transfer Bank</div>
                 </button>
               </div>
-
               <div v-if="paymentType === 'qris'" class="mb-6 bg-white dark:bg-dark-900 p-4 rounded-xl border-2 border-border shadow-lg">
                 <div class="mx-auto w-64 h-64 bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-950 dark:to-primary-900 rounded-xl flex items-center justify-center border-2 border-primary-300 dark:border-primary-700 overflow-hidden">
                   <img src="/qris.png" alt="QRIS Payment" class="w-full h-full object-contain" />
@@ -94,7 +86,6 @@
                   Scan QR Code menggunakan aplikasi pembayaran Anda
                 </p>
               </div>
-
               <div v-else class="mb-6 bg-dark-50 dark:bg-dark-900 border-2 border-border rounded-xl p-5 text-left space-y-3">
                 <div class="flex justify-between text-xs font-semibold uppercase">
                   <span class="text-dark-500">Bank</span>
@@ -110,7 +101,6 @@
                   a.n. {{ bankInfo.accountName }}
                 </div>
               </div>
-
               <form @submit.prevent="handleSubmitPayment">
                 <div class="mb-8">
                   <label class="block text-xs font-semibold uppercase text-center mb-3 text-dark-600">Bukti Pembayaran</label>
@@ -132,18 +122,6 @@
                 </button>
               </form>
             </div>
-
-            <div v-else-if="step === 3" class="text-center py-8">
-              <CheckCircle class="text-green-500 w-20 h-20 mx-auto mb-6" />
-              <h2 class="text-3xl font-bold mb-2">Pembayaran Diterima</h2>
-              <p class="text-sm font-medium text-dark-500 mb-8">
-                Pesanan Anda sedang diproses. Anda akan menerima notifikasi via email.
-              </p>
-              <button @click="handleClose" 
-                class="w-full bg-primary-600 hover:bg-primary-700 text-white h-12 rounded-lg font-semibold text-base shadow-lg transition-colors">
-                Selesai
-              </button>
-            </div>
           </div>
         </div>
       </div>
@@ -154,10 +132,9 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { X, Loader, QrCode, Building2, Upload, CheckCircle } from 'lucide-vue-next'
+import { X, Loader, QrCode, Building2, Upload } from 'lucide-vue-next'
 import { useOrderStore } from '@/stores/orderStore'
-import StatusBadge from './StatusBadge.vue' // Tambah Import ini
-import api from '../services/api'
+import StatusBadge from './StatusBadge.vue'
 
 const props = defineProps({
   product: { type: Object, required: true }
@@ -178,11 +155,9 @@ const step = ref(1)
 const submitting = ref(false)
 const formData = ref({ target_number: '', customer_email: '' })
 const orderData = ref(null)
-const paymentData = ref(null)
 const paymentType = ref('qris')
 const uploadedFile = ref(null)
 const fileInput = ref(null)
-const errorMessage = ref('')
 
 const formatPrice = (price) => new Intl.NumberFormat('id-ID').format(price)
 
@@ -202,7 +177,6 @@ const copyBankNumber = async () => {
 
 const handleSubmitOrder = async () => {
   submitting.value = true
-  errorMessage.value = ''
   try {
     const order = await orderStore.createOrder({
       sku: props.product.sku,
@@ -212,10 +186,9 @@ const handleSubmitOrder = async () => {
     orderData.value = order
     step.value = 2
   } catch (error) {
-    errorMessage.value = error.message || 'Gagal membuat pesanan'
-    alert(errorMessage.value)
-  } finally { 
-    submitting.value = false 
+    alert(error.message || 'Gagal membuat pesanan')
+  } finally {
+    submitting.value = false
   }
 }
 
@@ -238,11 +211,12 @@ const handleSubmitPayment = async () => {
     
     await orderStore.submitPayment(orderData.value.order_id, fd)
     
-    step.value = 3
+    handleClose()
+    router.push(`/payment/${orderData.value.order_id}/pending`)
   } catch (error) {
     alert('Gagal mengirim bukti pembayaran. Silakan coba lagi.')
-  } finally { 
-    submitting.value = false 
+  } finally {
+    submitting.value = false
   }
 }
 
@@ -255,16 +229,13 @@ onUnmounted(() => { document.body.style.overflow = '' })
 .modal-leave-active { 
   transition: opacity 0.3s ease; 
 }
-
 .modal-enter-from, 
 .modal-leave-to { 
   opacity: 0; 
 }
-
 .modal-enter-active > div > div { 
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
 }
-
 .modal-enter-from > div > div { 
   transform: scale(0.95) translateY(20px); 
   opacity: 0; 

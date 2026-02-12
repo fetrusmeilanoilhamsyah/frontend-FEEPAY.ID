@@ -16,7 +16,21 @@
             <div class="absolute inset-0 bg-gradient-to-r from-primary-500/0 via-primary-500/5 to-primary-500/0 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-300 rounded-lg"></div>
           </router-link>
 
-          <div class="flex items-center gap-3">
+          <div class="hidden md:flex items-center gap-1">
+            <router-link
+              to="/"
+              class="relative px-4 py-2 text-sm font-semibold text-dark-700 dark:text-dark-300 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-300 group"
+            >
+              <span class="relative z-10">Beranda</span>
+              <div class="absolute inset-0 bg-primary-50 dark:bg-primary-950/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            </router-link>
+            <router-link
+              to="/transactions"
+              class="relative px-4 py-2 text-sm font-semibold text-dark-700 dark:text-dark-300 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-300 group"
+            >
+              <span class="relative z-10">Riwayat</span>
+              <div class="absolute inset-0 bg-primary-50 dark:bg-primary-950/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            </router-link>
             <router-link
               v-if="isAuthenticated"
               to="/admin/dashboard"
@@ -25,7 +39,9 @@
               <span class="relative z-10">Dashboard</span>
               <div class="absolute inset-0 bg-primary-50 dark:bg-primary-950/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </router-link>
+          </div>
 
+          <div class="flex items-center gap-3">
             <button
               @click="toggleTheme"
               class="relative p-2.5 rounded-xl bg-dark-100 dark:bg-dark-800 text-dark-700 dark:text-dark-300 hover:bg-dark-200 dark:hover:bg-dark-700 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-500/50 group overflow-hidden"
@@ -48,13 +64,57 @@
             <button
               v-if="isAuthenticated"
               @click="handleLogout"
-              class="relative px-4 py-2 text-sm font-semibold text-dark-700 dark:text-dark-300 hover:text-red-600 dark:hover:text-red-400 transition-all duration-300 group"
+              class="relative px-4 py-2 text-sm font-semibold text-dark-700 dark:text-dark-300 hover:text-red-600 dark:hover:text-red-400 transition-all duration-300 group hidden md:block"
             >
               <span class="relative z-10">Logout</span>
               <div class="absolute inset-0 bg-red-50 dark:bg-red-950/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </button>
+
+            <button
+              @click="mobileMenuOpen = !mobileMenuOpen"
+              class="md:hidden relative p-2.5 rounded-xl bg-dark-100 dark:bg-dark-800 text-dark-700 dark:text-dark-300 hover:bg-dark-200 dark:hover:bg-dark-700 transition-all"
+            >
+              <Menu v-if="!mobileMenuOpen" :size="20" />
+              <X v-else :size="20" />
+            </button>
           </div>
         </div>
+
+        <transition name="slide-down">
+          <div v-if="mobileMenuOpen" class="md:hidden py-4 border-t border-border">
+            <div class="flex flex-col gap-2">
+              <router-link
+                to="/"
+                @click="mobileMenuOpen = false"
+                class="px-4 py-3 text-sm font-semibold text-dark-700 dark:text-dark-300 hover:bg-primary-50 dark:hover:bg-primary-950/20 rounded-lg transition-colors"
+              >
+                Beranda
+              </router-link>
+              <router-link
+                to="/transactions"
+                @click="mobileMenuOpen = false"
+                class="px-4 py-3 text-sm font-semibold text-dark-700 dark:text-dark-300 hover:bg-primary-50 dark:hover:bg-primary-950/20 rounded-lg transition-colors"
+              >
+                Riwayat Transaksi
+              </router-link>
+              <router-link
+                v-if="isAuthenticated"
+                to="/admin/dashboard"
+                @click="mobileMenuOpen = false"
+                class="px-4 py-3 text-sm font-semibold text-dark-700 dark:text-dark-300 hover:bg-primary-50 dark:hover:bg-primary-950/20 rounded-lg transition-colors"
+              >
+                Dashboard Admin
+              </router-link>
+              <button
+                v-if="isAuthenticated"
+                @click="handleLogout"
+                class="px-4 py-3 text-sm font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-lg transition-colors text-left"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </transition>
       </div>
     </nav>
 
@@ -94,11 +154,9 @@
 <script setup>
 import { onMounted, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { Sun, Moon } from 'lucide-vue-next'
+import { Sun, Moon, Menu, X } from 'lucide-vue-next'
 import { useTheme } from './composables/useTheme'
 import { useAuth } from './composables/useAuth'
-
-// Import ChatWidget dengan nama file yang sesuai
 import ChatWidget from './components/frontend_ChatWidget.vue'
 
 const router = useRouter()
@@ -106,6 +164,7 @@ const { toggleTheme, initTheme, isDark } = useTheme()
 const { isAuthenticated, logout } = useAuth()
 
 const showScrollTop = ref(false)
+const mobileMenuOpen = ref(false)
 
 const handleScroll = () => {
   showScrollTop.value = window.scrollY > 300
@@ -129,8 +188,14 @@ onUnmounted(() => {
 
 const handleLogout = async () => {
   await logout()
+  mobileMenuOpen.value = false
   router.push('/admin/login')
 }
+
+// Close mobile menu on route change
+router.afterEach(() => {
+  mobileMenuOpen.value = false
+})
 </script>
 
 <style scoped>
@@ -156,6 +221,18 @@ const handleLogout = async () => {
 .fade-leave-to {
   opacity: 0;
 }
+
+/* Mobile Menu Animation */
+.slide-down-enter-active,
+.slide-down-leave-active {
+  transition: all 0.3s ease;
+}
+.slide-down-enter-from,
+.slide-down-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
 html {
   scroll-behavior: smooth;
 }
