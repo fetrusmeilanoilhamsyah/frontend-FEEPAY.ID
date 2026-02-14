@@ -3,13 +3,33 @@
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
       
       <!-- Header -->
-      <div class="mb-8">
+      <div class="mb-6">
         <h1 class="text-3xl font-bold text-dark-950 dark:text-white mb-2">
           Riwayat Transaksi
         </h1>
         <p class="text-sm text-dark-600 dark:text-dark-400">
           Pantau status pesanan Anda
         </p>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="mb-6">
+        <div class="relative">
+          <Search class="absolute left-4 top-1/2 -translate-y-1/2 text-dark-400" :size="20" />
+          <input 
+            v-model="searchQuery"
+            type="text"
+            placeholder="Cari order ID, produk, atau nomor..."
+            class="w-full h-12 pl-12 pr-4 bg-white dark:bg-dark-900 border-2 border-border rounded-xl text-dark-950 dark:text-white font-medium outline-none focus:border-primary-600 transition-colors"
+          />
+          <button 
+            v-if="searchQuery"
+            @click="searchQuery = ''"
+            class="absolute right-4 top-1/2 -translate-y-1/2 text-dark-400 hover:text-dark-950 dark:hover:text-white"
+          >
+            <X :size="18" />
+          </button>
+        </div>
       </div>
 
       <!-- Filter Tabs -->
@@ -38,23 +58,22 @@
         </div>
       </div>
 
-      <!-- Orders List -->
+      <!-- Loading Skeletons -->
       <div v-if="loading" class="space-y-4">
-        <div v-for="i in 3" :key="i" class="bg-white dark:bg-dark-900 rounded-xl p-6 border border-border animate-pulse">
-          <div class="h-4 bg-dark-200 dark:bg-dark-800 rounded w-1/4 mb-3"></div>
-          <div class="h-3 bg-dark-200 dark:bg-dark-800 rounded w-1/2"></div>
-        </div>
+        <SkeletonOrderCard v-for="i in 5" :key="i" />
       </div>
 
+      <!-- Empty State -->
       <div v-else-if="filteredOrders.length === 0" class="text-center py-16">
         <Package class="mx-auto mb-4 text-dark-300 dark:text-dark-700" :size="64" />
         <h3 class="text-lg font-semibold text-dark-950 dark:text-white mb-2">
-          {{ activeFilter === 'all' ? 'Belum ada transaksi' : 'Tidak ada transaksi ' + activeFilterLabel }}
+          {{ searchQuery ? 'Tidak ada hasil' : (activeFilter === 'all' ? 'Belum ada transaksi' : 'Tidak ada transaksi ' + activeFilterLabel) }}
         </h3>
         <p class="text-sm text-dark-600 dark:text-dark-400 mb-6">
-          Mulai berbelanja untuk melihat riwayat transaksi
+          {{ searchQuery ? 'Coba kata kunci lain' : 'Mulai berbelanja untuk melihat riwayat transaksi' }}
         </p>
         <button 
+          v-if="!searchQuery"
           @click="$router.push('/')"
           class="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-semibold transition-colors"
         >
@@ -227,9 +246,10 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { Package, ChevronRight, RefreshCw, ShoppingBag, Check, X } from 'lucide-vue-next'
+import { Package, ChevronRight, RefreshCw, ShoppingBag, Check, X, Search } from 'lucide-vue-next'
 import { useOrderStore } from '@/stores/orderStore'
 import StatusBadge from '@/components/StatusBadge.vue'
+import SkeletonOrderCard from '@/components/SkeletonOrderCard.vue'
 
 const router = useRouter()
 const orderStore = useOrderStore()
@@ -239,6 +259,7 @@ const selectedOrder = ref(null)
 const refreshing = ref(false)
 const showToast = ref(false)
 const toastMessage = ref('')
+const searchQuery = ref('')
 
 const filters = computed(() => [
   { value: 'all', label: 'Semua', count: orderStore.orderHistory.length },
@@ -254,12 +275,23 @@ const activeFilterLabel = computed(() => {
 })
 
 const filteredOrders = computed(() => {
-  if (activeFilter.value === 'all') return orderStore.orderHistory
-  if (activeFilter.value === 'pending') return orderStore.pendingOrders
-  if (activeFilter.value === 'processing') return orderStore.processingOrders
-  if (activeFilter.value === 'success') return orderStore.completedOrders.filter(o => o.status === 'success')
-  if (activeFilter.value === 'failed') return orderStore.completedOrders.filter(o => o.status === 'failed')
-  return []
+  let orders = []
+  if (activeFilter.value === 'all') orders = orderStore.orderHistory
+  else if (activeFilter.value === 'pending') orders = orderStore.pendingOrders
+  else if (activeFilter.value === 'processing') orders = orderStore.processingOrders
+  else if (activeFilter.value === 'success') orders = orderStore.completedOrders.filter(o => o.status === 'success')
+  else if (activeFilter.value === 'failed') orders = orderStore.completedOrders.filter(o => o.status === 'failed')
+
+  if (searchQuery.value) {
+    const q = searchQuery.value.toLowerCase()
+    orders = orders.filter(o =>
+      o.order_id?.toLowerCase().includes(q) ||
+      o.product_name?.toLowerCase().includes(q) ||
+      o.target_number?.toLowerCase().includes(q)
+    )
+  }
+
+  return orders
 })
 
 const loading = computed(() => orderStore.loading)

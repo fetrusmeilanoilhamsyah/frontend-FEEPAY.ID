@@ -41,9 +41,8 @@
 
     <!-- Products Tab -->
     <div v-if="activeTab === 'products'">
-      <!-- Tombol Sync Products -->
       <div class="mb-4 flex justify-end">
-        <button @click="handleSyncProducts" 
+        <button @click="handleSyncProducts"
           :disabled="isSyncing"
           class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
           <svg v-if="isSyncing" class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -54,7 +53,6 @@
         </button>
       </div>
 
-      <!-- Tabel Products -->
       <div class="card overflow-x-auto border border-border rounded-xl shadow-sm">
         <table class="w-full text-sm text-left">
           <thead class="bg-muted/50 border-b border-border">
@@ -108,12 +106,12 @@
                 }">{{ order.status }}</span>
             </td>
             <td class="p-4 flex gap-2">
-              <button v-if="order.status === 'processing'" @click="handleSyncOrder(order.order_id)" 
+              <button v-if="order.status === 'processing'" @click="handleSyncOrder(order.order_id)"
                 class="text-blue-600 font-semibold hover:underline">
                 Sinkronisasi
               </button>
-              <button v-if="order.status === 'pending' && order.payment?.status === 'verified'" 
-                @click="openConfirmModal(order)" 
+              <button v-if="order.status === 'pending' && order.payment?.status === 'verified'"
+                @click="openConfirmModal(order)"
                 class="bg-primary text-white px-3 py-1 rounded text-xs font-semibold hover:bg-primary/90 transition-colors">
                 Konfirmasi
               </button>
@@ -145,11 +143,11 @@
             </td>
             <td class="p-4 text-xs">
               <div v-if="pay.status === 'pending'" class="flex gap-2">
-                <button @click="openVerifyPaymentModal(pay.id, 'verified')" 
+                <button @click="openVerifyPaymentModal(pay.id, 'verified')"
                   class="text-green-600 font-semibold hover:underline">
                   Verifikasi
                 </button>
-                <button @click="openVerifyPaymentModal(pay.id, 'rejected')" 
+                <button @click="openVerifyPaymentModal(pay.id, 'rejected')"
                   class="text-red-600 font-semibold hover:underline">
                   Tolak
                 </button>
@@ -193,11 +191,11 @@
             </td>
             <td class="p-4 text-center text-xs">
               <div v-if="u.status === 'pending'" class="flex gap-2 justify-center">
-                <button @click="openApproveUsdtModal(u, 'approved')" 
+                <button @click="openApproveUsdtModal(u, 'approved')"
                   class="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded font-semibold text-xs transition-colors">
                   Setujui
                 </button>
-                <button @click="openApproveUsdtModal(u, 'rejected')" 
+                <button @click="openApproveUsdtModal(u, 'rejected')"
                   class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded font-semibold text-xs transition-colors">
                   Tolak
                 </button>
@@ -215,15 +213,15 @@
         <div class="bg-card border border-border rounded-xl p-6 max-w-md w-full shadow-2xl">
           <h2 class="text-xl font-bold mb-2">Edit Harga Produk</h2>
           <p class="text-sm text-muted-foreground mb-4">{{ editingProduct?.name }}</p>
-          <input v-model="newSellingPrice" type="number" 
-            class="w-full p-3 border-2 border-border rounded-lg mb-6 bg-muted font-semibold focus:ring-2 focus:ring-primary focus:border-primary outline-none" 
+          <input v-model="newSellingPrice" type="number"
+            class="w-full p-3 border-2 border-border rounded-lg mb-6 bg-muted font-semibold focus:ring-2 focus:ring-primary focus:border-primary outline-none"
             placeholder="Masukkan harga baru" />
           <div class="flex gap-3">
-            <button @click="closeEditPriceModal" 
+            <button @click="closeEditPriceModal"
               class="flex-1 p-3 bg-muted hover:bg-muted/80 rounded-lg font-semibold transition-colors">
               Batal
             </button>
-            <button @click="saveNewPrice" 
+            <button @click="saveNewPrice"
               class="flex-1 p-3 bg-primary hover:bg-primary/90 text-white rounded-lg font-semibold transition-colors">
               Simpan
             </button>
@@ -235,7 +233,7 @@
     <!-- PIN Modal -->
     <PINModal v-if="showPinModal" :title="pinModalTitle" :subtitle="pinModalSubtitle" @confirmed="handlePinConfirmed" @close="closePinModal" />
 
-    <!-- Toast Notification -->
+    <!-- Toast -->
     <transition name="toast">
       <div v-if="showToast" class="fixed bottom-6 right-6 bg-card border-2 border-primary rounded-xl shadow-2xl p-4 z-50 flex items-center gap-3 max-w-sm">
         <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
@@ -246,14 +244,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import PINModal from '../components/PINModal.vue'
 import api from '../services/api'
 import { useAuth } from '../composables/useAuth'
 
 const { setAdminPin } = useAuth()
 
-// State
 const activeTab = ref('products')
 const stats = ref({})
 const loadingStats = ref(true)
@@ -261,8 +258,9 @@ const products = ref([])
 const orders = ref([])
 const payments = ref([])
 const usdtConversions = ref([])
-const lastOrderCount = ref(0) 
-const isSyncing = ref(false) // State untuk tombol sync
+const lastOrderCount = ref(0)
+const isSyncing = ref(false)
+const isFetching = ref(false) // FIX: flag anti race condition
 
 const showPinModal = ref(false)
 const pinModalTitle = ref('')
@@ -274,9 +272,11 @@ const newSellingPrice = ref(0)
 const showToast = ref(false)
 const toastMessage = ref('')
 
+// FIX: auto-refresh interval diperbesar dari 5s → 30s
+// dan ada guard isFetching untuk cegah race condition
+const AUTO_REFRESH_INTERVAL = 30000
 let autoRefreshTimer = null
 
-// Tabs configuration
 const tabs = [
   { value: 'products', label: 'Produk' },
   { value: 'orders', label: 'Pesanan' },
@@ -284,17 +284,19 @@ const tabs = [
   { value: 'usdt', label: 'Konversi USDT' }
 ]
 
-// Utilities
 const formatPrice = (p) => new Intl.NumberFormat('id-ID').format(p)
 
-const showToastNotification = (m) => { 
+const showToastNotification = (m) => {
   toastMessage.value = m
   showToast.value = true
-  setTimeout(() => showToast.value = false, 3000) 
+  setTimeout(() => showToast.value = false, 3000)
 }
 
-// Data Fetching
 const fetchAllData = async () => {
+  // FIX: Guard race condition — skip jika fetch sebelumnya belum selesai
+  if (isFetching.value) return
+  isFetching.value = true
+
   try {
     const [s, p, o, pay, u] = await Promise.all([
       api.dashboard.getStats().catch(() => ({})),
@@ -303,60 +305,54 @@ const fetchAllData = async () => {
       api.payments.getAll().catch(() => []),
       api.usdt.getAll().catch(() => [])
     ])
-    
+
     const currentOrders = o.data || o
-    
-    // New order notification
+
     if (lastOrderCount.value > 0 && currentOrders.length > lastOrderCount.value) {
       new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3').play().catch(() => {})
       showToastNotification('Pesanan Baru Masuk!')
     }
-    
+
     stats.value = s
     products.value = p
     orders.value = currentOrders
     payments.value = pay
     usdtConversions.value = u
     lastOrderCount.value = currentOrders.length
-  } catch (e) { 
-    console.error('Fetch Error:', e) 
-  } finally { 
-    loadingStats.value = false 
+  } catch (e) {
+    console.error('Fetch Error:', e)
+  } finally {
+    loadingStats.value = false
+    isFetching.value = false
   }
 }
 
-// Sync Products Handler - BARU
 const handleSyncProducts = async () => {
   if (isSyncing.value) return
-  
   isSyncing.value = true
   showToastNotification('Memulai sinkronisasi produk...')
-  
   try {
     const result = await api.products.sync()
     showToastNotification(result.message || 'Produk berhasil disinkronkan!')
-    await fetchAllData() // Refresh data produk
+    await fetchAllData()
   } catch (e) {
-    console.error('Sync Error:', e)
     showToastNotification(e.message || 'Gagal sinkronisasi produk')
   } finally {
     isSyncing.value = false
   }
 }
 
-// Order Actions
 const handleSyncOrder = async (id) => {
   showToastNotification('Menyinkronkan...')
   try {
     const res = await api.orders.sync(id)
     showToastNotification(res.message)
     await fetchAllData()
-  } catch (e) { 
-    showToastNotification('Sinkronisasi gagal') 
+  } catch (e) {
+    showToastNotification('Sinkronisasi gagal')
   }
 }
 
-// PIN Confirmation Handler
 const handlePinConfirmed = async (pin) => {
   setAdminPin(pin)
   const action = pendingAction.value
@@ -366,46 +362,39 @@ const handlePinConfirmed = async (pin) => {
   try {
     if (action.type === 'confirm_order') {
       await api.orders.confirm(action.data.id)
-      // Update lokal instant
       const order = orders.value.find(o => o.id === action.data.id)
       if (order) order.status = 'processing'
     }
-    
     if (action.type === 'verify_payment') {
       await api.payments.verify(action.data.id, { status: action.data.s })
-      // Update lokal instant
       const payment = payments.value.find(p => p.id === action.data.id)
       if (payment) payment.status = action.data.s
     }
-    
     if (action.type === 'approve_usdt') {
-      await api.usdt.approve(action.data.id, { 
+      await api.usdt.approve(action.data.id, {
         status: action.data.s,
-        admin_note: 'Verified by Admin' 
+        admin_note: 'Verified by Admin'
       })
-      // Update lokal instant ⚡
       const conversion = usdtConversions.value.find(u => u.id === action.data.id)
       if (conversion) conversion.status = action.data.s
     }
-    
+
     showToastNotification('Berhasil!')
-    // Langsung fetch tanpa delay
     fetchAllData()
-  } catch (e) { 
-    showToastNotification('Terjadi kesalahan') 
+  } catch (e) {
+    showToastNotification('Terjadi kesalahan')
     console.error('Action Error:', e)
   }
 }
 
-// Product Price Edit
-const openEditPriceModal = (p) => { 
+const openEditPriceModal = (p) => {
   editingProduct.value = p
   newSellingPrice.value = p.selling_price
-  showEditPriceModal.value = true 
+  showEditPriceModal.value = true
 }
 
-const closeEditPriceModal = () => { 
-  showEditPriceModal.value = false 
+const closeEditPriceModal = () => {
+  showEditPriceModal.value = false
 }
 
 const saveNewPrice = async () => {
@@ -414,53 +403,49 @@ const saveNewPrice = async () => {
     showToastNotification('Harga berhasil diperbarui!')
     closeEditPriceModal()
     await fetchAllData()
-  } catch (e) { 
-    showToastNotification('Gagal memperbarui harga') 
+  } catch (e) {
+    showToastNotification('Gagal memperbarui harga')
   }
 }
 
-// Modal Openers
-const openConfirmModal = (o) => { 
+const openConfirmModal = (o) => {
   pinModalTitle.value = 'Konfirmasi Pesanan'
   pinModalSubtitle.value = 'Masukkan PIN untuk melanjutkan'
   pendingAction.value = { type: 'confirm_order', data: o }
-  showPinModal.value = true 
+  showPinModal.value = true
 }
 
-const openVerifyPaymentModal = (id, s) => { 
+const openVerifyPaymentModal = (id, s) => {
   pinModalTitle.value = s === 'verified' ? 'Verifikasi Pembayaran' : 'Tolak Pembayaran'
   pinModalSubtitle.value = 'Masukkan PIN untuk melanjutkan'
   pendingAction.value = { type: 'verify_payment', data: { id, s } }
-  showPinModal.value = true 
+  showPinModal.value = true
 }
 
-const openApproveUsdtModal = (u, s) => { 
+const openApproveUsdtModal = (u, s) => {
   pinModalTitle.value = s === 'approved' ? 'Setujui Konversi USDT' : 'Tolak Konversi USDT'
   pinModalSubtitle.value = 'Masukkan PIN untuk melanjutkan'
-  pendingAction.value = { 
-    type: 'approve_usdt', 
-    data: { id: u.id, s: s } 
-  }
-  showPinModal.value = true 
+  pendingAction.value = { type: 'approve_usdt', data: { id: u.id, s } }
+  showPinModal.value = true
 }
 
-const closePinModal = () => { 
+const closePinModal = () => {
   showPinModal.value = false
   pendingAction.value = null
 }
 
-// Lifecycle
 onMounted(() => {
   fetchAllData()
+  // FIX: interval 30 detik bukan 5 detik
   autoRefreshTimer = setInterval(() => {
-    if (!showPinModal.value && !showEditPriceModal.value) { 
-      fetchAllData() 
+    if (!showPinModal.value && !showEditPriceModal.value) {
+      fetchAllData()
     }
-  }, 5000)
+  }, AUTO_REFRESH_INTERVAL)
 })
 
-onUnmounted(() => { 
-  if (autoRefreshTimer) clearInterval(autoRefreshTimer) 
+onUnmounted(() => {
+  if (autoRefreshTimer) clearInterval(autoRefreshTimer)
 })
 </script>
 
@@ -469,7 +454,6 @@ onUnmounted(() => {
 .toast-leave-active {
   transition: all 0.3s ease;
 }
-
 .toast-enter-from,
 .toast-leave-to {
   opacity: 0;

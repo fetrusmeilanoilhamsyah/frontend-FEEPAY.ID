@@ -37,8 +37,6 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
-
 const props = defineProps({
   product: {
     type: Object,
@@ -46,13 +44,13 @@ const props = defineProps({
   }
 })
 
-const router = useRouter()
+const emit = defineEmits(['select'])
 
 const formatPrice = (price) => {
   return new Intl.NumberFormat('id-ID').format(price)
 }
 
 const handleSelect = () => {
-  router.push(`/checkout/${props.product.sku}`)
+  emit('select', props.product)
 }
 </script>

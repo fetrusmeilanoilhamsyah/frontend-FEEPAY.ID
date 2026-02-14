@@ -6,7 +6,7 @@ import { ref } from 'vue'
 export const isApiProcessing = ref(false)
 
 const api = axios.create({
-  baseURL: 'http://localhost:8000/api',
+  baseURL: 'http://127.0.0.1:8000/api', // ← UBAH localhost → 127.0.0.1
   timeout: 30000,
   withCredentials: true,
   headers: {

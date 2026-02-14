@@ -4,20 +4,24 @@
       <button
         v-if="!isOpen"
         @click="toggleChat"
-        class="fixed bottom-6 right-6 z-50 w-14 h-14 bg-gradient-to-br from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group"
+        class="fixed z-50 w-14 h-14 bg-gradient-to-br from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group"
+        :class="isMobile ? 'bottom-20 right-4' : 'bottom-6 right-6'"
         aria-label="Open chat"
       >
         <MessageCircle :size="24" class="group-hover:scale-110 transition-transform duration-300" />
-        <span v-if="hasNewMessage" class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-ping"></span>
-        <span v-if="hasNewMessage" class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
+        <!-- FIX: hasNewMessage dikendalikan dari luar via prop -->
+        <span v-if="hasUnread" class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-ping"></span>
+        <span v-if="hasUnread" class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
       </button>
     </transition>
 
     <transition name="slide-up">
       <div
         v-if="isOpen"
-        class="fixed bottom-6 right-6 z-50 w-96 max-w-[calc(100vw-3rem)] bg-white dark:bg-dark-900 rounded-2xl shadow-2xl border border-border overflow-hidden"
+        class="fixed z-50 w-96 max-w-[calc(100vw-2rem)] bg-white dark:bg-dark-900 rounded-2xl shadow-2xl border border-border overflow-hidden"
+        :class="isMobile ? 'bottom-20 right-4' : 'bottom-6 right-6'"
       >
+        <!-- Header -->
         <div class="bg-gradient-to-r from-primary-600 to-primary-700 p-4 flex items-center justify-between text-white">
           <div class="flex items-center gap-3">
             <div class="relative">
@@ -40,7 +44,10 @@
           </button>
         </div>
 
+        <!-- Body -->
         <div class="p-4 space-y-4 max-h-[400px] overflow-y-auto">
+
+          <!-- Welcome Message -->
           <div class="flex gap-3">
             <div class="w-8 h-8 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center flex-shrink-0">
               <Bot :size="16" class="text-primary-600" />
@@ -52,6 +59,7 @@
             </div>
           </div>
 
+          <!-- Platform Selection -->
           <div v-if="step === 'platform'" class="space-y-3">
             <button
               @click="selectPlatform('whatsapp')"
@@ -84,6 +92,7 @@
             </button>
           </div>
 
+          <!-- Form -->
           <div v-if="step === 'form'" class="space-y-3">
             <button
               @click="step = 'platform'"
@@ -97,27 +106,26 @@
               v-model="form.name"
               type="text"
               placeholder="Nama Anda (Opsional)"
-              class="w-full px-4 py-2.5 bg-dark-50 dark:bg-dark-800 border border-border rounded-lg outline-none focus:border-primary-500 transition-colors text-sm"
+              class="w-full px-4 py-2.5 bg-dark-50 dark:bg-dark-800 border border-border rounded-lg outline-none focus:border-primary-500 transition-colors text-sm text-dark-950 dark:text-white"
             />
 
             <input
               v-model="form.email"
               type="email"
               placeholder="Email Anda (Opsional)"
-              class="w-full px-4 py-2.5 bg-dark-50 dark:bg-dark-800 border border-border rounded-lg outline-none focus:border-primary-500 transition-colors text-sm"
+              class="w-full px-4 py-2.5 bg-dark-50 dark:bg-dark-800 border border-border rounded-lg outline-none focus:border-primary-500 transition-colors text-sm text-dark-950 dark:text-white"
             />
 
             <textarea
               v-model="form.message"
               placeholder="Tulis pesan Anda..."
               rows="4"
-              class="w-full px-4 py-2.5 bg-dark-50 dark:bg-dark-800 border border-border rounded-lg outline-none focus:border-primary-500 transition-colors text-sm resize-none"
-              required
+              class="w-full px-4 py-2.5 bg-dark-50 dark:bg-dark-800 border border-border rounded-lg outline-none focus:border-primary-500 transition-colors text-sm resize-none text-dark-950 dark:text-white"
             ></textarea>
 
             <button
               @click="sendMessage"
-              :disabled="!form.message || sending"
+              :disabled="!form.message.trim() || sending"
               class="w-full py-3 bg-primary-600 hover:bg-primary-700 disabled:bg-dark-300 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
             >
               <Loader v-if="sending" :size="18" class="animate-spin" />
@@ -129,11 +137,12 @@
             </p>
           </div>
 
+          <!-- Success -->
           <div v-if="step === 'success'" class="text-center py-6">
             <div class="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
               <CheckCircle :size="32" class="text-green-600" />
             </div>
-            <h4 class="font-bold text-lg mb-2">Pesan Terkirim!</h4>
+            <h4 class="font-bold text-lg mb-2 text-dark-950 dark:text-white">Pesan Terkirim!</h4>
             <p class="text-sm text-dark-600 dark:text-dark-400 mb-4">
               Tim kami akan segera menghubungi Anda
             </p>
@@ -144,6 +153,7 @@
               Kirim Pesan Lagi
             </button>
           </div>
+
         </div>
       </div>
     </transition>
@@ -151,16 +161,42 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { MessageCircle, X, Headphones, Bot, Send, ChevronRight, ChevronLeft, Loader, CheckCircle } from 'lucide-vue-next'
 import api from '../services/api'
 
+// FIX: hasNewMessage sekarang bisa dikontrol dari luar via prop
+const props = defineProps({
+  newMessageCount: {
+    type: Number,
+    default: 0
+  }
+})
+
 const isOpen = ref(false)
-const hasNewMessage = ref(false)
 const step = ref('platform')
 const selectedPlatform = ref(null)
 const sending = ref(false)
 const errorMessage = ref('')
+
+// FIX: isMobile untuk deteksi BottomNav agar posisi tidak tertutup
+const isMobile = ref(false)
+
+const checkMobile = () => {
+  isMobile.value = window.innerWidth < 768
+}
+
+onMounted(() => {
+  checkMobile()
+  window.addEventListener('resize', checkMobile)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', checkMobile)
+})
+
+// FIX: hasUnread dari prop bukan hardcode false
+const hasUnread = computed(() => props.newMessageCount > 0 && !isOpen.value)
 
 const form = ref({
   name: '',
@@ -170,9 +206,6 @@ const form = ref({
 
 const toggleChat = () => {
   isOpen.value = !isOpen.value
-  if (isOpen.value) {
-    hasNewMessage.value = false
-  }
 }
 
 const selectPlatform = (platform) => {
@@ -196,7 +229,6 @@ const sendMessage = async () => {
 
     step.value = 'success'
   } catch (error) {
-    console.error('Send message error:', error)
     errorMessage.value = error.message || 'Gagal mengirim pesan. Silakan coba lagi.'
   } finally {
     sending.value = false
@@ -216,7 +248,6 @@ const resetForm = () => {
 .scale-leave-active {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 .scale-enter-from,
 .scale-leave-to {
   opacity: 0;
@@ -226,16 +257,13 @@ const resetForm = () => {
 .slide-up-enter-active {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 .slide-up-leave-active {
   transition: all 0.2s cubic-bezier(0.4, 0, 1, 1);
 }
-
 .slide-up-enter-from {
   opacity: 0;
   transform: translateY(20px);
 }
-
 .slide-up-leave-to {
   opacity: 0;
   transform: translateY(10px);
