@@ -106,12 +106,16 @@ export default {
   orders: {
     create: (d) => api.post('/orders/create', d),
     get: (id) => api.get(`/orders/${id}`),
+    list: () => api.get('/orders'),
     getAll: (p) => api.get('/admin/x7k2m/orders', { params: p }), 
     confirm: (id) => api.post(`/admin/x7k2m/orders/${id}/confirm`),
     sync: (id) => api.post(`/admin/x7k2m/orders/${id}/sync`), 
   },
 
   payments: {
+    midtrans: {
+      create: (data) => api.post('/payments/midtrans/create', data)
+    },
     submit: (fd) => api.post('/payments/submit', fd, { headers: { 'Content-Type': 'multipart/form-data' } }),
     getAll: (p) => api.get('/admin/x7k2m/payments', { params: p }),
     verify: (id, d) => api.post(`/admin/x7k2m/payments/${id}/verify`, d),

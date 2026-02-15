@@ -1,311 +1,233 @@
 <template>
-  <div class="min-h-screen bg-stone-50 dark:bg-dark-950 flex items-center justify-center p-4">
+  <div class="min-h-screen bg-background flex items-center justify-center p-4">
     <div class="max-w-md w-full">
       
-      <!-- Loading State -->
-      <div v-if="loading" class="bg-white dark:bg-dark-900 rounded-2xl p-8 border border-border text-center">
-        <Loader class="animate-spin mx-auto mb-4 text-primary-600" :size="48" />
-        <p class="text-sm text-dark-600 dark:text-dark-400">Memuat data pesanan...</p>
+      <!-- Pending Icon -->
+      <div class="text-center mb-6">
+        <div class="pending-icon mx-auto mb-4">
+          <Clock :size="48" class="text-yellow-600 dark:text-yellow-400" />
+        </div>
+        
+        <h1 class="text-2xl sm:text-3xl font-black text-dark-950 dark:text-white mb-2">
+          Menunggu Pembayaran
+        </h1>
+        <p class="text-sm text-dark-600 dark:text-dark-400">
+          Selesaikan pembayaran sebelum waktu habis
+        </p>
       </div>
 
-      <!-- Error State -->
-      <div v-else-if="error" class="bg-white dark:bg-dark-900 rounded-2xl p-8 border border-border text-center">
-        <AlertCircle class="mx-auto mb-4 text-red-500" :size="48" />
-        <h2 class="text-xl font-bold text-dark-950 dark:text-white mb-2">Order Tidak Ditemukan</h2>
-        <p class="text-sm text-dark-600 dark:text-dark-400 mb-6">{{ error }}</p>
-        <button 
+      <!-- Countdown Timer -->
+      <div v-if="timeRemaining" class="mb-6 p-4 bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-800 rounded-xl">
+        <div class="flex items-center justify-between">
+          <span class="text-sm font-semibold text-yellow-700 dark:text-yellow-300">
+            Batas Waktu
+          </span>
+          <div class="text-2xl font-black font-mono text-yellow-600 dark:text-yellow-400">
+            {{ formatTime(timeRemaining) }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Details -->
+      <div class="bg-white dark:bg-dark-900 rounded-2xl border border-border p-6 mb-4">
+        
+        <!-- Loading -->
+        <div v-if="loading" class="space-y-4">
+          <div class="h-4 bg-dark-100 dark:bg-dark-800 rounded animate-pulse"></div>
+          <div class="h-4 bg-dark-100 dark:bg-dark-800 rounded animate-pulse w-3/4"></div>
+        </div>
+
+        <!-- Order Info -->
+        <div v-else-if="order" class="space-y-4">
+          
+          <div class="flex items-center justify-between pb-4 border-b border-border">
+            <span class="text-sm text-dark-600 dark:text-dark-400">Order ID</span>
+            <span class="text-sm font-bold text-dark-950 dark:text-white font-mono">
+              {{ order.order_id }}
+            </span>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-dark-600 dark:text-dark-400">Produk</span>
+            <span class="text-sm font-semibold text-dark-950 dark:text-white text-right">
+              {{ order.product_name }}
+            </span>
+          </div>
+
+          <div class="flex items-center justify-between pt-4 border-t border-border">
+            <span class="text-base font-semibold text-dark-700 dark:text-dark-300">Total</span>
+            <span class="text-xl font-black text-primary-600 dark:text-primary-400">
+              Rp {{ order.amount?.toLocaleString('id-ID') }}
+            </span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Payment Instructions -->
+      <div class="bg-white dark:bg-dark-900 rounded-2xl border border-border p-6 mb-4">
+        <h3 class="text-sm font-bold text-dark-950 dark:text-white mb-4">
+          Cara Pembayaran
+        </h3>
+        
+        <ol class="space-y-3">
+          <li class="flex gap-3">
+            <span class="flex-shrink-0 w-6 h-6 bg-primary-600 text-white text-xs font-bold rounded-full flex items-center justify-center">
+              1
+            </span>
+            <span class="text-sm text-dark-700 dark:text-dark-300">
+              Pilih metode pembayaran di popup Midtrans
+            </span>
+          </li>
+          <li class="flex gap-3">
+            <span class="flex-shrink-0 w-6 h-6 bg-primary-600 text-white text-xs font-bold rounded-full flex items-center justify-center">
+              2
+            </span>
+            <span class="text-sm text-dark-700 dark:text-dark-300">
+              Selesaikan pembayaran sesuai instruksi
+            </span>
+          </li>
+          <li class="flex gap-3">
+            <span class="flex-shrink-0 w-6 h-6 bg-primary-600 text-white text-xs font-bold rounded-full flex items-center justify-center">
+              3
+            </span>
+            <span class="text-sm text-dark-700 dark:text-dark-300">
+              Tunggu notifikasi pembayaran berhasil
+            </span>
+          </li>
+        </ol>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="space-y-3">
+        <button
+          @click="checkPaymentStatus"
+          :disabled="checking"
+          class="w-full h-12 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50"
+        >
+          <Loader v-if="checking" class="inline animate-spin mr-2" :size="18" />
+          {{ checking ? 'Mengecek...' : 'Cek Status Pembayaran' }}
+        </button>
+        
+        <button
           @click="$router.push('/')"
-          class="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-semibold transition-colors"
+          class="w-full h-12 border-2 border-border hover:bg-dark-50 dark:hover:bg-dark-800 text-dark-950 dark:text-white font-semibold rounded-xl transition-all"
         >
           Kembali ke Beranda
         </button>
       </div>
 
-      <!-- Pending State -->
-      <div v-else-if="order" class="space-y-6">
-        
-        <!-- Status Card -->
-        <div class="bg-white dark:bg-dark-900 rounded-2xl p-8 border border-border text-center">
-          <!-- Animated Icon -->
-          <div class="relative inline-flex mb-6">
-            <div class="absolute inset-0 bg-yellow-500/20 rounded-full animate-ping"></div>
-            <div class="relative bg-yellow-50 dark:bg-yellow-950/20 p-6 rounded-full">
-              <Clock class="text-yellow-600 dark:text-yellow-400" :size="48" />
-            </div>
-          </div>
-
-          <!-- Status -->
-          <div class="mb-4">
-            <StatusBadge :status="order.status" />
-          </div>
-
-          <h1 class="text-2xl font-bold text-dark-950 dark:text-white mb-2">
-            Pembayaran Sedang Diverifikasi
-          </h1>
-          <p class="text-sm text-dark-600 dark:text-dark-400 mb-6">
-            Pesanan Anda akan diproses setelah admin memverifikasi pembayaran
-          </p>
-
-          <!-- Estimated Time -->
-          <div class="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg text-sm">
-            <Timer class="text-blue-600 dark:text-blue-400" :size="16" />
-            <span class="font-semibold text-blue-700 dark:text-blue-300">
-              Estimasi: 5-15 menit
-            </span>
-          </div>
-        </div>
-
-        <!-- Order Details Card -->
-        <div class="bg-white dark:bg-dark-900 rounded-2xl p-6 border border-border">
-          <h3 class="text-lg font-bold text-dark-950 dark:text-white mb-4">
-            Detail Pesanan
-          </h3>
-
-          <div class="space-y-4">
-            <div class="flex justify-between items-start">
-              <span class="text-sm text-dark-600 dark:text-dark-400">Order ID</span>
-              <div class="text-right">
-                <div class="font-mono text-sm font-semibold text-dark-950 dark:text-white">
-                  {{ order.order_id }}
-                </div>
-                <button 
-                  @click="copyOrderId"
-                  class="text-xs text-primary-600 hover:text-primary-700 font-semibold mt-1"
-                >
-                  Salin
-                </button>
-              </div>
-            </div>
-
-            <div class="flex justify-between items-start">
-              <span class="text-sm text-dark-600 dark:text-dark-400">Produk</span>
-              <span class="font-semibold text-dark-950 dark:text-white text-right max-w-[60%]">
-                {{ order.product_name }}
-              </span>
-            </div>
-
-            <div class="flex justify-between items-start">
-              <span class="text-sm text-dark-600 dark:text-dark-400">Nomor Tujuan</span>
-              <span class="font-mono font-semibold text-dark-950 dark:text-white">
-                {{ order.target_number }}
-              </span>
-            </div>
-
-            <div class="flex justify-between items-start">
-              <span class="text-sm text-dark-600 dark:text-dark-400">Email</span>
-              <span class="text-sm text-dark-950 dark:text-white">
-                {{ order.customer_email }}
-              </span>
-            </div>
-
-            <div class="pt-4 border-t border-border flex justify-between items-end">
-              <span class="text-sm font-semibold text-dark-600 dark:text-dark-400">Total Pembayaran</span>
-              <span class="text-2xl font-bold text-primary-600 dark:text-primary-400">
-                Rp {{ formatPrice(order.total_price) }}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Info Card -->
-        <div class="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4">
-          <div class="flex gap-3">
-            <Info class="text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" :size="20" />
-            <div class="text-sm text-blue-700 dark:text-blue-300">
-              <p class="font-semibold mb-1">Catatan Penting:</p>
-              <ul class="space-y-1 text-blue-600 dark:text-blue-400">
-                <li>• Anda akan menerima notifikasi via email setelah verifikasi selesai</li>
-                <li>• Proses verifikasi dilakukan secara manual oleh admin</li>
-                <li>• Jangan melakukan pembayaran ulang</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <!-- Actions -->
-        <div class="flex flex-col sm:flex-row gap-3">
-          <button 
-            @click="checkStatus"
-            :disabled="checking"
-            class="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-white dark:bg-dark-900 border border-border hover:border-primary-600 text-dark-950 dark:text-white rounded-lg font-semibold transition-all disabled:opacity-50"
-          >
-            <RefreshCw :class="{ 'animate-spin': checking }" :size="18" />
-            {{ checking ? 'Memeriksa...' : 'Cek Status' }}
-          </button>
-          <button 
-            @click="$router.push('/transactions')"
-            class="flex-1 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-semibold transition-colors"
-          >
-            Lihat Riwayat
-          </button>
-        </div>
-
-        <!-- Back Home -->
-        <div class="text-center">
-          <button 
-            @click="$router.push('/')"
-            class="text-sm text-dark-600 dark:text-dark-400 hover:text-primary-600 dark:hover:text-primary-400 font-semibold transition-colors"
-          >
-            ← Kembali ke Beranda
-          </button>
-        </div>
-
-      </div>
     </div>
-
-    <!-- Toast -->
-    <transition name="toast">
-      <div v-if="showToast" class="fixed bottom-4 right-4 bg-white dark:bg-dark-900 border border-primary-600 rounded-xl shadow-lg p-4 z-50 max-w-sm">
-        <div class="flex items-center gap-2">
-          <Check class="text-primary-600 flex-shrink-0" :size="18" />
-          <span class="text-sm font-semibold text-dark-950 dark:text-white">{{ toastMessage }}</span>
-        </div>
-      </div>
-    </transition>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { Clock, AlertCircle, Info, Timer, RefreshCw, Check, Loader } from 'lucide-vue-next'
-import { useOrderStore } from '@/stores/orderStore'
-import StatusBadge from '@/components/StatusBadge.vue'
+import { Clock, Loader } from 'lucide-vue-next'
+import api from '@/services/api'
 
 const route = useRoute()
 const router = useRouter()
-const orderStore = useOrderStore()
 
-const order = ref(null)
 const loading = ref(true)
-const error = ref(null)
 const checking = ref(false)
-const showToast = ref(false)
-const toastMessage = ref('')
-let autoCheckInterval = null
+const order = ref(null)
+const timeRemaining = ref(null)
 
-const formatPrice = (price) => {
-  return new Intl.NumberFormat('id-ID').format(price)
-}
+let intervalId = null
 
-const loadOrder = async () => {
-  const orderId = route.params.orderId
-  
-  if (!orderId) {
-    error.value = 'Order ID tidak ditemukan'
-    loading.value = false
-    return
-  }
+const orderId = route.params.orderId
 
+const fetchOrderDetails = async () => {
+  loading.value = true
   try {
-    const orderData = await orderStore.getOrderById(orderId)
-    order.value = orderData
-
-    // Jika status bukan pending/processing, redirect
-    if (orderData.status === 'success') {
-      router.replace(`/payment/${orderId}/success`)
-    } else if (orderData.status === 'failed') {
-      router.replace('/transactions')
+    const response = await api.orders.get(orderId)
+    order.value = response
+    
+    // Calculate time remaining (assume 24 hours from creation)
+    if (response.created_at) {
+      const createdAt = new Date(response.created_at)
+      const expiresAt = new Date(createdAt.getTime() + 24 * 60 * 60 * 1000)
+      const now = new Date()
+      timeRemaining.value = Math.max(0, expiresAt - now)
     }
   } catch (err) {
-    error.value = err.message || 'Gagal memuat data pesanan'
+    console.error('Failed to fetch order:', err)
   } finally {
     loading.value = false
   }
 }
 
-const checkStatus = async () => {
-  if (!order.value) return
-  
+const checkPaymentStatus = async () => {
   checking.value = true
   try {
-    const status = await orderStore.checkOrderStatus(order.value.order_id)
+    const response = await api.orders.get(orderId)
     
-    if (status === 'success') {
-      toastMessage.value = 'Pembayaran berhasil diverifikasi!'
-      showToast.value = true
-      setTimeout(() => {
-        router.push(`/payment/${order.value.order_id}/success`)
-      }, 1500)
-    } else if (status === 'failed') {
-      toastMessage.value = 'Pembayaran ditolak'
-      showToast.value = true
-      setTimeout(() => {
-        router.push('/transactions')
-      }, 1500)
+    if (response.status === 'success') {
+      router.push({ name: 'payment-success', params: { orderId } })
+    } else if (response.status === 'failed') {
+      alert('Pembayaran gagal atau dibatalkan')
+      router.push('/')
     } else {
-      toastMessage.value = 'Status masih dalam verifikasi'
-      showToast.value = true
-      setTimeout(() => showToast.value = false, 2000)
+      alert('Pembayaran masih pending. Silakan selesaikan pembayaran.')
     }
-    
-    // Update order data
-    await loadOrder()
   } catch (err) {
-    toastMessage.value = 'Gagal memeriksa status'
-    showToast.value = true
-    setTimeout(() => showToast.value = false, 2000)
+    alert('Gagal mengecek status pembayaran')
   } finally {
     checking.value = false
   }
 }
 
-const copyOrderId = async () => {
-  if (!order.value) return
+const formatTime = (ms) => {
+  const hours = Math.floor(ms / (1000 * 60 * 60))
+  const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60))
+  const seconds = Math.floor((ms % (1000 * 60)) / 1000)
   
-  try {
-    await navigator.clipboard.writeText(order.value.order_id)
-    toastMessage.value = 'Order ID berhasil disalin'
-    showToast.value = true
-    setTimeout(() => showToast.value = false, 2000)
-  } catch (err) {
-    alert('Gagal menyalin Order ID')
-  }
-}
-
-// Auto-check status every 30 seconds
-const startAutoCheck = () => {
-  autoCheckInterval = setInterval(() => {
-    checkStatus()
-  }, 30000) // 30 seconds
-}
-
-const stopAutoCheck = () => {
-  if (autoCheckInterval) {
-    clearInterval(autoCheckInterval)
-    autoCheckInterval = null
-  }
+  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
 }
 
 onMounted(() => {
-  loadOrder()
-  startAutoCheck()
+  fetchOrderDetails()
+  
+  // Update countdown every second
+  intervalId = setInterval(() => {
+    if (timeRemaining.value > 0) {
+      timeRemaining.value -= 1000
+    } else {
+      clearInterval(intervalId)
+    }
+  }, 1000)
 })
 
 onUnmounted(() => {
-  stopAutoCheck()
+  if (intervalId) clearInterval(intervalId)
 })
 </script>
 
 <style scoped>
-.toast-enter-active,
-.toast-leave-active {
-  transition: all 0.3s ease;
-}
-.toast-enter-from,
-.toast-leave-to {
-  opacity: 0;
-  transform: translateX(100%);
+.pending-icon {
+  width: 100px;
+  height: 100px;
+  background: rgb(254 243 199);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  margin: 0 auto;
 }
 
-@keyframes ping {
-  75%, 100% {
-    transform: scale(2);
-    opacity: 0;
+.dark .pending-icon {
+  background: rgba(234, 179, 8, 0.2);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
   }
-}
-
-.animate-ping {
-  animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+  50% {
+    opacity: 0.7;
+  }
 }
 </style>

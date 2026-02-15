@@ -1,333 +1,265 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 dark:from-dark-950 dark:to-dark-900 flex items-center justify-center p-4">
-    <div class="max-w-md w-full">
-
-      <!-- Loading State -->
-      <div v-if="loading" class="bg-white dark:bg-dark-900 rounded-2xl p-8 border border-border text-center">
-        <Loader class="animate-spin mx-auto mb-4 text-primary-600" :size="48" />
-        <p class="text-sm text-dark-600 dark:text-dark-400">Memuat data pesanan...</p>
-      </div>
-
-      <!-- Error State -->
-      <div v-else-if="error" class="bg-white dark:bg-dark-900 rounded-2xl p-8 border border-border text-center">
-        <AlertCircle class="mx-auto mb-4 text-red-500" :size="48" />
-        <h2 class="text-xl font-bold text-dark-950 dark:text-white mb-2">Order Tidak Ditemukan</h2>
-        <p class="text-sm text-dark-600 dark:text-dark-400 mb-6">{{ error }}</p>
-        <button
-          @click="$router.push('/')"
-          class="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-semibold transition-colors"
-        >
-          Kembali ke Beranda
-        </button>
-      </div>
-
-      <!-- Success State -->
-      <div v-else-if="order" class="space-y-6">
-
-        <!-- Success Card -->
-        <div class="bg-white dark:bg-dark-900 rounded-2xl p-8 border border-green-200 dark:border-green-800 text-center relative overflow-hidden">
-
-          <!-- FIX: Confetti dibuat saat mount, bukan Math.random() di template -->
-          <div class="absolute inset-0 pointer-events-none">
-            <div
-              v-for="dot in confettiDots"
-              :key="dot.id"
-              class="absolute w-2 h-2 rounded-full opacity-50"
-              :style="dot.style"
-            ></div>
-          </div>
-
-          <!-- Success Icon -->
-          <div class="relative inline-flex mb-6">
-            <div class="absolute inset-0 bg-green-500/20 rounded-full animate-ping"></div>
-            <div class="relative bg-green-50 dark:bg-green-950/20 p-6 rounded-full success-icon">
-              <CheckCircle2 class="text-green-600 dark:text-green-400" :size="64" />
+  <div class="success-page-wrapper">
+    <div class="min-h-screen bg-background flex items-center justify-center p-4">
+      <div class="max-w-md w-full">
+        
+        <!-- Success Animation -->
+        <div class="text-center mb-6">
+          <div class="success-icon mx-auto mb-4">
+            <div class="success-checkmark">
+              <Check :size="48" class="text-white" />
             </div>
           </div>
-
-          <!-- Status Badge -->
-          <div class="mb-4">
-            <StatusBadge :status="order.status" />
-          </div>
-
-          <!-- Title -->
-          <h1 class="text-3xl font-bold text-dark-950 dark:text-white mb-2">
-            Transaksi Berhasil!
+          
+          <h1 class="text-2xl sm:text-3xl font-black text-dark-950 dark:text-white mb-2">
+            Pembayaran Berhasil!
           </h1>
-          <p class="text-sm text-dark-600 dark:text-dark-400 mb-6">
-            Pesanan Anda telah diproses dan akan segera aktif
+          <p class="text-sm text-dark-600 dark:text-dark-400">
+            Transaksi Anda telah berhasil diproses
           </p>
-
-          <!-- Email Info -->
-          <div class="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg text-sm">
-            <Mail class="text-blue-600 dark:text-blue-400" :size="16" />
-            <span class="text-blue-700 dark:text-blue-300">
-              Detail transaksi telah dikirim ke email
-            </span>
-          </div>
         </div>
 
         <!-- Order Details Card -->
-        <div class="bg-white dark:bg-dark-900 rounded-2xl p-6 border border-border">
-          <h3 class="text-lg font-bold text-dark-950 dark:text-white mb-4 flex items-center gap-2">
-            <FileText :size="20" />
-            Detail Transaksi
-          </h3>
+        <div class="bg-white dark:bg-dark-900 rounded-2xl border border-border p-6 mb-4">
+          
+          <!-- Loading State -->
+          <div v-if="loading" class="space-y-4">
+            <div class="h-4 bg-dark-100 dark:bg-dark-800 rounded animate-pulse"></div>
+            <div class="h-4 bg-dark-100 dark:bg-dark-800 rounded animate-pulse w-3/4"></div>
+            <div class="h-4 bg-dark-100 dark:bg-dark-800 rounded animate-pulse w-1/2"></div>
+          </div>
 
-          <div class="space-y-4">
-            <div class="flex justify-between items-start">
+          <!-- Order Info -->
+          <div v-else-if="order" class="space-y-4">
+            
+            <!-- Order ID -->
+            <div class="flex items-center justify-between pb-4 border-b border-border">
               <span class="text-sm text-dark-600 dark:text-dark-400">Order ID</span>
-              <div class="text-right">
-                <div class="font-mono text-sm font-semibold text-dark-950 dark:text-white">
+              <div class="flex items-center gap-2">
+                <span class="text-sm font-bold text-dark-950 dark:text-white font-mono">
                   {{ order.order_id }}
-                </div>
-                <button
-                  @click="copyText(order.order_id, 'Order ID')"
-                  class="text-xs text-primary-600 hover:text-primary-700 font-semibold mt-1"
+                </span>
+                <button 
+                  @click="copyOrderId"
+                  class="p-1.5 hover:bg-dark-100 dark:hover:bg-dark-800 rounded transition-colors"
+                  title="Copy Order ID"
                 >
-                  Salin
+                  <Copy :size="14" class="text-dark-500 dark:text-dark-400" />
                 </button>
               </div>
             </div>
 
-            <div class="flex justify-between items-start">
+            <!-- Product -->
+            <div class="flex items-center justify-between">
               <span class="text-sm text-dark-600 dark:text-dark-400">Produk</span>
-              <span class="font-semibold text-dark-950 dark:text-white text-right max-w-[60%]">
+              <span class="text-sm font-semibold text-dark-950 dark:text-white text-right">
                 {{ order.product_name }}
               </span>
             </div>
 
-            <div class="flex justify-between items-start">
+            <!-- Target Number -->
+            <div class="flex items-center justify-between">
               <span class="text-sm text-dark-600 dark:text-dark-400">Nomor Tujuan</span>
-              <div class="text-right">
-                <div class="font-mono font-semibold text-dark-950 dark:text-white">
-                  {{ order.target_number }}
-                </div>
-                <button
-                  @click="copyText(order.target_number, 'Nomor tujuan')"
-                  class="text-xs text-primary-600 hover:text-primary-700 font-semibold mt-1"
-                >
-                  Salin
-                </button>
-              </div>
+              <span class="text-sm font-semibold text-dark-950 dark:text-white">
+                {{ order.target_number }}
+              </span>
             </div>
 
-            <!-- Serial Number -->
-            <div v-if="order.sn && order.sn !== '-'" class="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
-              <div class="flex items-start justify-between gap-3">
+            <!-- Serial Number (if available) -->
+            <div v-if="order.sn" class="p-4 bg-primary-50 dark:bg-primary-950/20 border border-primary-200 dark:border-primary-800 rounded-xl">
+              <div class="flex items-start gap-3">
+                <Key :size="18" class="text-primary-600 dark:text-primary-400 flex-shrink-0 mt-0.5" />
                 <div class="flex-1">
-                  <div class="text-xs font-semibold text-green-700 dark:text-green-400 mb-1">
-                    Serial Number (SN)
-                  </div>
-                  <div class="font-mono text-sm font-bold text-green-900 dark:text-green-300 break-all">
+                  <p class="text-xs font-semibold text-primary-700 dark:text-primary-300 mb-1">
+                    Serial Number / Kode Voucher
+                  </p>
+                  <p class="text-sm font-mono font-bold text-primary-950 dark:text-primary-100 break-all">
                     {{ order.sn }}
-                  </div>
+                  </p>
                 </div>
-                <button
-                  @click="copyText(order.sn, 'Serial Number')"
-                  class="flex-shrink-0 px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-semibold transition-colors flex items-center gap-1"
+                <button 
+                  @click="copySN"
+                  class="p-2 hover:bg-primary-100 dark:hover:bg-primary-900/30 rounded-lg transition-colors"
                 >
-                  <Copy :size="14" />
-                  Salin
+                  <Copy :size="16" class="text-primary-600 dark:text-primary-400" />
                 </button>
               </div>
             </div>
 
-            <div class="flex justify-between items-start">
-              <span class="text-sm text-dark-600 dark:text-dark-400">Tanggal</span>
-              <span class="text-sm text-dark-950 dark:text-white text-right">
-                {{ formatDate(order.created_at) }}
+            <!-- Amount -->
+            <div class="flex items-center justify-between pt-4 border-t border-border">
+              <span class="text-base font-semibold text-dark-700 dark:text-dark-300">Total Bayar</span>
+              <span class="text-xl font-black text-primary-600 dark:text-primary-400">
+                Rp {{ order.amount?.toLocaleString('id-ID') }}
               </span>
             </div>
 
-            <div class="pt-4 border-t border-border flex justify-between items-end">
-              <span class="text-sm font-semibold text-dark-600 dark:text-dark-400">Total Pembayaran</span>
-              <span class="text-2xl font-bold text-green-600 dark:text-green-400">
-                Rp {{ formatPrice(order.total_price) }}
-              </span>
+            <!-- Status Badge -->
+            <div class="flex items-center justify-center pt-2">
+              <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-full">
+                <div class="w-2 h-2 bg-green-600 rounded-full animate-pulse"></div>
+                <span class="text-xs font-bold text-green-700 dark:text-green-400">
+                  {{ order.status === 'success' ? 'Sukses' : 'Diproses' }}
+                </span>
+              </div>
             </div>
+
           </div>
+
+          <!-- Error State -->
+          <div v-else class="text-center py-8">
+            <AlertCircle class="mx-auto mb-3 text-red-500" :size="48" />
+            <p class="text-sm text-red-600 dark:text-red-400">
+              Gagal memuat detail order
+            </p>
+          </div>
+
         </div>
 
-        <!-- Info Card -->
-        <div class="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-xl p-4">
-          <div class="flex gap-3">
-            <Info class="text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" :size="20" />
-            <div class="text-sm text-green-700 dark:text-green-300">
-              <p class="font-semibold mb-1">Informasi Penting:</p>
-              <ul class="space-y-1 text-green-600 dark:text-green-400">
-                <li>• Produk akan aktif secara otomatis dalam 1-5 menit</li>
-                <li v-if="order.sn && order.sn !== '-'">• Simpan Serial Number (SN) untuk keperluan Anda</li>
-                <li>• Email konfirmasi telah dikirim ke {{ order.customer_email }}</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <!-- Actions -->
-        <div class="flex flex-col sm:flex-row gap-3">
+        <!-- Action Buttons -->
+        <div class="space-y-3">
           <button
             @click="$router.push('/')"
-            class="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-white dark:bg-dark-900 border border-border hover:border-primary-600 text-dark-950 dark:text-white rounded-lg font-semibold transition-all"
+            class="w-full h-12 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl transition-all"
           >
-            <Home :size="18" />
-            Beranda
+            Kembali ke Beranda
           </button>
+          
           <button
             @click="$router.push('/transactions')"
-            class="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-semibold transition-colors"
+            class="w-full h-12 border-2 border-border hover:bg-dark-50 dark:hover:bg-dark-800 text-dark-950 dark:text-white font-semibold rounded-xl transition-all"
           >
-            <History :size="18" />
-            Lihat Riwayat
+            Lihat Riwayat Transaksi
           </button>
         </div>
 
-        <!-- Repeat Order -->
-        <div class="text-center">
-          <button
-            @click="repeatOrder"
-            class="text-sm text-dark-600 dark:text-dark-400 hover:text-primary-600 dark:hover:text-primary-400 font-semibold transition-colors inline-flex items-center gap-1"
-          >
-            <RotateCcw :size="14" />
-            Pesan Produk yang Sama
-          </button>
+        <!-- Help Text -->
+        <div class="mt-6 text-center">
+          <p class="text-xs text-dark-500 dark:text-dark-400">
+            Butuh bantuan? 
+            <a href="#" class="text-primary-600 dark:text-primary-400 font-semibold hover:underline">
+              Hubungi Customer Service
+            </a>
+          </p>
         </div>
 
       </div>
     </div>
 
-    <!-- Toast -->
-    <transition name="toast">
-      <div v-if="showToast" class="fixed bottom-4 right-4 bg-white dark:bg-dark-900 border border-green-600 rounded-xl shadow-lg p-4 z-50 max-w-sm">
+    <!-- Toast Notification (inside wrapper) -->
+    <Transition name="toast">
+      <div v-if="showToast" class="fixed bottom-4 right-4 bg-white dark:bg-dark-900 border border-primary-600 rounded-xl shadow-lg p-4 z-50 max-w-sm">
         <div class="flex items-center gap-2">
-          <Check class="text-green-600 flex-shrink-0" :size="18" />
-          <span class="text-sm font-semibold text-dark-950 dark:text-white">{{ toastMessage }}</span>
+          <Check class="text-primary-600 flex-shrink-0" :size="18" />
+          <span class="text-sm font-semibold text-dark-800 dark:text-white">{{ toastMessage }}</span>
         </div>
       </div>
-    </transition>
+    </Transition>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { CheckCircle2, AlertCircle, Info, Mail, FileText, Copy, Home, History, RotateCcw, Check, Loader } from 'lucide-vue-next'
-import { useOrderStore } from '@/stores/orderStore'
-import StatusBadge from '@/components/StatusBadge.vue'
+import { useRoute } from 'vue-router'
+import { Check, Copy, Key, AlertCircle } from 'lucide-vue-next'
+import api from '@/services/api'
 
 const route = useRoute()
-const router = useRouter()
-const orderStore = useOrderStore()
 
-const order = ref(null)
 const loading = ref(true)
-const error = ref(null)
+const order = ref(null)
 const showToast = ref(false)
 const toastMessage = ref('')
 
-// FIX: Confetti dibuat sekali saat setup, bukan Math.random() di template
-// yang menyebabkan re-render terus menerus
-const CONFETTI_COLORS = ['#22c55e', '#16a34a', '#86efac', '#4ade80', '#bbf7d0']
-const confettiDots = Array.from({ length: 20 }, (_, i) => ({
-  id: i,
-  style: {
-    left: `${Math.floor(Math.random() * 100)}%`,
-    top: `${Math.floor(Math.random() * 100)}%`,
-    backgroundColor: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
-    animation: `float ${2 + (i % 3)}s ease-in-out infinite`,
-    animationDelay: `${(i * 0.1).toFixed(1)}s`
-  }
-}))
+const orderId = route.params.orderId
 
-const formatPrice = (price) => {
-  return new Intl.NumberFormat('id-ID').format(price)
-}
-
-const formatDate = (dateString) => {
-  const date = new Date(dateString)
-  return new Intl.DateTimeFormat('id-ID', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  }).format(date)
-}
-
-const loadOrder = async () => {
-  const orderId = route.params.orderId
-
-  if (!orderId) {
-    error.value = 'Order ID tidak ditemukan'
-    loading.value = false
-    return
-  }
-
+const fetchOrderDetails = async () => {
+  loading.value = true
   try {
-    const orderData = await orderStore.getOrderById(orderId)
-    order.value = orderData
-
-    if (orderData.status !== 'success') {
-      router.replace(`/payment/${orderId}/pending`)
-    }
+    console.log('📥 Fetching order:', orderId)
+    const response = await api.orders.get(orderId)
+    console.log('✅ Order details:', response)
+    order.value = response
   } catch (err) {
-    error.value = err.message || 'Gagal memuat data pesanan'
+    console.error('❌ Failed to fetch order:', err)
   } finally {
     loading.value = false
   }
 }
 
-const copyText = async (text, label) => {
+const copyOrderId = async () => {
   try {
-    await navigator.clipboard.writeText(text)
-    toastMessage.value = `${label} berhasil disalin`
+    await navigator.clipboard.writeText(order.value.order_id)
+    toastMessage.value = 'Order ID disalin'
     showToast.value = true
     setTimeout(() => showToast.value = false, 2000)
   } catch (err) {
-    alert(`Gagal menyalin ${label}`)
+    console.error('Failed to copy:', err)
   }
 }
 
-const repeatOrder = () => {
-  router.push('/')
+const copySN = async () => {
+  try {
+    await navigator.clipboard.writeText(order.value.sn)
+    toastMessage.value = 'Serial Number disalin'
+    showToast.value = true
+    setTimeout(() => showToast.value = false, 2000)
+  } catch (err) {
+    console.error('Failed to copy:', err)
+  }
 }
 
 onMounted(() => {
-  loadOrder()
+  console.log('🎉 PaymentSuccessView mounted, orderId:', orderId)
+  fetchOrderDetails()
 })
 </script>
 
 <style scoped>
+.success-page-wrapper {
+  /* Single root wrapper */
+}
+
+.success-icon {
+  width: 100px;
+  height: 100px;
+  position: relative;
+  animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.success-checkmark {
+  width: 100px;
+  height: 100px;
+  background: linear-gradient(135deg, rgb(34, 197, 94) 0%, rgb(22, 163, 74) 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(34, 197, 94, 0.3);
+}
+
+@keyframes scaleIn {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 .toast-enter-active,
 .toast-leave-active {
   transition: all 0.3s ease;
 }
+
 .toast-enter-from,
 .toast-leave-to {
   opacity: 0;
   transform: translateX(100%);
-}
-
-@keyframes ping {
-  75%, 100% {
-    transform: scale(2);
-    opacity: 0;
-  }
-}
-.animate-ping {
-  animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-20px) rotate(180deg); }
-}
-
-.success-icon {
-  animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-@keyframes scaleIn {
-  0% { transform: scale(0); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
 }
 </style>
