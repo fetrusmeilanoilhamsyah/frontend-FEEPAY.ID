@@ -9,9 +9,8 @@ export const useProductStore = defineStore('product', () => {
   const error = ref(null)
   const lastFetch = ref(null)
 
-  // FIX: Cache 5 menit tapi skeleton SELALU muncul minimal 800ms
   const CACHE_DURATION = 5 * 60 * 1000
-  const MIN_LOADING_MS = 800  // skeleton minimal kelihatan 800ms
+  const MIN_LOADING_MS = 800
 
   const isCacheValid = computed(() => {
     if (!lastFetch.value) return false
@@ -47,8 +46,6 @@ export const useProductStore = defineStore('product', () => {
   })
 
   async function fetchProducts(forceRefresh = false) {
-    // FIX: loading=true SELALU saat first load atau forceRefresh
-    // Minimal 800ms supaya skeleton kelihatan
     if (!forceRefresh && isCacheValid.value && products.value.length > 0) {
       console.log('📦 Using cached products')
       return products.value
@@ -70,7 +67,6 @@ export const useProductStore = defineStore('product', () => {
       console.error('❌ Fetch products error:', err)
       throw err
     } finally {
-      // FIX: pastikan loading muncul minimal MIN_LOADING_MS
       const elapsed = Date.now() - startTime
       const remaining = MIN_LOADING_MS - elapsed
       if (remaining > 0) {

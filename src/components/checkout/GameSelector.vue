@@ -15,10 +15,17 @@
         <!-- Game Logo -->
         <div class="game-logo">
           <img 
+            v-if="getGameLogo(game)"
             :src="getGameLogo(game)" 
             :alt="game"
             class="w-10 h-10 object-contain transition-transform duration-300 group-hover:scale-110"
-            @error="handleImageError"
+            @error="(e) => e.target.style.display = 'none'"
+          />
+          <Gamepad2
+            v-else
+            :size="32"
+            class="transition-transform duration-300 group-hover:scale-110"
+            :class="modelValue === game ? 'text-primary-600 dark:text-primary-400' : 'text-dark-500 dark:text-dark-400'"
           />
         </div>
         
@@ -55,41 +62,37 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue'])
 
-const selectGame = (game) => {
-  emit('update:modelValue', game)
+const gameLogos = {
+  'MOBILE LEGENDS': '/logos/games/ml.png',
+  'FREE FIRE': '/logos/games/ff.png',
+  'PUBG MOBILE': '/logos/games/pubg.png',
+  'GENSHIN IMPACT': '/logos/games/genshin.png',
+  'CALL OF DUTY MOBILE': '/logos/games/cod.png',
+  'VALORANT': '/logos/games/valorant.png',
+  'LEAGUE OF LEGENDS': '/logos/games/leagueoflegends.png',
+  'ROBLOX': '/logos/games/roblox.png'
 }
 
 const getGameLogo = (game) => {
-  const logoMap = {
-    'MOBILE LEGENDS': '/logos/games/ml.png',
-    'FREE FIRE': '/logos/games/ff.png',
-    'PUBG MOBILE': '/logos/games/pubg.png',
-    'GENSHIN IMPACT': '/logos/games/genshin.png',
-    'CALL OF DUTY': '/logos/games/cod.png',
-    'VALORANT': '/logos/games/valorant.png',
-    'LEAGUE OF LEGENDS': '/logos/games/lol.png'
-  }
-  
-  return logoMap[game] || '/logos/games/default.png'
+  return gameLogos[game?.toUpperCase()] || null
 }
 
-const handleImageError = (e) => {
-  // Fallback to icon if image fails
-  console.warn('Logo not found, using fallback')
-  e.target.style.display = 'none'
+const selectGame = (game) => {
+  emit('update:modelValue', game)
 }
 
 const formatGameName = (name) => {
   if (!name) return 'Unknown Game'
   
-  return name
+   return name
     .replace(/MOBILE LEGENDS/i, 'Mobile Legends')
     .replace(/FREE FIRE/i, 'Free Fire')
-    .replace(/PUBG/i, 'PUBG Mobile')
-    .replace(/GENSHIN/i, 'Genshin Impact')
-    .replace(/CALL OF DUTY/i, 'Call of Duty')
+    .replace(/PUBG MOBILE/i, 'PUBG Mobile')
+    .replace(/GENSHIN IMPACT/i, 'Genshin Impact')
+    .replace(/CALL OF DUTY MOBILE/i, 'Call of Duty Mobile')
     .replace(/VALORANT/i, 'Valorant')
     .replace(/LEAGUE OF LEGENDS/i, 'League of Legends')
+    .replace(/ROBLOX/i, 'Roblox')
 }
 </script>
 
@@ -191,4 +194,4 @@ const formatGameName = (name) => {
 .dark .game-card.active .game-name {
   color: rgb(59 143 212);
 }
-</style>
+</style> 

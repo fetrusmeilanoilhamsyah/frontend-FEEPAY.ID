@@ -12,9 +12,17 @@
         class="wallet-card group"
         :class="{ 'active': modelValue === wallet }"
       >
-        <!-- Wallet Logo Placeholder -->
+        <!-- Wallet Logo -->
         <div class="wallet-logo">
+          <img
+            v-if="getWalletLogo(wallet)"
+            :src="getWalletLogo(wallet)"
+            :alt="wallet"
+            class="w-8 h-8 object-contain transition-transform duration-300 group-hover:scale-110"
+            @error="(e) => e.target.style.display = 'none'"
+          />
           <Wallet 
+            v-else
             :size="32" 
             class="transition-transform duration-300 group-hover:scale-110"
             :class="modelValue === wallet ? 'text-primary-600 dark:text-primary-400' : 'text-dark-500 dark:text-dark-400'"
@@ -53,6 +61,18 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['update:modelValue'])
+
+const walletLogos = {
+  'GOPAY': '/logos/wallets/gopay.png',
+  'OVO': '/logos/wallets/ovo.png',
+  'DANA': '/logos/wallets/dana.png',
+  'SHOPEEPAY': '/logos/wallets/shopeepay.png',
+  'LINKAJA': '/logos/wallets/linkaja.png'
+}
+
+const getWalletLogo = (walletName) => {
+  return walletLogos[walletName?.toUpperCase()] || null
+}
 
 const selectWallet = (wallet) => {
   emit('update:modelValue', wallet)

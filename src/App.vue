@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen transition-colors duration-500 relative">
+  <div class="min-h-screen transition-colors duration-300 relative">
 
     <!-- Background blur decorations -->
     <div class="fixed inset-0 pointer-events-none overflow-hidden">
@@ -8,89 +8,100 @@
     </div>
 
     <!-- Top Navbar -->
-    <nav class="sticky top-0 z-50 backdrop-blur-xl bg-white/90 dark:bg-dark-950/90 border-b border-dark-200/50 dark:border-dark-700/50 shadow-sm">
+    <nav class="sticky top-0 z-50 backdrop-blur-xl bg-white/95 dark:bg-dark-950/95 border-b border-dark-200/50 dark:border-dark-700/50">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-16">
-          <router-link
-            to="/"
-            class="group relative text-2xl font-bold tracking-tight text-dark-950 dark:text-white transition-all duration-300"
-          >
-            <span class="relative z-10">FEEPAY<span class="text-primary-600 dark:text-primary-400">.ID</span></span>
-            <div class="absolute inset-0 bg-gradient-to-r from-primary-500/0 via-primary-500/5 to-primary-500/0 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-300 rounded-lg"></div>
+        <div class="flex justify-between items-center h-14">
+
+          <!-- Logo -->
+          <router-link to="/" class="flex items-center select-none">
+            <span class="text-xl font-black tracking-tight text-dark-950 dark:text-white">FEE</span>
+            <span class="text-xl font-black tracking-tight bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">PAY</span>
+            <span class="text-xl font-black tracking-tight text-dark-400 dark:text-dark-500">.</span>
+            <span class="text-xl font-black tracking-tight bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">ID</span>
           </router-link>
 
           <!-- Desktop Nav -->
           <div class="hidden md:flex items-center gap-1">
             <router-link to="/"
-              class="relative px-4 py-2 text-sm font-semibold text-dark-700 dark:text-dark-300 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-300 group">
-              <span class="relative z-10">Beranda</span>
-              <div class="absolute inset-0 bg-primary-50 dark:bg-primary-950/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              class="px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-200"
+              :class="$route.path === '/'
+                ? 'text-blue-500 bg-blue-50 dark:bg-blue-950/20'
+                : 'text-dark-600 dark:text-dark-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950/20'">
+              Beranda
             </router-link>
             <router-link to="/transactions"
-              class="relative px-4 py-2 text-sm font-semibold text-dark-700 dark:text-dark-300 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-300 group">
-              <span class="relative z-10">Riwayat</span>
-              <div class="absolute inset-0 bg-primary-50 dark:bg-primary-950/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              class="px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-200"
+              :class="$route.path.startsWith('/transactions')
+                ? 'text-blue-500 bg-blue-50 dark:bg-blue-950/20'
+                : 'text-dark-600 dark:text-dark-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950/20'">
+              Riwayat
             </router-link>
             <router-link to="/profile"
-              class="relative px-4 py-2 text-sm font-semibold text-dark-700 dark:text-dark-300 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-300 group">
-              <span class="relative z-10">Profil</span>
-              <div class="absolute inset-0 bg-primary-50 dark:bg-primary-950/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              class="px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-200"
+              :class="$route.path.startsWith('/profile')
+                ? 'text-blue-500 bg-blue-50 dark:bg-blue-950/20'
+                : 'text-dark-600 dark:text-dark-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950/20'">
+              Profil
             </router-link>
             <router-link v-if="isAuthenticated" to="/admin/dashboard"
-              class="relative px-4 py-2 text-sm font-semibold text-dark-700 dark:text-dark-300 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-300 group">
-              <span class="relative z-10">Dashboard</span>
-              <div class="absolute inset-0 bg-primary-50 dark:bg-primary-950/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              class="px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-200"
+              :class="$route.path.startsWith('/admin')
+                ? 'text-blue-500 bg-blue-50 dark:bg-blue-950/20'
+                : 'text-dark-600 dark:text-dark-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950/20'">
+              Dashboard
             </router-link>
           </div>
 
-          <div class="flex items-center gap-3">
+          <div class="flex items-center gap-2">
             <!-- Theme Toggle -->
             <button @click="toggleTheme"
-              class="relative p-2.5 rounded-xl bg-dark-100 dark:bg-dark-800 text-dark-700 dark:text-dark-300 hover:bg-dark-200 dark:hover:bg-dark-700 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-500/50 group overflow-hidden"
+              class="p-2.5 rounded-xl bg-dark-100 dark:bg-dark-800 text-dark-600 dark:text-dark-300 hover:bg-dark-200 dark:hover:bg-dark-700 transition-all duration-200 focus:outline-none active:scale-95"
               aria-label="Toggle theme">
-              <div class="absolute inset-0 bg-gradient-to-br from-primary-500/0 to-primary-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <Sun v-if="isDark()" :size="20" class="relative z-10 transform transition-all duration-500" :class="{ 'rotate-180 scale-110': isDark() }" />
-              <Moon v-else :size="20" class="relative z-10 transform transition-all duration-500 group-hover:rotate-12" />
+              <Sun v-if="isDark()" :size="18" />
+              <Moon v-else :size="18" />
             </button>
 
             <!-- Logout (desktop) -->
             <button v-if="isAuthenticated" @click="handleLogout"
-              class="relative px-4 py-2 text-sm font-semibold text-dark-700 dark:text-dark-300 hover:text-red-600 dark:hover:text-red-400 transition-all duration-300 group hidden md:block">
-              <span class="relative z-10">Logout</span>
-              <div class="absolute inset-0 bg-red-50 dark:bg-red-950/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              class="hidden md:block px-4 py-2 text-sm font-semibold text-dark-600 dark:text-dark-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-lg transition-all duration-200">
+              Logout
             </button>
 
             <!-- Hamburger (mobile) -->
             <button @click="mobileMenuOpen = !mobileMenuOpen"
-              class="md:hidden relative p-2.5 rounded-xl bg-dark-100 dark:bg-dark-800 text-dark-700 dark:text-dark-300 hover:bg-dark-200 dark:hover:bg-dark-700 transition-all">
-              <Menu v-if="!mobileMenuOpen" :size="20" />
-              <X v-else :size="20" />
+              class="md:hidden p-2.5 rounded-xl bg-dark-100 dark:bg-dark-800 text-dark-600 dark:text-dark-300 hover:bg-dark-200 dark:hover:bg-dark-700 transition-all active:scale-95">
+              <Menu v-if="!mobileMenuOpen" :size="18" />
+              <X v-else :size="18" />
             </button>
           </div>
         </div>
 
         <!-- Mobile Menu Dropdown -->
         <transition name="slide-down">
-          <div v-if="mobileMenuOpen" class="md:hidden py-4 border-t border-border">
-            <div class="flex flex-col gap-2">
+          <div v-if="mobileMenuOpen" class="md:hidden py-3 border-t border-border">
+            <div class="flex flex-col gap-1">
               <router-link to="/" @click="mobileMenuOpen = false"
-                class="px-4 py-3 text-sm font-semibold text-dark-700 dark:text-dark-300 hover:bg-primary-50 dark:hover:bg-primary-950/20 rounded-lg transition-colors">
+                class="px-4 py-3 text-sm font-semibold rounded-lg transition-all duration-200 active:scale-[0.98]"
+                :class="$route.path === '/' ? 'text-blue-500 bg-blue-50 dark:bg-blue-950/20' : 'text-dark-700 dark:text-dark-300 hover:bg-dark-100 dark:hover:bg-dark-800'">
                 Beranda
               </router-link>
               <router-link to="/transactions" @click="mobileMenuOpen = false"
-                class="px-4 py-3 text-sm font-semibold text-dark-700 dark:text-dark-300 hover:bg-primary-50 dark:hover:bg-primary-950/20 rounded-lg transition-colors">
+                class="px-4 py-3 text-sm font-semibold rounded-lg transition-all duration-200 active:scale-[0.98]"
+                :class="$route.path.startsWith('/transactions') ? 'text-blue-500 bg-blue-50 dark:bg-blue-950/20' : 'text-dark-700 dark:text-dark-300 hover:bg-dark-100 dark:hover:bg-dark-800'">
                 Riwayat Transaksi
               </router-link>
               <router-link to="/profile" @click="mobileMenuOpen = false"
-                class="px-4 py-3 text-sm font-semibold text-dark-700 dark:text-dark-300 hover:bg-primary-50 dark:hover:bg-primary-950/20 rounded-lg transition-colors">
+                class="px-4 py-3 text-sm font-semibold rounded-lg transition-all duration-200 active:scale-[0.98]"
+                :class="$route.path.startsWith('/profile') ? 'text-blue-500 bg-blue-50 dark:bg-blue-950/20' : 'text-dark-700 dark:text-dark-300 hover:bg-dark-100 dark:hover:bg-dark-800'">
                 Profil
               </router-link>
               <router-link v-if="isAuthenticated" to="/admin/dashboard" @click="mobileMenuOpen = false"
-                class="px-4 py-3 text-sm font-semibold text-dark-700 dark:text-dark-300 hover:bg-primary-50 dark:hover:bg-primary-950/20 rounded-lg transition-colors">
+                class="px-4 py-3 text-sm font-semibold rounded-lg transition-all duration-200 active:scale-[0.98]"
+                :class="$route.path.startsWith('/admin') ? 'text-blue-500 bg-blue-50 dark:bg-blue-950/20' : 'text-dark-700 dark:text-dark-300 hover:bg-dark-100 dark:hover:bg-dark-800'">
                 Dashboard Admin
               </router-link>
               <button v-if="isAuthenticated" @click="handleLogout"
-                class="px-4 py-3 text-sm font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-lg transition-colors text-left">
+                class="px-4 py-3 text-sm font-semibold text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-lg transition-all duration-200 text-left active:scale-[0.98]">
                 Logout
               </button>
             </div>
@@ -99,38 +110,35 @@
       </div>
     </nav>
 
-    <!-- Main Content — FIX: pb-20 di mobile supaya tidak ketutup BottomNav -->
-    <main class="relative z-10 pb-0 md:pb-0" :class="{ 'pb-20': isMobile }">
-      <router-view v-slot="{ Component }">
-        <transition name="fade-slide" mode="out-in">
-          <component :is="Component" />
+    <!-- Main Content -->
+    <main class="relative z-10" :class="{ 'pb-20': isMobile }">
+      <router-view v-slot="{ Component, route }">
+        <transition :name="transitionName" mode="out-in">
+          <component :is="Component" :key="route.path" />
         </transition>
       </router-view>
     </main>
 
-    <!-- Scroll to Top — FIX: bottom-24 di mobile (di atas BottomNav), bottom-8 di desktop -->
+    <!-- Scroll to Top -->
     <transition name="fade">
       <button v-if="showScrollTop" @click="scrollToTop"
-        class="fixed z-40 p-3 rounded-full bg-primary-600 hover:bg-primary-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-500/50 group"
+        class="fixed z-40 p-3 rounded-full bg-gradient-to-r from-blue-500 to-cyan-400 text-white shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 focus:outline-none"
         :class="isMobile ? 'bottom-24 right-4' : 'bottom-8 right-8'"
         aria-label="Scroll to top">
-        <svg class="w-5 h-5 transform group-hover:-translate-y-0.5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 10l7-7m0 0l7 7m-7-7v18" />
         </svg>
       </button>
     </transition>
 
-    <!-- FIX: BottomNav ditambahkan -->
     <BottomNav />
-
-    <!-- ChatWidget -->
     <ChatWidget />
   </div>
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { onMounted, onUnmounted, ref, computed, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { Sun, Moon, Menu, X } from 'lucide-vue-next'
 import { useTheme } from './composables/useTheme'
 import { useAuth } from './composables/useAuth'
@@ -138,32 +146,37 @@ import ChatWidget from './components/frontend_ChatWidget.vue'
 import BottomNav from './components/BottomNav.vue'
 
 const router = useRouter()
+const route = useRoute()
 const { toggleTheme, initTheme, isDark } = useTheme()
 const { isAuthenticated, logout } = useAuth()
 
 const showScrollTop = ref(false)
 const mobileMenuOpen = ref(false)
 const windowWidth = ref(window.innerWidth)
+const transitionName = ref('page')
 
-// FIX: deteksi mobile untuk BottomNav spacing
 const isMobile = computed(() => windowWidth.value < 768)
 
-const handleScroll = () => {
-  showScrollTop.value = window.scrollY > 300
+const routeDepth = {
+  '/': 0,
+  '/transactions': 1,
+  '/profile': 1,
 }
 
-const handleResize = () => {
-  windowWidth.value = window.innerWidth
-}
+watch(() => route.path, (to, from) => {
+  const toDepth = routeDepth[to] ?? 2
+  const fromDepth = routeDepth[from] ?? 2
+  transitionName.value = toDepth > fromDepth ? 'slide-left' : toDepth < fromDepth ? 'slide-right' : 'page'
+})
 
-const scrollToTop = () => {
-  window.scrollTo({ top: 0, behavior: 'smooth' })
-}
+const handleScroll = () => { showScrollTop.value = window.scrollY > 300 }
+const handleResize = () => { windowWidth.value = window.innerWidth }
+const scrollToTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }) }
 
 onMounted(() => {
   initTheme()
-  window.addEventListener('scroll', handleScroll)
-  window.addEventListener('resize', handleResize)
+  window.addEventListener('scroll', handleScroll, { passive: true })
+  window.addEventListener('resize', handleResize, { passive: true })
 })
 
 onUnmounted(() => {
@@ -183,42 +196,59 @@ router.afterEach(() => {
 </script>
 
 <style scoped>
-.fade-slide-enter-active {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+/* GPU acceleration */
+.page-enter-active,
+.page-leave-active,
+.slide-left-enter-active,
+.slide-left-leave-active,
+.slide-right-enter-active,
+.slide-right-leave-active {
+  will-change: opacity, transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
-.fade-slide-leave-active {
-  transition: all 0.2s cubic-bezier(0.4, 0, 1, 1);
+
+/* Page fade */
+.page-enter-active {
+  transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-.fade-slide-enter-from {
-  opacity: 0;
-  transform: translateY(10px);
+.page-leave-active {
+  transition: opacity 0.15s ease, transform 0.15s ease-in;
 }
-.fade-slide-leave-to {
-  opacity: 0;
-  transform: translateY(-5px);
+.page-enter-from { opacity: 0; transform: translate3d(0, 8px, 0) scale(0.99); }
+.page-leave-to   { opacity: 0; transform: translate3d(0, -4px, 0) scale(0.99); }
+
+/* Slide left */
+.slide-left-enter-active {
+  transition: opacity 0.28s ease, transform 0.28s cubic-bezier(0.34, 1.2, 0.64, 1);
 }
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
+.slide-left-leave-active {
+  transition: opacity 0.18s ease, transform 0.18s ease-in;
 }
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
+.slide-left-enter-from { opacity: 0; transform: translate3d(20px, 0, 0); }
+.slide-left-leave-to   { opacity: 0; transform: translate3d(-12px, 0, 0); }
+
+/* Slide right */
+.slide-right-enter-active {
+  transition: opacity 0.28s ease, transform 0.28s cubic-bezier(0.34, 1.2, 0.64, 1);
 }
-.slide-down-enter-active,
-.slide-down-leave-active {
-  transition: all 0.3s ease;
+.slide-right-leave-active {
+  transition: opacity 0.18s ease, transform 0.18s ease-in;
 }
-.slide-down-enter-from,
-.slide-down-leave-to {
-  opacity: 0;
-  transform: translateY(-10px);
+.slide-right-enter-from { opacity: 0; transform: translate3d(-20px, 0, 0); }
+.slide-right-leave-to   { opacity: 0; transform: translate3d(12px, 0, 0); }
+
+/* Mobile menu */
+.slide-down-enter-active { transition: all 0.22s cubic-bezier(0.34, 1.3, 0.64, 1); }
+.slide-down-leave-active { transition: all 0.15s ease-in; }
+.slide-down-enter-from   { opacity: 0; transform: translate3d(0, -8px, 0); }
+.slide-down-leave-to     { opacity: 0; transform: translate3d(0, -4px, 0); }
+
+/* Scroll to top */
+.fade-enter-active {
+  transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-html {
-  scroll-behavior: smooth;
-}
-::-webkit-scrollbar { width: 10px; }
-::-webkit-scrollbar-track { @apply bg-dark-100 dark:bg-dark-900; }
-::-webkit-scrollbar-thumb { @apply bg-dark-300 dark:bg-dark-700 rounded-full; }
-::-webkit-scrollbar-thumb:hover { @apply bg-dark-400 dark:bg-dark-600; }
+.fade-leave-active { transition: opacity 0.15s ease; }
+.fade-enter-from   { opacity: 0; transform: translate3d(0, 8px, 0); }
+.fade-leave-to     { opacity: 0; }
 </style>
