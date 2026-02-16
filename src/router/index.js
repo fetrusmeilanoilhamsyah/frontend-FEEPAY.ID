@@ -49,39 +49,46 @@ const routes = [
     meta: { requiresGuest: true }
   },
   {
-  path: '/checkout/pulsa',
-  name: 'pulsa-checkout',
-  component: () => import('../views/checkout/PulsaCheckout.vue')
-},
-{
-  path: '/checkout/data',
-  name: 'data-checkout',
-  component: () => import('../views/checkout/DataCheckout.vue')
-},
-{
-  path: '/checkout/game-voucher',
-  name: 'game-voucher-checkout',
-  component: () => import('../views/checkout/GameVoucherCheckout.vue')
-},
-{
-  path: '/checkout/pln',
-  name: 'pln-checkout',
-  component: () => import('../views/checkout/PlnCheckout.vue')
-},
-{
-  path: '/checkout/top-up-game',
-  name: 'top-up-game-checkout',
-  component: () => import('../views/checkout/TopUpGameCheckout.vue')
-},
-{
-  path: '/checkout/e-wallet',
-  name: 'e-wallet-checkout',
-  component: () => import('../views/checkout/EWalletCheckout.vue')
-},
+    path: '/checkout/pulsa',
+    name: 'pulsa-checkout',
+    component: () => import('../views/checkout/PulsaCheckout.vue')
+  },
+  {
+    path: '/checkout/data',
+    name: 'data-checkout',
+    component: () => import('../views/checkout/DataCheckout.vue')
+  },
+  {
+    path: '/checkout/game-voucher',
+    name: 'game-voucher-checkout',
+    component: () => import('../views/checkout/GameVoucherCheckout.vue')
+  },
+  {
+    path: '/checkout/pln',
+    name: 'pln-checkout',
+    component: () => import('../views/checkout/PlnCheckout.vue')
+  },
+  {
+    path: '/checkout/top-up-game',
+    name: 'top-up-game-checkout',
+    component: () => import('../views/checkout/TopUpGameCheckout.vue')
+  },
+  {
+    path: '/checkout/e-wallet',
+    name: 'e-wallet-checkout',
+    component: () => import('../views/checkout/EWalletCheckout.vue')
+  },
   {
     path: '/admin/dashboard',
     name: 'admin-dashboard',
     component: () => import('../views/AdminDashboard.vue'),
+    meta: { requiresAuth: true }
+  },
+  // ✅ NEW: Jika kamu ingin memisahkan halaman manajemen order di masa depan
+  {
+    path: '/admin/orders',
+    name: 'admin-orders',
+    component: () => import('../views/AdminDashboard.vue'), // Sementara pakai dashboard karena tabbed system
     meta: { requiresAuth: true }
   },
   {
