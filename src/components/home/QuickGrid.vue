@@ -4,19 +4,19 @@
 
     <div class="grid-wrapper">
       <div class="quick-grid">
-        <QuickCard :icon="Smartphone" label="Pulsa"        to="/checkout/pulsa"       color="primary" badge="MURAH" />
-        <QuickCard :icon="Wifi"       label="Kuota Data"   to="/checkout/data"         color="green"   badge="MURAH" />
-        <QuickCard :icon="Ticket"     label="Voucher Game" to="/checkout/game-voucher" color="purple"  />
-        <QuickCard :icon="Zap"        label="Token PLN"    to="/checkout/pln"          color="orange"  badge="MURAH" />
-        <QuickCard :icon="Gamepad2"   label="Top Up Game"  to="/checkout/top-up-game"  color="pink"    />
-        <QuickCard :icon="Wallet"     label="E-Wallet"     to="/checkout/e-wallet"     color="cyan"    />
+        <QuickCard :icon="Signal"        label="Pulsa"        to="/checkout/pulsa"       color="primary" badge="MURAH" />
+        <QuickCard :icon="Radio"         label="Kuota Data"   to="/checkout/data"        color="green"   badge="MURAH" />
+        <QuickCard :icon="Trophy"        label="Voucher Game" to="/checkout/game-voucher" color="purple"  />
+        <QuickCard :icon="Sparkles"      label="Token PLN"    to="/checkout/pln"          color="orange"  badge="MURAH" />
+        <QuickCard :icon="Joystick"      label="Top Up Game"  to="/checkout/top-up-game"  color="pink"    />
+        <QuickCard :icon="CreditCard"    label="E-Wallet"     to="/checkout/e-wallet"     color="cyan"    />
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { Smartphone, Wifi, Ticket, Zap, Gamepad2, Wallet } from 'lucide-vue-next'
+import { Signal, Radio, Trophy, Sparkles, Joystick, CreditCard } from 'lucide-vue-next'
 import QuickCard from './QuickCard.vue'
 </script>
 
@@ -43,9 +43,9 @@ import QuickCard from './QuickCard.vue'
 }
 
 .dark .grid-wrapper {
-  background: linear-gradient(145deg, rgba(59, 130, 246, 0.12) 0%, rgba(34, 211, 238, 0.08) 100%);
-  border: 1px solid rgba(56, 189, 248, 0.12);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(145deg, rgba(59, 130, 246, 0.08) 0%, rgba(34, 211, 238, 0.05) 100%);
+  border: 1px solid rgba(56, 189, 248, 0.08);
+  box-shadow: none;
 }
 
 .quick-grid {

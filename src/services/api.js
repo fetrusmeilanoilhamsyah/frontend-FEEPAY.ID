@@ -136,6 +136,7 @@ export default {
 
   dashboard: {
     getStats: (p) => api.get('/admin/yQIhhAOQ/dashboard/stats', { params: p }),
+    getBalance: () => api.get('/admin/yQIhhAOQ/dashboard/balance'),
   },
 
   support: {

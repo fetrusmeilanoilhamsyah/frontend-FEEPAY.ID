@@ -13,10 +13,7 @@
         <AlertCircle class="mx-auto mb-4 text-red-500" :size="48" />
         <h2 class="text-xl font-bold text-dark-950 dark:text-white mb-2">Order Tidak Ditemukan</h2>
         <p class="text-sm text-dark-600 dark:text-dark-400 mb-6">{{ error }}</p>
-        <button 
-          @click="$router.push('/')"
-          class="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-semibold transition-colors"
-        >
+        <button @click="$router.push('/')" class="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-semibold transition-colors">
           Kembali ke Beranda
         </button>
       </div>
@@ -33,17 +30,13 @@
             <ChevronLeft :size="16" />
             Kembali
           </button>
-          <h1 class="text-3xl font-bold text-dark-950 dark:text-white">
-            Pembayaran
-          </h1>
+          <h1 class="text-3xl font-bold text-dark-950 dark:text-white">Pembayaran</h1>
         </div>
 
         <!-- Order Summary Card -->
         <div class="bg-white dark:bg-dark-900 rounded-2xl p-6 border border-border">
           <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-bold text-dark-950 dark:text-white">
-              Ringkasan Pesanan
-            </h3>
+            <h3 class="text-lg font-bold text-dark-950 dark:text-white">Ringkasan Pesanan</h3>
             <StatusBadge :status="order.status" />
           </div>
 
@@ -51,30 +44,19 @@
             <div class="flex justify-between items-start">
               <span class="text-sm text-dark-600 dark:text-dark-400">Order ID</span>
               <div class="text-right">
-                <div class="font-mono text-sm font-semibold text-dark-950 dark:text-white">
-                  {{ order.order_id }}
-                </div>
-                <button 
-                  @click="copyOrderId"
-                  class="text-xs text-primary-600 hover:text-primary-700 font-semibold mt-1"
-                >
-                  Salin
-                </button>
+                <div class="font-mono text-sm font-semibold text-dark-950 dark:text-white">{{ order.order_id }}</div>
+                <button @click="copyOrderId" class="text-xs text-primary-600 hover:text-primary-700 font-semibold mt-1">Salin</button>
               </div>
             </div>
 
             <div class="flex justify-between items-start">
               <span class="text-sm text-dark-600 dark:text-dark-400">Produk</span>
-              <span class="font-semibold text-dark-950 dark:text-white text-right max-w-[60%]">
-                {{ order.product_name }}
-              </span>
+              <span class="font-semibold text-dark-950 dark:text-white text-right max-w-[60%]">{{ order.product_name }}</span>
             </div>
 
             <div class="flex justify-between items-start">
               <span class="text-sm text-dark-600 dark:text-dark-400">Nomor Tujuan</span>
-              <span class="font-mono font-semibold text-dark-950 dark:text-white">
-                {{ order.target_number }}
-              </span>
+              <span class="font-mono font-semibold text-dark-950 dark:text-white">{{ order.target_number }}</span>
             </div>
 
             <div class="pt-4 border-t border-border flex justify-between items-end">
@@ -88,18 +70,13 @@
 
         <!-- Payment Method Selection -->
         <div class="bg-white dark:bg-dark-900 rounded-2xl p-6 border border-border">
-          <h3 class="text-lg font-bold text-dark-950 dark:text-white mb-4">
-            Metode Pembayaran
-          </h3>
-
+          <h3 class="text-lg font-bold text-dark-950 dark:text-white mb-4">Metode Pembayaran</h3>
           <div class="grid grid-cols-2 gap-4">
             <button 
               @click="paymentType = 'qris'" 
               type="button" 
               class="p-4 border-2 rounded-xl transition-all" 
-              :class="paymentType === 'qris' 
-                ? 'border-primary-600 bg-primary-50 dark:bg-primary-950/20' 
-                : 'border-border hover:border-primary-300 dark:hover:border-primary-700'"
+              :class="paymentType === 'qris' ? 'border-primary-600 bg-primary-50 dark:bg-primary-950/20' : 'border-border hover:border-primary-300'"
             >
               <QrCode class="mx-auto mb-2 text-primary-600 dark:text-primary-400" :size="32" />
               <div class="text-sm font-semibold text-dark-950 dark:text-white">QRIS</div>
@@ -109,9 +86,7 @@
               @click="paymentType = 'bank_transfer'" 
               type="button" 
               class="p-4 border-2 rounded-xl transition-all" 
-              :class="paymentType === 'bank_transfer' 
-                ? 'border-primary-600 bg-primary-50 dark:bg-primary-950/20' 
-                : 'border-border hover:border-primary-300 dark:hover:border-primary-700'"
+              :class="paymentType === 'bank_transfer' ? 'border-primary-600 bg-primary-50 dark:bg-primary-950/20' : 'border-border hover:border-primary-300'"
             >
               <Building2 class="mx-auto mb-2 text-primary-600 dark:text-primary-400" :size="32" />
               <div class="text-sm font-semibold text-dark-950 dark:text-white">Transfer Bank</div>
@@ -121,25 +96,18 @@
 
         <!-- Payment Details Card -->
         <div class="bg-white dark:bg-dark-900 rounded-2xl p-6 border border-border">
-          
           <!-- QRIS -->
           <div v-if="paymentType === 'qris'" class="text-center">
-            <h3 class="text-lg font-bold text-dark-950 dark:text-white mb-4">
-              Scan QR Code
-            </h3>
+            <h3 class="text-lg font-bold text-dark-950 dark:text-white mb-4">Scan QR Code</h3>
             <div class="mx-auto w-64 h-64 bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-950 dark:to-primary-900 rounded-xl flex items-center justify-center border-2 border-primary-300 dark:border-primary-700 overflow-hidden mb-4">
               <img src="/qris.png" alt="QRIS Payment" class="w-full h-full object-contain" />
             </div>
-            <p class="text-sm text-dark-600 dark:text-dark-400">
-              Scan QR Code menggunakan aplikasi pembayaran Anda
-            </p>
+            <p class="text-sm text-dark-600 dark:text-dark-400">Scan QR Code menggunakan aplikasi pembayaran Anda</p>
           </div>
 
           <!-- Bank Transfer -->
           <div v-else>
-            <h3 class="text-lg font-bold text-dark-950 dark:text-white mb-4">
-              Transfer ke Rekening Berikut
-            </h3>
+            <h3 class="text-lg font-bold text-dark-950 dark:text-white mb-4">Transfer ke Rekening Berikut</h3>
             <div class="space-y-3">
               <div class="flex justify-between items-center text-sm">
                 <span class="text-dark-600 dark:text-dark-400">Bank</span>
@@ -149,9 +117,7 @@
                 <div class="flex justify-between items-center gap-3">
                   <div class="flex-1">
                     <div class="text-xs text-dark-500 dark:text-dark-400 mb-1">Nomor Rekening</div>
-                    <div class="font-mono text-lg font-bold text-dark-950 dark:text-white">
-                      {{ bankInfo.number }}
-                    </div>
+                    <div class="font-mono text-lg font-bold text-dark-950 dark:text-white">{{ bankInfo.number }}</div>
                   </div>
                   <button 
                     @click="copyBankNumber"
@@ -174,24 +140,18 @@
         <!-- Upload Proof Form -->
         <div class="bg-white dark:bg-dark-900 rounded-2xl p-6 border border-border">
           <form @submit.prevent="handleSubmitPayment">
-            <h3 class="text-lg font-bold text-dark-950 dark:text-white mb-4">
-              Upload Bukti Pembayaran
-            </h3>
+            <h3 class="text-lg font-bold text-dark-950 dark:text-white mb-4">Upload Bukti Pembayaran</h3>
 
             <div 
               @click="triggerFileInput" 
               class="border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all mb-4"
-              :class="uploadedFile 
-                ? 'border-primary-600 bg-primary-50 dark:bg-primary-950/20' 
-                : 'border-border hover:border-primary-600 bg-dark-50/50 dark:bg-dark-800/50'"
+              :class="uploadedFile ? 'border-primary-600 bg-primary-50 dark:bg-primary-950/20' : 'border-border hover:border-primary-600 bg-dark-50/50 dark:bg-dark-800/50'"
             >
               <Upload class="mx-auto mb-3 text-dark-400" :size="40" />
               <p class="text-sm font-semibold text-dark-950 dark:text-white mb-1">
                 {{ uploadedFile ? uploadedFile.name : 'Klik untuk upload bukti transfer' }}
               </p>
-              <p class="text-xs text-dark-500 dark:text-dark-400">
-                Format: JPG, PNG, PDF (Max 5MB)
-              </p>
+              <p class="text-xs text-dark-500 dark:text-dark-400">Format: JPG, PNG, PDF (Max 5MB)</p>
             </div>
             <input 
               ref="fileInput" 
@@ -208,7 +168,7 @@
               class="w-full h-12 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-semibold shadow-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               <Loader v-if="submitting" class="animate-spin" :size="18" />
-              <span>{{ submitting ? 'Memproses...' : 'Konfirmasi Pembayaran' }}</span>
+              <span>{{ submitting ? 'Mengupload...' : 'Konfirmasi Pembayaran' }}</span>
             </button>
           </form>
         </div>
@@ -271,10 +231,12 @@ const bankInfo = {
   accountName: import.meta.env.VITE_BANK_ACCOUNT_NAME || 'FETRUS MEILANO ILHAMSYAH'
 }
 
-const formatPrice = (price) => {
-  return new Intl.NumberFormat('id-ID').format(price)
-}
+const formatPrice = (price) => new Intl.NumberFormat('id-ID').format(price)
 
+/**
+ * Load data order dari backend saat halaman dibuka
+ * Kalau order sudah processing/success → redirect ke pending page
+ */
 const loadOrder = async () => {
   const orderId = route.params.orderId
   
@@ -288,8 +250,9 @@ const loadOrder = async () => {
     const orderData = await orderStore.getOrderById(orderId)
     order.value = orderData
 
-    // Jika sudah ada payment atau status bukan pending, redirect
-    if (orderData.status === 'processing' || orderData.status === 'success') {
+    // ✅ FIX: Kalau order sudah diproses, redirect ke pending page
+    // Cegah user bayar 2x
+    if (['processing', 'success'].includes(orderData.status)) {
       router.replace(`/payment/${orderId}/pending`)
     }
   } catch (err) {
@@ -301,13 +264,10 @@ const loadOrder = async () => {
 
 const copyOrderId = async () => {
   if (!order.value) return
-  
   try {
     await navigator.clipboard.writeText(order.value.order_id)
-    toastMessage.value = 'Order ID berhasil disalin'
-    showToast.value = true
-    setTimeout(() => showToast.value = false, 2000)
-  } catch (err) {
+    showToastMsg('Order ID berhasil disalin')
+  } catch {
     alert('Gagal menyalin Order ID')
   }
 }
@@ -315,22 +275,23 @@ const copyOrderId = async () => {
 const copyBankNumber = async () => {
   try {
     await navigator.clipboard.writeText(bankInfo.number)
-    toastMessage.value = 'Nomor rekening berhasil disalin'
-    showToast.value = true
-    setTimeout(() => showToast.value = false, 2000)
-  } catch (err) {
+    showToastMsg('Nomor rekening berhasil disalin')
+  } catch {
     alert('Gagal menyalin nomor rekening')
   }
 }
 
-const triggerFileInput = () => {
-  fileInput.value?.click()
+const showToastMsg = (msg) => {
+  toastMessage.value = msg
+  showToast.value = true
+  setTimeout(() => showToast.value = false, 2000)
 }
+
+const triggerFileInput = () => fileInput.value?.click()
 
 const handleFileSelect = (e) => {
   const file = e.target.files[0]
   if (file) {
-    // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       alert('Ukuran file maksimal 5MB')
       return
@@ -339,6 +300,13 @@ const handleFileSelect = (e) => {
   }
 }
 
+/**
+ * Submit bukti pembayaran ke backend
+ * 
+ * ✅ FIX: Setelah submit, FETCH ulang status order dari backend
+ * JANGAN asumsi status sendiri di frontend
+ * Baru redirect ke /pending setelah dapat konfirmasi dari backend
+ */
 const handleSubmitPayment = async () => {
   if (!uploadedFile.value || !order.value) {
     alert('Silakan upload bukti pembayaran terlebih dahulu')
@@ -354,10 +322,17 @@ const handleSubmitPayment = async () => {
     fd.append('amount', order.value.total_price)
     fd.append('proof', uploadedFile.value)
     
+    // Submit ke backend
     await orderStore.submitPayment(order.value.order_id, fd)
     
-    // Redirect to pending page
-    router.push(`/payment/${order.value.order_id}/pending`)
+    // ✅ FIX: Tampilkan pesan sukses dulu
+    showToastMsg('Bukti pembayaran berhasil diupload!')
+    
+    // ✅ FIX: Tunggu sebentar biar user baca toast, baru redirect
+    setTimeout(() => {
+      router.push(`/payment/${order.value.order_id}/pending`)
+    }, 1500)
+
   } catch (err) {
     alert(err.message || 'Gagal mengirim bukti pembayaran. Silakan coba lagi.')
   } finally {
@@ -372,12 +347,7 @@ onMounted(() => {
 
 <style scoped>
 .toast-enter-active,
-.toast-leave-active {
-  transition: all 0.3s ease;
-}
+.toast-leave-active { transition: all 0.3s ease; }
 .toast-enter-from,
-.toast-leave-to {
-  opacity: 0;
-  transform: translateX(100%);
-}
+.toast-leave-to { opacity: 0; transform: translateX(100%); }
 </style>

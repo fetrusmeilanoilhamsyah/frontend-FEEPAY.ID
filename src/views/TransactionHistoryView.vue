@@ -154,7 +154,7 @@
 
     </div>
 
-    <!-- Order Detail Modal (Simple) -->
+    <!-- Order Detail Modal -->
     <teleport to="body">
       <transition name="modal">
         <div v-if="selectedOrder" class="fixed inset-0 z-50 overflow-y-auto" @click="selectedOrder = null">
@@ -248,6 +248,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { Package, ChevronRight, RefreshCw, ShoppingBag, Check, X, Search } from 'lucide-vue-next'
 import { useOrderStore } from '@/stores/orderStore'
+import api from '@/services/api'
 import StatusBadge from '@/components/StatusBadge.vue'
 import SkeletonOrderCard from '@/components/SkeletonOrderCard.vue'
 
@@ -257,6 +258,7 @@ const orderStore = useOrderStore()
 const activeFilter = ref('all')
 const selectedOrder = ref(null)
 const refreshing = ref(false)
+const loading = ref(false)
 const showToast = ref(false)
 const toastMessage = ref('')
 const searchQuery = ref('')
@@ -294,20 +296,13 @@ const filteredOrders = computed(() => {
   return orders
 })
 
-const loading = computed(() => orderStore.loading)
-
-const formatPrice = (price) => {
-  return new Intl.NumberFormat('id-ID').format(price)
-}
+const formatPrice = (price) => new Intl.NumberFormat('id-ID').format(price)
 
 const formatDate = (dateString) => {
   const date = new Date(dateString)
   return new Intl.DateTimeFormat('id-ID', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
+    day: 'numeric', month: 'short', year: 'numeric',
+    hour: '2-digit', minute: '2-digit'
   }).format(date)
 }
 
@@ -315,9 +310,8 @@ const viewOrderDetail = (order) => {
   selectedOrder.value = order
 }
 
-const repeatOrder = (order) => {
+const repeatOrder = () => {
   router.push('/')
-  // TODO: Auto-fill form dengan data order
 }
 
 const copySN = async (sn) => {
@@ -326,50 +320,78 @@ const copySN = async (sn) => {
     toastMessage.value = 'Serial Number berhasil disalin'
     showToast.value = true
     setTimeout(() => showToast.value = false, 2000)
-  } catch (err) {
+  } catch {
     alert('Gagal menyalin SN')
   }
 }
 
+/**
+ * Sync semua order di localStorage dengan status terbaru dari backend.
+ * Ini yang fix bug: status di riwayat tidak sesuai realita di database.
+ */
+const syncOrdersFromBackend = async () => {
+  const history = orderStore.orderHistory
+  if (history.length === 0) return
+
+  // Fetch status terbaru untuk setiap order yang belum final
+  // Order yang sudah success/failed tidak perlu di-sync lagi
+  const ordersToSync = history.filter(o => 
+    !['success', 'failed'].includes(o.status)
+  )
+
+  await Promise.allSettled(
+    ordersToSync.map(async (order) => {
+      try {
+        const latest = await api.orders.get(order.order_id)
+        orderStore.addToHistory(latest) // update di store & localStorage
+      } catch {
+        // Kalau gagal fetch satu order, lanjut yang lain
+      }
+    })
+  )
+}
+
+/**
+ * Tombol "Muat Ulang" - sync semua order dari backend
+ * Fix: sebelumnya hanya baca localStorage, sekarang fetch ke backend
+ */
 const refreshOrders = async () => {
   refreshing.value = true
   try {
-    // Refresh semua order dari localStorage
-    orderStore.restoreHistory()
-    
-    // TODO: Optionally sync with API
-    toastMessage.value = 'Riwayat berhasil dimuat ulang'
+    await syncOrdersFromBackend()
+    toastMessage.value = 'Status berhasil diperbarui'
     showToast.value = true
     setTimeout(() => showToast.value = false, 2000)
-  } catch (err) {
+  } catch {
     alert('Gagal memuat ulang')
   } finally {
     refreshing.value = false
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
+  // Restore dari localStorage dulu biar tampil cepat
   orderStore.restoreHistory()
+
+  // Lalu sync status terbaru dari backend di background
+  // Fix: sebelumnya tidak ada sync ke backend sama sekali
+  loading.value = true
+  try {
+    await syncOrdersFromBackend()
+  } finally {
+    loading.value = false
+  }
 })
 </script>
 
 <style scoped>
 .modal-enter-active,
-.modal-leave-active {
-  transition: opacity 0.3s ease;
-}
+.modal-leave-active { transition: opacity 0.3s ease; }
 .modal-enter-from,
-.modal-leave-to {
-  opacity: 0;
-}
+.modal-leave-to { opacity: 0; }
 
 .toast-enter-active,
-.toast-leave-active {
-  transition: all 0.3s ease;
-}
+.toast-leave-active { transition: all 0.3s ease; }
 .toast-enter-from,
-.toast-leave-to {
-  opacity: 0;
-  transform: translateX(100%);
-}
+.toast-leave-to { opacity: 0; transform: translateX(100%); }
 </style>

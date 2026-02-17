@@ -57,7 +57,7 @@
           <div class="flex items-center justify-between pt-4 border-t border-border">
             <span class="text-base font-semibold text-dark-700 dark:text-dark-300">Total</span>
             <span class="text-xl font-black text-primary-600 dark:text-primary-400">
-              Rp {{ order.amount?.toLocaleString('id-ID') }}
+              Rp {{ Number(order.total_price).toLocaleString('id-ID') }}
             </span>
           </div>
 
@@ -145,7 +145,6 @@ const fetchOrderDetails = async () => {
     const response = await api.orders.get(orderId)
     order.value = response
     
-    // Calculate time remaining (assume 24 hours from creation)
     if (response.created_at) {
       const createdAt = new Date(response.created_at)
       const expiresAt = new Date(createdAt.getTime() + 24 * 60 * 60 * 1000)
@@ -190,7 +189,6 @@ const formatTime = (ms) => {
 onMounted(() => {
   fetchOrderDetails()
   
-  // Update countdown every second
   intervalId = setInterval(() => {
     if (timeRemaining.value > 0) {
       timeRemaining.value -= 1000
@@ -223,11 +221,7 @@ onUnmounted(() => {
 }
 
 @keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.7;
-  }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
 }
 </style>

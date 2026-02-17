@@ -10,12 +10,18 @@
       <div class="trust-bar mb-4">
         <div class="trust-item">
           <span class="trust-dot"></span>
-          <span>Semua layanan aktif</span>
+          <span>24 Jam Aktif</span>
         </div>
         <div class="trust-divider"></div>
-        <div class="trust-item">⚡ Proses instan</div>
+        <div class="trust-item">
+          <span class="trust-icon"></span>
+          <span>Proses Cepat</span>
+        </div>
         <div class="trust-divider"></div>
-        <div class="trust-item">🔒 Transaksi aman</div>
+        <div class="trust-item">
+          <span class="trust-icon"></span>
+          <span>Aman Terpercaya</span>
+        </div>
       </div>
 
       <!-- Tabs -->
@@ -39,6 +45,7 @@
       <!-- PRODUCTS TAB -->
       <div v-if="activeTab === 'products'">
         <QuickGrid @select="handleServiceSelect" />
+        <HowItWorks />
       </div>
 
       <!-- USDT TAB -->
@@ -50,7 +57,7 @@
                 Konversi USDT ke Rupiah
               </h2>
               <p class="text-xs sm:text-sm text-dark-500 dark:text-dark-400">
-                Proses pencairan cepat langsung ke rekening bank atau e-wallet Anda
+                Pencairan ke rekening atau e-wallet Anda
               </p>
             </div>
 
@@ -175,13 +182,13 @@
                 :disabled="usdtSubmitting"
               >
                 <Loader v-if="usdtSubmitting" class="inline animate-spin mr-2" :size="16" />
-                {{ usdtSubmitting ? 'Sedang Memproses...' : 'Kirim Permintaan Konversi' }}
+                {{ usdtSubmitting ? 'Memproses Permintaan' : 'Kirim Permintaan Konversi' }}
               </button>
             </form>
 
             <div class="mt-4 bg-primary-50 dark:bg-primary-950/20 border border-primary-200 dark:border-primary-800 rounded-lg p-3">
               <p class="text-xs text-center text-primary-600 dark:text-primary-400 font-medium">
-                Pencairan akan diproses dalam waktu 5–15 menit setelah verifikasi transfer
+                Proses verifikasi 5-15 menit setelah transfer dikonfirmasi
               </p>
             </div>
           </div>
@@ -207,6 +214,7 @@ import { Check, Upload, Loader, Copy } from 'lucide-vue-next'
 import BannerSlider from '@/components/BannerSlider.vue'
 import QuickGrid from '@/components/home/QuickGrid.vue'
 import SkeletonBanner from '@/components/SkeletonBanner.vue'
+import HowItWorks from '@/components/home/HowItWorks.vue'
 import { useProductStore } from '@/stores/productStore'
 import api from '../services/api'
 
@@ -273,8 +281,9 @@ const handleUsdtSubmit = async () => {
 .trust-bar {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.5rem 0.75rem;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
   background: white;
   border: 1px solid rgba(56, 189, 248, 0.2);
   border-radius: 10px;
@@ -285,14 +294,16 @@ const handleUsdtSubmit = async () => {
 .trust-bar::-webkit-scrollbar { display: none; }
 
 .dark .trust-bar {
-  background: rgb(15 20 30);
+  background: rgb(10 10 10);
   border-color: rgba(56, 189, 248, 0.1);
 }
 
 .trust-item {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.375rem;
+  flex: 1;
   font-size: 0.7rem;
   font-weight: 600;
   color: rgb(75 85 99);
@@ -303,16 +314,24 @@ const handleUsdtSubmit = async () => {
 .dark .trust-item { color: rgb(156 163 175); }
 
 .trust-dot {
+  display: block;
   width: 6px;
   height: 6px;
   border-radius: 50%;
   background: #00c853;
   box-shadow: 0 0 0 2px rgba(0, 200, 83, 0.2);
+  flex-shrink: 0;
+}
+
+.trust-icon {
+  display: block;
+  font-size: 0.75rem;
+  flex-shrink: 0;
 }
 
 .trust-divider {
   width: 1px;
-  height: 12px;
+  height: 14px;
   background: rgb(229 231 235);
   flex-shrink: 0;
 }
@@ -330,7 +349,7 @@ const handleUsdtSubmit = async () => {
 }
 
 .dark .tab-wrapper {
-  background: rgb(15 20 30);
+  background: rgb(10 10 10);
   border-color: rgb(42 49 66);
 }
 

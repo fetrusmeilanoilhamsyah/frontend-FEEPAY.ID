@@ -45,8 +45,8 @@
         />
 
         <!-- Loading Skeletons -->
-        <div v-if="productStore.loading" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-          <SkeletonProductCard v-for="i in 8" :key="i" />
+        <div v-if="productStore.loading" class="grid grid-cols-3 gap-3">
+          <SkeletonProductCard v-for="i in 12" :key="i" />
         </div>
 
         <!-- Products -->
@@ -60,7 +60,7 @@
             </span>
           </div>
 
-          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+          <div class="grid grid-cols-3 gap-3">
             <ProductCard
               v-for="product in pulsaProducts"
               :key="product.id"

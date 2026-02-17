@@ -43,6 +43,24 @@
             </div>
           </div>
 
+          <!-- Email Input -->
+          <div class="email-input-wrapper">
+            <label class="email-label">
+              Email
+              <span class="text-red-500">*</span>
+            </label>
+            <input
+              v-model="localEmail"
+              type="email"
+              class="email-input"
+              :class="{ 'email-input--error': emailError }"
+              placeholder="email@example.com"
+              @input="emailError = ''"
+            />
+            <p v-if="emailError" class="email-error">{{ emailError }}</p>
+            <p v-else class="email-hint">Notifikasi & bukti transaksi dikirim ke email ini</p>
+          </div>
+
           <!-- Additional Info (optional) -->
           <div v-if="showInfo" class="info-box">
             <div class="flex items-start gap-2">
@@ -57,7 +75,8 @@
           <MidtransButton
             :product="product"
             :target-number="customerData"
-            :customer-email="customerEmail"
+            :customer-email="localEmail"
+            :disabled="!isEmailValid"
             @close="emit('close')"
             @success="(orderId) => emit('success', orderId)"
             @pending="(orderId) => emit('pending', orderId)"
@@ -69,7 +88,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { X, Info } from 'lucide-vue-next'
 import MidtransButton from './MidtransButton.vue'
 
@@ -86,9 +105,10 @@ const props = defineProps({
     type: String,
     default: 'Nomor Tujuan'
   },
+  // Opsional: kalau parent sudah punya email (misal dari auth), bisa di-pass sini
   customerEmail: {
     type: String,
-    default: 'customer@feepay.id'
+    default: ''
   },
   showInfo: {
     type: Boolean,
@@ -101,6 +121,28 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['close', 'success', 'pending'])
+
+// Email state lokal — pakai prop kalau ada, kosong kalau tidak
+const localEmail = ref(props.customerEmail || '')
+const emailError = ref('')
+
+// Sync kalau prop berubah dari luar (misal user login)
+watch(() => props.customerEmail, (val) => {
+  if (val) localEmail.value = val
+})
+
+// Reset email tiap modal dibuka (product berubah dari null ke ada)
+watch(() => props.product, (val) => {
+  if (val && !props.customerEmail) {
+    localEmail.value = ''
+    emailError.value = ''
+  }
+})
+
+const isEmailValid = computed(() => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(localEmail.value)
+})
 
 const formatPrice = (price) => {
   return new Intl.NumberFormat('id-ID').format(price)
@@ -202,6 +244,72 @@ const customerDisplay = computed(() => {
   color: rgb(59 143 212);
 }
 
+/* Email Input */
+.email-input-wrapper {
+  margin-bottom: 16px;
+}
+
+.email-label {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: rgb(55 65 81);
+  margin-bottom: 6px;
+}
+
+.dark .email-label {
+  color: rgb(209 213 219);
+}
+
+.email-input {
+  width: 100%;
+  height: 44px;
+  background: white;
+  border: 2px solid rgb(229 231 235);
+  border-radius: 10px;
+  padding: 0 14px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgb(17 24 39);
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.email-input:focus {
+  border-color: rgb(79 172 254);
+}
+
+.email-input--error {
+  border-color: rgb(239 68 68);
+}
+
+.dark .email-input {
+  background: rgb(17 24 39);
+  border-color: rgb(55 65 81);
+  color: rgb(243 244 246);
+}
+
+.dark .email-input:focus {
+  border-color: rgb(79 172 254);
+}
+
+.email-hint {
+  margin-top: 4px;
+  font-size: 0.75rem;
+  color: rgb(107 114 128);
+}
+
+.dark .email-hint {
+  color: rgb(156 163 175);
+}
+
+.email-error {
+  margin-top: 4px;
+  font-size: 0.75rem;
+  color: rgb(239 68 68);
+}
+
 /* Info Box */
 .info-box {
   background: rgb(239 246 255);
@@ -218,25 +326,13 @@ const customerDisplay = computed(() => {
 
 /* Animations */
 @keyframes slideUp {
-  from {
-    transform: translateY(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
 @keyframes scaleIn {
-  from {
-    transform: scale(0.95);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
 
 .modal-enter-active,

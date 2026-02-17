@@ -1,11 +1,11 @@
 <template>
   <div class="min-h-screen transition-colors duration-300 relative">
 
-    <!-- Background blur decorations -->
-    <div class="fixed inset-0 pointer-events-none overflow-hidden">
-      <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-primary-500/5 dark:bg-primary-500/3 rounded-full blur-[120px] transform translate-x-1/2 -translate-y-1/2"></div>
-      <div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-500/5 dark:bg-blue-500/3 rounded-full blur-[100px] transform -translate-x-1/2 translate-y-1/2"></div>
-    </div>
+   <!-- Background blur decorations -->
+<div class="fixed inset-0 pointer-events-none overflow-hidden">
+  <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/3 dark:bg-white/[0.01] rounded-full blur-[120px] transform translate-x-1/2 -translate-y-1/2"></div>
+  <div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-cyan-500/3 dark:bg-white/[0.01] rounded-full blur-[100px] transform -translate-x-1/2 translate-y-1/2"></div>
+</div>
 
     <!-- Top Navbar -->
     <nav class="sticky top-0 z-50 backdrop-blur-xl bg-white/95 dark:bg-dark-950/95 border-b border-dark-200/50 dark:border-dark-700/50">

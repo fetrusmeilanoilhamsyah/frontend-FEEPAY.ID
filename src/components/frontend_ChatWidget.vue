@@ -9,7 +9,6 @@
         aria-label="Open chat"
       >
         <MessageCircle :size="24" class="group-hover:scale-110 transition-transform duration-300" />
-        <!-- FIX: hasNewMessage dikendalikan dari luar via prop -->
         <span v-if="hasUnread" class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-ping"></span>
         <span v-if="hasUnread" class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
       </button>
@@ -31,8 +30,8 @@
               <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-primary-700"></span>
             </div>
             <div>
-              <h3 class="font-bold text-base">Customer Service</h3>
-              <p class="text-xs text-white/80">Online - Siap Membantu</p>
+              <h3 class="font-bold text-base">Support FEEPAY</h3>
+              <p class="text-xs text-white/80">Tim kami siap membantu</p>
             </div>
           </div>
           <button
@@ -54,7 +53,7 @@
             </div>
             <div class="bg-primary-50 dark:bg-primary-900/20 rounded-2xl rounded-tl-none p-3 max-w-[80%]">
               <p class="text-sm text-dark-900 dark:text-dark-100">
-                Halo! 👋 Ada yang bisa kami bantu? Pilih platform untuk menghubungi kami:
+                Ada pertanyaan? Hubungi kami melalui:
               </p>
             </div>
           </div>
@@ -72,7 +71,7 @@
               </div>
               <div class="text-left flex-1">
                 <p class="font-bold text-dark-900 dark:text-white">WhatsApp</p>
-                <p class="text-xs text-dark-600 dark:text-dark-400">Chat langsung via WA</p>
+                <p class="text-xs text-dark-600 dark:text-dark-400">Balas cepat & langsung</p>
               </div>
               <ChevronRight :size="20" class="text-dark-400 group-hover:translate-x-1 transition-transform" />
             </button>
@@ -86,7 +85,7 @@
               </div>
               <div class="text-left flex-1">
                 <p class="font-bold text-dark-900 dark:text-white">Telegram</p>
-                <p class="text-xs text-dark-600 dark:text-dark-400">Kirim pesan via Telegram</p>
+                <p class="text-xs text-dark-600 dark:text-dark-400">Alternatif chat lainnya</p>
               </div>
               <ChevronRight :size="20" class="text-dark-400 group-hover:translate-x-1 transition-transform" />
             </button>
@@ -105,20 +104,20 @@
             <input
               v-model="form.name"
               type="text"
-              placeholder="Nama Anda (Opsional)"
+              placeholder="Nama (opsional)"
               class="w-full px-4 py-2.5 bg-dark-50 dark:bg-dark-800 border border-border rounded-lg outline-none focus:border-primary-500 transition-colors text-sm text-dark-950 dark:text-white"
             />
 
             <input
               v-model="form.email"
               type="email"
-              placeholder="Email Anda (Opsional)"
+              placeholder="Email (opsional)"
               class="w-full px-4 py-2.5 bg-dark-50 dark:bg-dark-800 border border-border rounded-lg outline-none focus:border-primary-500 transition-colors text-sm text-dark-950 dark:text-white"
             />
 
             <textarea
               v-model="form.message"
-              placeholder="Tulis pesan Anda..."
+              placeholder="Tulis pesan Anda"
               rows="4"
               class="w-full px-4 py-2.5 bg-dark-50 dark:bg-dark-800 border border-border rounded-lg outline-none focus:border-primary-500 transition-colors text-sm resize-none text-dark-950 dark:text-white"
             ></textarea>
@@ -129,7 +128,7 @@
               class="w-full py-3 bg-primary-600 hover:bg-primary-700 disabled:bg-dark-300 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
             >
               <Loader v-if="sending" :size="18" class="animate-spin" />
-              <span>{{ sending ? 'Mengirim...' : 'Kirim Pesan' }}</span>
+              <span>{{ sending ? 'Mengirim Pesan' : 'Kirim Pesan' }}</span>
             </button>
 
             <p v-if="errorMessage" class="text-sm text-red-600 dark:text-red-400 text-center">
@@ -142,9 +141,9 @@
             <div class="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
               <CheckCircle :size="32" class="text-green-600" />
             </div>
-            <h4 class="font-bold text-lg mb-2 text-dark-950 dark:text-white">Pesan Terkirim!</h4>
+            <h4 class="font-bold text-lg mb-2 text-dark-950 dark:text-white">Pesan Terkirim</h4>
             <p class="text-sm text-dark-600 dark:text-dark-400 mb-4">
-              Tim kami akan segera menghubungi Anda
+              Tim kami akan segera merespons
             </p>
             <button
               @click="resetForm"
@@ -165,7 +164,6 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { MessageCircle, X, Headphones, Bot, Send, ChevronRight, ChevronLeft, Loader, CheckCircle } from 'lucide-vue-next'
 import api from '../services/api'
 
-// FIX: hasNewMessage sekarang bisa dikontrol dari luar via prop
 const props = defineProps({
   newMessageCount: {
     type: Number,
@@ -179,7 +177,6 @@ const selectedPlatform = ref(null)
 const sending = ref(false)
 const errorMessage = ref('')
 
-// FIX: isMobile untuk deteksi BottomNav agar posisi tidak tertutup
 const isMobile = ref(false)
 
 const checkMobile = () => {
@@ -195,7 +192,6 @@ onUnmounted(() => {
   window.removeEventListener('resize', checkMobile)
 })
 
-// FIX: hasUnread dari prop bukan hardcode false
 const hasUnread = computed(() => props.newMessageCount > 0 && !isOpen.value)
 
 const form = ref({

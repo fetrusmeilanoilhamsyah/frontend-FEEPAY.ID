@@ -8,26 +8,26 @@
     role="button"
     :aria-label="`Order ${product.name}`"
   >
-    <!-- Operator Badge (Pulsa/Data) -->
-    <OperatorBadge 
-      v-if="isPulsaOrData"
-      :operator="extractOperator(product.name)" 
-    />
-
-    <!-- Wallet/Game Logo -->
-    <div v-else-if="productLogo" class="product-logo-badge">
-      <img
-        :src="productLogo"
-        :alt="product.name"
-        class="w-4 h-4 object-contain"
-        @error="(e) => e.target.style.display = 'none'"
+    <!-- Badge Container (Tengah) -->
+    <div class="badge-container">
+      <OperatorBadge 
+        v-if="isPulsaOrData"
+        :operator="extractOperator(product.name)" 
       />
-      <span>{{ productBrandName }}</span>
-    </div>
 
-    <!-- Fallback badge -->
-    <div v-else class="fallback-badge">
-      {{ product.category }}
+      <div v-else-if="productLogo" class="product-logo-badge">
+        <img
+          :src="productLogo"
+          :alt="product.name"
+          class="w-4 h-4 object-contain"
+          @error="(e) => e.target.style.display = 'none'"
+        />
+        <span>{{ productBrandName }}</span>
+      </div>
+
+      <div v-else class="fallback-badge">
+        {{ product.category }}
+      </div>
     </div>
 
     <h3 class="product-name">
@@ -53,7 +53,6 @@ const props = defineProps({
 
 const emit = defineEmits(['select'])
 
-// ─── Pulsa / Data ───────────────────────────────────────────
 const OPERATORS = ['Telkomsel', 'Indosat', 'XL', 'Axis', 'Tri', 'Smartfren', 'by.U', 'Three']
 
 const isPulsaOrData = computed(() => {
@@ -65,7 +64,6 @@ const extractOperator = (name) => {
   return OPERATORS.find(op => name?.toLowerCase().includes(op.toLowerCase())) || null
 }
 
-// ─── E-Wallet ───────────────────────────────────────────────
 const walletLogos = {
   'gopay': '/logos/wallets/gopay.png',
   'ovo': '/logos/wallets/ovo.png',
@@ -74,7 +72,6 @@ const walletLogos = {
   'linkaja': '/logos/wallets/linkaja.png'
 }
 
-// ─── Game ────────────────────────────────────────────────────
 const gameLogos = {
   'mobile legends': '/logos/games/ml.png',
   'mobilelegend': '/logos/games/ml.png',
@@ -133,7 +130,6 @@ const productBrandName = computed(() => {
   return props.product?.category || ''
 })
 
-// ─── Helpers ─────────────────────────────────────────────────
 const formatPrice = (price) => {
   return new Intl.NumberFormat('id-ID').format(price)
 }
@@ -148,14 +144,13 @@ const handleSelect = () => {
   position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  min-height: 120px;
-  padding: 12px;
+  min-height: 130px;
+  padding: 14px 12px;
   background: white;
   border: 1.5px solid rgb(229 231 235);
   border-radius: 16px;
   cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s ease;
   overflow: hidden;
 }
 
@@ -165,32 +160,36 @@ const handleSelect = () => {
 }
 
 .product-card:hover {
-  border-color: rgb(79 172 254);
+  border-color: rgb(59 130 246);
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(79, 172, 254, 0.15);
+  box-shadow: 0 8px 16px rgba(59, 130, 246, 0.12);
 }
 
 .dark .product-card:hover {
-  border-color: rgb(59 143 212);
-  box-shadow: 0 8px 20px rgba(59, 143, 212, 0.2);
+  border-color: rgb(96 165 250);
+  box-shadow: 0 8px 16px rgba(96, 165, 250, 0.15);
 }
 
 .product-card:active {
   transform: translateY(0);
-  box-shadow: 0 4px 12px rgba(79, 172, 254, 0.1);
+}
+
+.badge-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
 }
 
 .product-logo-badge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 3px 8px;
+  padding: 4px 10px;
   background: rgb(243 244 246);
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 0.625rem;
   font-weight: 700;
   color: rgb(55 65 81);
-  width: fit-content;
 }
 
 .dark .product-logo-badge {
@@ -200,14 +199,13 @@ const handleSelect = () => {
 
 .fallback-badge {
   display: inline-block;
-  padding: 3px 8px;
+  padding: 4px 10px;
   background: rgb(243 244 246);
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 0.625rem;
   font-weight: 600;
   text-transform: uppercase;
   color: rgb(107 114 128);
-  width: fit-content;
 }
 
 .dark .fallback-badge {
@@ -220,8 +218,9 @@ const handleSelect = () => {
   font-weight: 700;
   line-height: 1.3;
   color: rgb(17 24 39);
-  margin-bottom: auto;
-  margin-top: 8px;
+  text-align: center;
+  margin: 0 0 auto 0;
+  padding: 0 4px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -236,19 +235,20 @@ const handleSelect = () => {
 .product-price {
   font-size: 1.125rem;
   font-weight: 800;
-  color: rgb(79 172 254);
-  margin-top: 12px;
+  color: rgb(59 130 246);
   letter-spacing: -0.025em;
+  margin-top: 10px;
+  text-align: center;
 }
 
 .dark .product-price {
-  color: rgb(59 143 212);
+  color: rgb(96 165 250);
 }
 
 @media (min-width: 640px) {
   .product-card {
-    min-height: 130px;
-    padding: 16px;
+    min-height: 140px;
+    padding: 16px 14px;
   }
 
   .product-name {

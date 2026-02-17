@@ -4,6 +4,7 @@ import { ref, computed, watch } from 'vue'
 import api from '../services/api'
 
 export const useOrderStore = defineStore('order', () => {
+  
   // ============================================
   // STATE
   // ============================================
@@ -32,12 +33,13 @@ export const useOrderStore = defineStore('order', () => {
   )
 
   // ============================================
-  // AUTO-SAVE WATCHER
+  // AUTO-SAVE KE LOCALSTORAGE
+  // Simpan max 50 order terakhir
   // ============================================
   watch(
     () => orderHistory.value,
     (newHistory) => {
-      const historyToSave = newHistory.slice(0, 50) // Save max 50 orders
+      const historyToSave = newHistory.slice(0, 50)
       localStorage.setItem('feepay_order_history', JSON.stringify(historyToSave))
     },
     { deep: true }
@@ -46,7 +48,11 @@ export const useOrderStore = defineStore('order', () => {
   // ============================================
   // ACTIONS
   // ============================================
-  
+
+  /**
+   * Buat order baru ke backend
+   * Return: data order dari backend (termasuk order_id)
+   */
   async function createOrder(orderData) {
     loading.value = true
     error.value = null
@@ -54,17 +60,13 @@ export const useOrderStore = defineStore('order', () => {
     try {
       const order = await api.orders.create(orderData)
       
-      // Set current order
       currentOrder.value = order
       localStorage.setItem('feepay_current_order', JSON.stringify(order))
       
-      // Add to history
       const exists = orderHistory.value.find(o => o.order_id === order.order_id)
       if (!exists) {
         orderHistory.value.unshift(order)
       }
-      
-      console.log('✅ Order created and saved to history:', order.order_id)
       
       return order
     } catch (err) {
@@ -75,6 +77,13 @@ export const useOrderStore = defineStore('order', () => {
     }
   }
 
+  /**
+   * Submit bukti pembayaran (manual transfer)
+   * 
+   * ✅ FIX: Status TIDAK lagi di-update manual di frontend
+   * Status hanya diupdate dari response API backend
+   * Kenapa? Supaya status selalu sinkron dengan database
+   */
   async function submitPayment(orderId, paymentData) {
     loading.value = true
     error.value = null
@@ -82,17 +91,8 @@ export const useOrderStore = defineStore('order', () => {
     try {
       const response = await api.payments.submit(paymentData)
       
-      // Update order status in history
-      const orderIndex = orderHistory.value.findIndex(o => o.order_id === orderId)
-      if (orderIndex !== -1) {
-        orderHistory.value[orderIndex].status = 'processing'
-      }
-      
-      // Update current order
-      if (currentOrder.value?.order_id === orderId) {
-        currentOrder.value.status = 'processing'
-        localStorage.setItem('feepay_current_order', JSON.stringify(currentOrder.value))
-      }
+      // ✅ FIX: Fetch status terbaru dari backend (jangan asumsi sendiri)
+      await getOrderById(orderId)
       
       return response
     } catch (err) {
@@ -103,6 +103,10 @@ export const useOrderStore = defineStore('order', () => {
     }
   }
 
+  /**
+   * Ambil data order dari backend berdasarkan orderId
+   * Otomatis update orderHistory dan currentOrder
+   */
   async function getOrderById(orderId) {
     loading.value = true
     error.value = null
@@ -110,7 +114,6 @@ export const useOrderStore = defineStore('order', () => {
     try {
       const order = await api.orders.get(orderId)
       
-      // Update or add to history
       const index = orderHistory.value.findIndex(o => o.order_id === orderId)
       if (index !== -1) {
         orderHistory.value[index] = order
@@ -118,7 +121,6 @@ export const useOrderStore = defineStore('order', () => {
         orderHistory.value.unshift(order)
       }
       
-      // Update current order if match
       if (currentOrder.value?.order_id === orderId) {
         currentOrder.value = order
         localStorage.setItem('feepay_current_order', JSON.stringify(order))
@@ -133,6 +135,10 @@ export const useOrderStore = defineStore('order', () => {
     }
   }
 
+  /**
+   * Cek status order terbaru dari backend
+   * Return: string status ('pending' | 'processing' | 'success' | 'failed')
+   */
   async function checkOrderStatus(orderId) {
     try {
       const order = await getOrderById(orderId)
@@ -143,21 +149,19 @@ export const useOrderStore = defineStore('order', () => {
     }
   }
 
+  /**
+   * Update status order secara manual (hanya dari response backend)
+   * Dipakai di PaymentSuccessView saat polling
+   */
   function updateOrderStatus(orderId, status) {
-    console.log('📝 Updating order status:', orderId, status)
-    
-    // Update in history
     const index = orderHistory.value.findIndex(o => o.order_id === orderId)
     if (index !== -1) {
       orderHistory.value[index].status = status
-      console.log('✅ Order status updated in history')
     }
     
-    // Update current order
     if (currentOrder.value?.order_id === orderId) {
       currentOrder.value.status = status
       localStorage.setItem('feepay_current_order', JSON.stringify(currentOrder.value))
-      console.log('✅ Current order status updated')
     }
   }
 
@@ -171,9 +175,7 @@ export const useOrderStore = defineStore('order', () => {
     if (saved) {
       try {
         currentOrder.value = JSON.parse(saved)
-        console.log('✅ Current order restored:', currentOrder.value.order_id)
       } catch (err) {
-        console.error('Failed to restore order:', err)
         localStorage.removeItem('feepay_current_order')
       }
     }
@@ -181,15 +183,10 @@ export const useOrderStore = defineStore('order', () => {
 
   function addToHistory(order) {
     const index = orderHistory.value.findIndex(o => o.order_id === order.order_id)
-    
     if (index !== -1) {
-      // Update existing
       orderHistory.value[index] = { ...orderHistory.value[index], ...order }
-      console.log('✅ Order updated in history:', order.order_id)
     } else {
-      // Add new
       orderHistory.value.unshift(order)
-      console.log('✅ Order added to history:', order.order_id)
     }
   }
 
@@ -198,9 +195,7 @@ export const useOrderStore = defineStore('order', () => {
     if (saved) {
       try {
         orderHistory.value = JSON.parse(saved)
-        console.log('✅ Order history restored:', orderHistory.value.length, 'orders')
       } catch (err) {
-        console.error('Failed to restore history:', err)
         localStorage.removeItem('feepay_order_history')
       }
     }
@@ -209,29 +204,21 @@ export const useOrderStore = defineStore('order', () => {
   function clearHistory() {
     orderHistory.value = []
     localStorage.removeItem('feepay_order_history')
-    console.log('🗑️ Order history cleared')
   }
 
-  // ============================================
-  // AUTO-RESTORE ON INIT
-  // ============================================
+  // Auto-restore saat store diinisialisasi
   restoreCurrentOrder()
   restoreHistory()
 
   return {
-    // State
     currentOrder,
     orderHistory,
     loading,
     error,
-    
-    // Getters
     hasCurrentOrder,
     pendingOrders,
     processingOrders,
     completedOrders,
-    
-    // Actions
     createOrder,
     submitPayment,
     getOrderById,
