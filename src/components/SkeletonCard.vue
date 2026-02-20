@@ -1,37 +1,20 @@
 <template>
-  <div class="animate-pulse">
-    <slot></slot>
+  <div class="animate-pulse bg-card border border-border rounded-xl p-4 space-y-3">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+      <div class="h-4 w-24 bg-muted rounded-lg" />
+      <div class="h-6 w-16 bg-muted rounded-full" />
+    </div>
+
+    <!-- Content -->
+    <div class="space-y-2">
+      <div class="h-3 w-full bg-muted rounded-lg" />
+      <div class="h-3 w-3/4 bg-muted rounded-lg" />
+    </div>
+
+    <!-- Footer -->
+    <div class="pt-2 border-t border-border">
+      <div class="h-4 w-20 bg-muted rounded-lg" />
+    </div>
   </div>
 </template>
-
-<style scoped>
-@keyframes shimmer {
-  0% {
-    background-position: -1000px 0;
-  }
-  100% {
-    background-position: 1000px 0;
-  }
-}
-
-.animate-pulse {
-  animation: shimmer 2s infinite linear;
-  background: linear-gradient(
-    90deg,
-    #f0f0f0 0%,
-    #f8f8f8 50%,
-    #f0f0f0 100%
-  );
-  background-size: 1000px 100%;
-}
-
-:global(.dark) .animate-pulse {
-  background: linear-gradient(
-    90deg,
-    #1a1a1a 0%,
-    #2a2a2a 50%,
-    #1a1a1a 100%
-  );
-  background-size: 1000px 100%;
-}
-</style>

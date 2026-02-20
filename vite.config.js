@@ -7,8 +7,17 @@ export default defineConfig({
   plugins: [vue()],
   resolve: {
     alias: {
-      // Mengarahkan simbol '@' ke folder 'src' secara absolut
       '@': path.resolve(__dirname, './src'),
     },
   },
+  // ✅ FIX L-03: Hapus semua console.log & debugger saat build production
+  // Di development tetap muncul normal
+  build: {
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      }
+    }
+  }
 })

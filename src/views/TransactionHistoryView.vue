@@ -1,13 +1,13 @@
 <template>
-  <div class="min-h-screen bg-stone-50 dark:bg-dark-950 py-8">
+  <div class="min-h-screen bg-background py-8">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
       
       <!-- Header -->
       <div class="mb-6">
-        <h1 class="text-3xl font-bold text-dark-950 dark:text-white mb-2">
+        <h1 class="text-3xl font-bold text-foreground mb-2">
           Riwayat Transaksi
         </h1>
-        <p class="text-sm text-dark-600 dark:text-dark-400">
+        <p class="text-sm text-muted-foreground">
           Pantau status pesanan Anda
         </p>
       </div>
@@ -15,17 +15,17 @@
       <!-- Search Bar -->
       <div class="mb-6">
         <div class="relative">
-          <Search class="absolute left-4 top-1/2 -translate-y-1/2 text-dark-400" :size="20" />
+          <Search class="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" :size="20" />
           <input 
             v-model="searchQuery"
             type="text"
             placeholder="Cari order ID, produk, atau nomor..."
-            class="w-full h-12 pl-12 pr-4 bg-white dark:bg-dark-900 border-2 border-border rounded-xl text-dark-950 dark:text-white font-medium outline-none focus:border-primary-600 transition-colors"
+            class="w-full h-12 pl-12 pr-4 bg-card border-2 border-border rounded-xl text-foreground font-medium outline-none focus:border-primary transition-colors"
           />
           <button 
             v-if="searchQuery"
             @click="searchQuery = ''"
-            class="absolute right-4 top-1/2 -translate-y-1/2 text-dark-400 hover:text-dark-950 dark:hover:text-white"
+            class="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
           >
             <X :size="18" />
           </button>
@@ -34,15 +34,15 @@
 
       <!-- Filter Tabs -->
       <div class="mb-6 overflow-x-auto">
-        <div class="inline-flex bg-white dark:bg-dark-900 p-1 rounded-xl border border-border shadow-sm">
+        <div class="inline-flex bg-card p-1 rounded-xl border border-border shadow-sm">
           <button 
             v-for="filter in filters" 
             :key="filter.value"
             @click="activeFilter = filter.value"
             class="px-4 py-2 text-sm font-semibold rounded-lg transition-all whitespace-nowrap"
             :class="activeFilter === filter.value 
-              ? 'bg-primary-600 text-white shadow-sm' 
-              : 'text-dark-600 dark:text-dark-400 hover:bg-dark-50 dark:hover:bg-dark-800'"
+              ? 'bg-primary text-primary-foreground shadow-sm' 
+              : 'text-muted-foreground hover:bg-muted'"
           >
             {{ filter.label }}
             <span 
@@ -50,7 +50,7 @@
               class="ml-1.5 px-1.5 py-0.5 text-xs rounded-full"
               :class="activeFilter === filter.value 
                 ? 'bg-white/20' 
-                : 'bg-dark-100 dark:bg-dark-800'"
+                : 'bg-muted'"
             >
               {{ filter.count }}
             </span>
@@ -65,17 +65,17 @@
 
       <!-- Empty State -->
       <div v-else-if="filteredOrders.length === 0" class="text-center py-16">
-        <Package class="mx-auto mb-4 text-dark-300 dark:text-dark-700" :size="64" />
-        <h3 class="text-lg font-semibold text-dark-950 dark:text-white mb-2">
+        <Package class="mx-auto mb-4 text-muted-foreground" :size="64" />
+        <h3 class="text-lg font-semibold text-foreground mb-2">
           {{ searchQuery ? 'Tidak ada hasil' : (activeFilter === 'all' ? 'Belum ada transaksi' : 'Tidak ada transaksi ' + activeFilterLabel) }}
         </h3>
-        <p class="text-sm text-dark-600 dark:text-dark-400 mb-6">
+        <p class="text-sm text-muted-foreground mb-6">
           {{ searchQuery ? 'Coba kata kunci lain' : 'Mulai berbelanja untuk melihat riwayat transaksi' }}
         </p>
         <button 
           v-if="!searchQuery"
           @click="$router.push('/')"
-          class="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-semibold transition-colors"
+          class="inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-hover text-primary-foreground rounded-lg font-semibold transition-colors"
         >
           <ShoppingBag :size="18" />
           Belanja Sekarang
@@ -86,36 +86,36 @@
         <div 
           v-for="order in filteredOrders" 
           :key="order.order_id"
-          class="bg-white dark:bg-dark-900 rounded-xl p-6 border border-border hover:border-primary-600 dark:hover:border-primary-600 transition-all cursor-pointer group"
+          class="bg-card rounded-xl p-6 border border-border hover:border-primary transition-all cursor-pointer group"
           @click="viewOrderDetail(order)"
         >
           <!-- Order Header -->
           <div class="flex items-start justify-between mb-4">
             <div class="flex-1">
               <div class="flex items-center gap-2 mb-2">
-                <span class="text-xs font-semibold text-dark-500 dark:text-dark-400">
+                <span class="text-xs font-semibold text-muted-foreground">
                   {{ formatDate(order.created_at) }}
                 </span>
                 <StatusBadge :status="order.status" />
               </div>
-              <h3 class="font-bold text-lg text-dark-950 dark:text-white group-hover:text-primary-600 transition-colors">
+              <h3 class="font-bold text-lg text-foreground group-hover:text-primary transition-colors">
                 {{ order.product_name }}
               </h3>
             </div>
-            <ChevronRight class="text-dark-400 dark:text-dark-600 group-hover:text-primary-600 transition-colors flex-shrink-0" :size="20" />
+            <ChevronRight class="text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" :size="20" />
           </div>
 
           <!-- Order Details -->
           <div class="grid grid-cols-2 gap-4 pt-4 border-t border-border">
             <div>
-              <div class="text-xs text-dark-500 dark:text-dark-400 mb-1">Order ID</div>
-              <div class="font-mono text-sm font-semibold text-dark-950 dark:text-white">
+              <div class="text-xs text-muted-foreground mb-1">Order ID</div>
+              <div class="font-mono text-sm font-semibold text-foreground">
                 {{ order.order_id }}
               </div>
             </div>
             <div class="text-right">
-              <div class="text-xs text-dark-500 dark:text-dark-400 mb-1">Total</div>
-              <div class="text-lg font-bold text-primary-600 dark:text-primary-400">
+              <div class="text-xs text-muted-foreground mb-1">Total</div>
+              <div class="text-lg font-bold text-primary">
                 Rp {{ formatPrice(order.total_price) }}
               </div>
             </div>
@@ -125,14 +125,14 @@
           <div v-if="order.status === 'success' || order.status === 'failed'" class="mt-4 pt-4 border-t border-border flex gap-2">
             <button 
               @click.stop="repeatOrder(order)"
-              class="flex-1 px-4 py-2 bg-dark-100 dark:bg-dark-800 hover:bg-dark-200 dark:hover:bg-dark-700 text-dark-950 dark:text-white rounded-lg text-sm font-semibold transition-colors"
+              class="flex-1 px-4 py-2 bg-secondary hover:bg-secondary-hover text-secondary-foreground rounded-lg text-sm font-semibold transition-colors"
             >
               Pesan Lagi
             </button>
             <button 
               v-if="order.sn && order.status === 'success'"
               @click.stop="copySN(order.sn)"
-              class="px-4 py-2 bg-primary-50 dark:bg-primary-950/20 hover:bg-primary-100 dark:hover:bg-primary-950/40 text-primary-600 dark:text-primary-400 rounded-lg text-sm font-semibold transition-colors"
+              class="px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg text-sm font-semibold transition-colors"
             >
               Salin SN
             </button>
@@ -145,7 +145,7 @@
         <button 
           @click="refreshOrders"
           :disabled="refreshing"
-          class="inline-flex items-center gap-2 px-6 py-3 bg-white dark:bg-dark-900 border border-border hover:border-primary-600 text-dark-950 dark:text-white rounded-lg font-semibold transition-all disabled:opacity-50"
+          class="inline-flex items-center gap-2 px-6 py-3 bg-card border border-border hover:border-primary text-foreground rounded-lg font-semibold transition-all disabled:opacity-50"
         >
           <RefreshCw :class="{ 'animate-spin': refreshing }" :size="18" />
           {{ refreshing ? 'Memuat ulang...' : 'Muat Ulang' }}
@@ -161,48 +161,48 @@
           <div class="fixed inset-0 bg-black/70 backdrop-blur-sm"></div>
           <div class="flex min-h-full items-center justify-center p-4">
             <div 
-              class="relative bg-white dark:bg-dark-950 rounded-2xl shadow-2xl max-w-md w-full p-8 border border-border"
+              class="relative bg-card rounded-2xl shadow-2xl max-w-md w-full p-8 border border-border"
               @click.stop
             >
               <button 
                 @click="selectedOrder = null"
-                class="absolute top-6 right-6 p-2 rounded-lg text-dark-400 hover:text-primary-600 transition-all"
+                class="absolute top-6 right-6 p-2 rounded-lg text-muted-foreground hover:text-primary transition-all"
               >
                 <X :size="20" />
               </button>
 
-              <h2 class="text-2xl font-bold text-dark-950 dark:text-white mb-6">
+              <h2 class="text-2xl font-bold text-foreground mb-6">
                 Detail Pesanan
               </h2>
 
               <div class="space-y-4">
                 <div>
-                  <div class="text-xs font-semibold text-dark-500 dark:text-dark-400 mb-1">Status</div>
+                  <div class="text-xs font-semibold text-muted-foreground mb-1">Status</div>
                   <StatusBadge :status="selectedOrder.status" />
                 </div>
 
                 <div>
-                  <div class="text-xs font-semibold text-dark-500 dark:text-dark-400 mb-1">Produk</div>
-                  <div class="font-bold text-dark-950 dark:text-white">{{ selectedOrder.product_name }}</div>
+                  <div class="text-xs font-semibold text-muted-foreground mb-1">Produk</div>
+                  <div class="font-bold text-foreground">{{ selectedOrder.product_name }}</div>
                 </div>
 
                 <div>
-                  <div class="text-xs font-semibold text-dark-500 dark:text-dark-400 mb-1">Nomor Tujuan</div>
-                  <div class="font-mono text-dark-950 dark:text-white">{{ selectedOrder.target_number }}</div>
+                  <div class="text-xs font-semibold text-muted-foreground mb-1">Nomor Tujuan</div>
+                  <div class="font-mono text-foreground">{{ selectedOrder.target_number }}</div>
                 </div>
 
                 <div>
-                  <div class="text-xs font-semibold text-dark-500 dark:text-dark-400 mb-1">Order ID</div>
-                  <div class="font-mono text-sm text-dark-950 dark:text-white">{{ selectedOrder.order_id }}</div>
+                  <div class="text-xs font-semibold text-muted-foreground mb-1">Order ID</div>
+                  <div class="font-mono text-sm text-foreground">{{ selectedOrder.order_id }}</div>
                 </div>
 
                 <div v-if="selectedOrder.sn">
-                  <div class="text-xs font-semibold text-dark-500 dark:text-dark-400 mb-1">Serial Number (SN)</div>
+                  <div class="text-xs font-semibold text-muted-foreground mb-1">Serial Number (SN)</div>
                   <div class="flex items-center gap-2">
-                    <div class="font-mono text-sm text-dark-950 dark:text-white flex-1">{{ selectedOrder.sn }}</div>
+                    <div class="font-mono text-sm text-foreground flex-1">{{ selectedOrder.sn }}</div>
                     <button 
                       @click="copySN(selectedOrder.sn)"
-                      class="px-3 py-1 bg-primary-600 hover:bg-primary-700 text-white rounded text-xs font-semibold transition-colors"
+                      class="px-3 py-1 bg-primary hover:bg-primary-hover text-primary-foreground rounded text-xs font-semibold transition-colors"
                     >
                       Salin
                     </button>
@@ -211,8 +211,8 @@
 
                 <div class="pt-4 border-t border-border">
                   <div class="flex justify-between items-end">
-                    <div class="text-xs font-semibold text-dark-500 dark:text-dark-400">Total Pembayaran</div>
-                    <div class="text-2xl font-bold text-primary-600 dark:text-primary-400">
+                    <div class="text-xs font-semibold text-muted-foreground">Total Pembayaran</div>
+                    <div class="text-2xl font-bold text-primary">
                       Rp {{ formatPrice(selectedOrder.total_price) }}
                     </div>
                   </div>
@@ -221,7 +221,7 @@
 
               <button 
                 @click="selectedOrder = null"
-                class="mt-6 w-full px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-semibold transition-colors"
+                class="mt-6 w-full px-6 py-3 bg-primary hover:bg-primary-hover text-primary-foreground rounded-lg font-semibold transition-colors"
               >
                 Tutup
               </button>
@@ -233,10 +233,10 @@
 
     <!-- Toast -->
     <transition name="toast">
-      <div v-if="showToast" class="fixed bottom-4 right-4 bg-white dark:bg-dark-900 border border-primary-600 rounded-xl shadow-lg p-4 z-50 max-w-sm">
+      <div v-if="showToast" class="fixed bottom-4 right-4 bg-card border border-primary rounded-xl shadow-lg p-4 z-50 max-w-sm">
         <div class="flex items-center gap-2">
-          <Check class="text-primary-600 flex-shrink-0" :size="18" />
-          <span class="text-sm font-semibold text-dark-950 dark:text-white">{{ toastMessage }}</span>
+          <Check class="text-primary flex-shrink-0" :size="18" />
+          <span class="text-sm font-semibold text-foreground">{{ toastMessage }}</span>
         </div>
       </div>
     </transition>
@@ -262,6 +262,9 @@ const loading = ref(false)
 const showToast = ref(false)
 const toastMessage = ref('')
 const searchQuery = ref('')
+
+// Guard supaya sync tidak jalan dobel
+const isSyncing = ref(false)
 
 const filters = computed(() => [
   { value: 'all', label: 'Semua', count: orderStore.orderHistory.length },
@@ -325,36 +328,42 @@ const copySN = async (sn) => {
   }
 }
 
-/**
- * Sync semua order di localStorage dengan status terbaru dari backend.
- * Ini yang fix bug: status di riwayat tidak sesuai realita di database.
- */
 const syncOrdersFromBackend = async () => {
-  const history = orderStore.orderHistory
-  if (history.length === 0) return
+  // Cegah double call
+  if (isSyncing.value) return
+  isSyncing.value = true
 
-  // Fetch status terbaru untuk setiap order yang belum final
-  // Order yang sudah success/failed tidak perlu di-sync lagi
-  const ordersToSync = history.filter(o => 
-    !['success', 'failed'].includes(o.status)
-  )
+  try {
+    const history = orderStore.orderHistory
+    if (history.length === 0) return
 
-  await Promise.allSettled(
-    ordersToSync.map(async (order) => {
-      try {
-        const latest = await api.orders.get(order.order_id)
-        orderStore.addToHistory(latest) // update di store & localStorage
-      } catch {
-        // Kalau gagal fetch satu order, lanjut yang lain
-      }
-    })
-  )
+    const ordersToSync = history.filter(o => 
+      !['success', 'failed'].includes(o.status)
+    )
+
+    if (ordersToSync.length === 0) return
+
+    await Promise.allSettled(
+      ordersToSync.map(async (order) => {
+        try {
+          // Kirim customer_email untuk verifikasi kepemilikan
+          const latest = await api.orders.get(order.order_id, order.customer_email)
+          orderStore.addToHistory(latest)
+        } catch (err) {
+          // FIX: Kalau 404, order sudah tidak ada di backend → hapus dari localStorage
+          const status = err?.status || err?.response?.status
+          if (status === 404) {
+            orderStore.removeFromHistory(order.order_id)
+          }
+          // Error lain (422, 500, dll) dibiarkan, order tetap di history
+        }
+      })
+    )
+  } finally {
+    isSyncing.value = false
+  }
 }
 
-/**
- * Tombol "Muat Ulang" - sync semua order dari backend
- * Fix: sebelumnya hanya baca localStorage, sekarang fetch ke backend
- */
 const refreshOrders = async () => {
   refreshing.value = true
   try {
@@ -370,11 +379,7 @@ const refreshOrders = async () => {
 }
 
 onMounted(async () => {
-  // Restore dari localStorage dulu biar tampil cepat
-  orderStore.restoreHistory()
-
-  // Lalu sync status terbaru dari backend di background
-  // Fix: sebelumnya tidak ada sync ke backend sama sekali
+  // Tidak perlu restoreHistory() di sini karena store sudah auto-restore saat init
   loading.value = true
   try {
     await syncOrdersFromBackend()

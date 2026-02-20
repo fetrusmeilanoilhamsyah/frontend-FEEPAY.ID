@@ -1,25 +1,19 @@
 <template>
-  <div 
+  <span 
     v-if="operator"
-    class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-bold"
-    :class="badgeClasses"
+    class="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-bold border"
+    :class="operatorConfig.className"
   >
-    <img 
-      v-if="operatorLogo && !logoError"
-      :src="operatorLogo" 
-      :alt="operator"
-      class="w-3.5 h-3.5 object-contain"
-      @error="handleLogoError"
+    <!-- ✅ Tambah logo dari public/logos/operators/ -->
+    <img
+      v-if="showLogo"
+      :src="`/logos/operators/${operatorKey}.png`"
+      :alt="operatorConfig.label"
+      class="w-4 h-4 object-contain"
+      @error="showLogo = false"
     />
-
-    <span 
-      v-else
-      class="w-1.5 h-1.5 rounded-full" 
-      :class="dotClasses"
-    ></span>
-    
-    {{ operator }}
-  </div>
+    {{ operatorConfig.label }}
+  </span>
 </template>
 
 <script setup>
@@ -29,84 +23,66 @@ const props = defineProps({
   operator: {
     type: String,
     default: null
+  },
+  size: {
+    type: String,
+    default: 'md',
+    validator: (val) => ['sm', 'md'].includes(val)
   }
 })
 
-const logoError = ref(false)
+const showLogo = ref(true)
 
-const operatorLogos = {
-  'telkomsel': '/logos/operators/telkomsel.png',
-  'indosat': '/logos/operators/indosat.png',
-  'xl': '/logos/operators/xl.png',
-  'axis': '/logos/operators/axis.png',
-  'smartfren': '/logos/operators/smartfren.png',
-  'by.u': '/logos/operators/byu.png',
-  'three': '/logos/operators/three.png'
+// Mapping key ke nama file logo (untuk kasus nama file berbeda dari key)
+const logoFilenames = {
+  'by.u': 'byu', // file di folder: byu.png, bukan by.u.png
 }
 
-const operatorColors = {
+const operatorKey = computed(() => {
+  const key = props.operator?.toLowerCase()
+  return logoFilenames[key] || key
+})
+
+const operatorConfigs = {
   'telkomsel': {
-    bg: 'bg-gradient-to-br from-red-50 to-red-100 dark:from-red-950/30 dark:to-red-900/20',
-    text: 'text-red-700 dark:text-red-400',
-    dot: 'bg-red-600',
-    border: 'border border-red-200 dark:border-red-800/50'
+    label: 'Telkomsel',
+    className: 'bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-400 dark:border-red-800'
   },
   'indosat': {
-    bg: 'bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-950/30 dark:to-amber-900/20',
-    text: 'text-amber-700 dark:text-amber-400',
-    dot: 'bg-amber-600',
-    border: 'border border-amber-200 dark:border-amber-800/50'
+    label: 'Indosat',
+    className: 'bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-950/30 dark:text-yellow-400 dark:border-yellow-800'
   },
   'xl': {
-    bg: 'bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/30 dark:to-blue-900/20',
-    text: 'text-blue-700 dark:text-blue-400',
-    dot: 'bg-blue-600',
-    border: 'border border-blue-200 dark:border-blue-800/50'
+    label: 'XL',
+    className: 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800'
   },
   'axis': {
-    bg: 'bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950/30 dark:to-purple-900/20',
-    text: 'text-purple-700 dark:text-purple-400',
-    dot: 'bg-purple-600',
-    border: 'border border-purple-200 dark:border-purple-800/50'
+    label: 'AXIS',
+    className: 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950/30 dark:text-purple-400 dark:border-purple-800'
   },
-  'smartfren': {
-    bg: 'bg-gradient-to-br from-pink-50 to-pink-100 dark:from-pink-950/30 dark:to-pink-900/20',
-    text: 'text-pink-700 dark:text-pink-400',
-    dot: 'bg-pink-600',
-    border: 'border border-pink-200 dark:border-pink-800/50'
-  },
-  'by.u': {
-    bg: 'bg-gradient-to-br from-cyan-50 to-cyan-100 dark:from-cyan-950/30 dark:to-cyan-900/20',
-    text: 'text-cyan-700 dark:text-cyan-400',
-    dot: 'bg-cyan-600',
-    border: 'border border-cyan-200 dark:border-cyan-800/50'
+  'tri': {
+    label: 'Tri',
+    className: 'bg-pink-50 text-pink-700 border-pink-200 dark:bg-pink-950/30 dark:text-pink-400 dark:border-pink-800'
   },
   'three': {
-    bg: 'bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950/30 dark:to-orange-900/20',
-    text: 'text-orange-700 dark:text-orange-400',
-    dot: 'bg-orange-600',
-    border: 'border border-orange-200 dark:border-orange-800/50'
+    label: 'Three',
+    className: 'bg-pink-50 text-pink-700 border-pink-200 dark:bg-pink-950/30 dark:text-pink-400 dark:border-pink-800'
+  },
+  'smartfren': {
+    label: 'Smartfren',
+    className: 'bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-950/30 dark:text-orange-400 dark:border-orange-800'
+  },
+  'by.u': {
+    label: 'by.U',
+    className: 'bg-cyan-50 text-cyan-700 border-cyan-200 dark:bg-cyan-950/30 dark:text-cyan-400 dark:border-cyan-800'
   }
 }
 
-const operatorKey = computed(() => props.operator?.toLowerCase() || null)
-
-const operatorLogo = computed(() => operatorLogos[operatorKey.value] || null)
-
-const badgeClasses = computed(() => {
-  const colors = operatorColors[operatorKey.value] || {
-    bg: 'bg-gray-100 dark:bg-gray-800',
-    text: 'text-gray-700 dark:text-gray-300',
-    border: 'border border-gray-200 dark:border-gray-700'
+const operatorConfig = computed(() => {
+  const key = props.operator?.toLowerCase()
+  return operatorConfigs[key] || {
+    label: props.operator || 'Unknown',
+    className: 'bg-neutral-100 text-neutral-700 border-neutral-200 dark:bg-neutral-800 dark:text-neutral-400 dark:border-neutral-700'
   }
-  return `${colors.bg} ${colors.text} ${colors.border}`
 })
-
-const dotClasses = computed(() => {
-  return (operatorColors[operatorKey.value] || { dot: 'bg-gray-500' }).dot
-})
-
-const handleLogoError = () => {
-  logoError.value = true
-}
 </script>

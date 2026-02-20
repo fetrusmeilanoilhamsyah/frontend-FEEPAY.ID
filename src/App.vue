@@ -1,23 +1,21 @@
 <template>
   <div class="min-h-screen transition-colors duration-300 relative">
 
-   <!-- Background blur decorations -->
-<div class="fixed inset-0 pointer-events-none overflow-hidden">
-  <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/3 dark:bg-white/[0.01] rounded-full blur-[120px] transform translate-x-1/2 -translate-y-1/2"></div>
-  <div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-cyan-500/3 dark:bg-white/[0.01] rounded-full blur-[100px] transform -translate-x-1/2 translate-y-1/2"></div>
-</div>
+    <!-- Background blur decorations -->
+    <div class="fixed inset-0 pointer-events-none overflow-hidden">
+      <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-primary-500/5 dark:bg-primary-500/[0.02] rounded-full blur-[120px] transform translate-x-1/2 -translate-y-1/2"></div>
+      <div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-accent-500/5 dark:bg-accent-500/[0.02] rounded-full blur-[100px] transform -translate-x-1/2 translate-y-1/2"></div>
+    </div>
 
     <!-- Top Navbar -->
-    <nav class="sticky top-0 z-50 backdrop-blur-xl bg-white/95 dark:bg-dark-950/95 border-b border-dark-200/50 dark:border-dark-700/50">
+    <nav class="sticky top-0 z-50 backdrop-blur-xl bg-background/95 border-b border-border">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-14">
 
           <!-- Logo -->
           <router-link to="/" class="flex items-center select-none">
-            <span class="text-xl font-black tracking-tight text-dark-950 dark:text-white">FEE</span>
-            <span class="text-xl font-black tracking-tight bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">PAY</span>
-            <span class="text-xl font-black tracking-tight text-dark-400 dark:text-dark-500">.</span>
-            <span class="text-xl font-black tracking-tight bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">ID</span>
+            <span class="text-xl font-black tracking-tight text-foreground">FEE</span>
+            <span class="text-xl font-black tracking-tight bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">PAY</span>
           </router-link>
 
           <!-- Desktop Nav -->
@@ -25,29 +23,29 @@
             <router-link to="/"
               class="px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-200"
               :class="$route.path === '/'
-                ? 'text-blue-500 bg-blue-50 dark:bg-blue-950/20'
-                : 'text-dark-600 dark:text-dark-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950/20'">
+                ? 'text-primary bg-primary-50 dark:bg-primary-950/20'
+                : 'text-muted-foreground hover:text-primary hover:bg-primary-50 dark:hover:bg-primary-950/20'">
               Beranda
             </router-link>
             <router-link to="/transactions"
               class="px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-200"
               :class="$route.path.startsWith('/transactions')
-                ? 'text-blue-500 bg-blue-50 dark:bg-blue-950/20'
-                : 'text-dark-600 dark:text-dark-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950/20'">
+                ? 'text-primary bg-primary-50 dark:bg-primary-950/20'
+                : 'text-muted-foreground hover:text-primary hover:bg-primary-50 dark:hover:bg-primary-950/20'">
               Riwayat
             </router-link>
             <router-link to="/profile"
               class="px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-200"
               :class="$route.path.startsWith('/profile')
-                ? 'text-blue-500 bg-blue-50 dark:bg-blue-950/20'
-                : 'text-dark-600 dark:text-dark-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950/20'">
+                ? 'text-primary bg-primary-50 dark:bg-primary-950/20'
+                : 'text-muted-foreground hover:text-primary hover:bg-primary-50 dark:hover:bg-primary-950/20'">
               Profil
             </router-link>
             <router-link v-if="isAuthenticated" to="/admin/dashboard"
               class="px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-200"
               :class="$route.path.startsWith('/admin')
-                ? 'text-blue-500 bg-blue-50 dark:bg-blue-950/20'
-                : 'text-dark-600 dark:text-dark-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950/20'">
+                ? 'text-primary bg-primary-50 dark:bg-primary-950/20'
+                : 'text-muted-foreground hover:text-primary hover:bg-primary-50 dark:hover:bg-primary-950/20'">
               Dashboard
             </router-link>
           </div>
@@ -55,7 +53,7 @@
           <div class="flex items-center gap-2">
             <!-- Theme Toggle -->
             <button @click="toggleTheme"
-              class="p-2.5 rounded-xl bg-dark-100 dark:bg-dark-800 text-dark-600 dark:text-dark-300 hover:bg-dark-200 dark:hover:bg-dark-700 transition-all duration-200 focus:outline-none active:scale-95"
+              class="p-2.5 rounded-xl bg-muted text-muted-foreground hover:bg-card-hover transition-all duration-200 focus:outline-none active:scale-95"
               aria-label="Toggle theme">
               <Sun v-if="isDark()" :size="18" />
               <Moon v-else :size="18" />
@@ -63,13 +61,13 @@
 
             <!-- Logout (desktop) -->
             <button v-if="isAuthenticated" @click="handleLogout"
-              class="hidden md:block px-4 py-2 text-sm font-semibold text-dark-600 dark:text-dark-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-lg transition-all duration-200">
+              class="hidden md:block px-4 py-2 text-sm font-semibold text-muted-foreground hover:text-error hover:bg-error-light rounded-lg transition-all duration-200">
               Logout
             </button>
 
             <!-- Hamburger (mobile) -->
             <button @click="mobileMenuOpen = !mobileMenuOpen"
-              class="md:hidden p-2.5 rounded-xl bg-dark-100 dark:bg-dark-800 text-dark-600 dark:text-dark-300 hover:bg-dark-200 dark:hover:bg-dark-700 transition-all active:scale-95">
+              class="md:hidden p-2.5 rounded-xl bg-muted text-muted-foreground hover:bg-card-hover transition-all active:scale-95">
               <Menu v-if="!mobileMenuOpen" :size="18" />
               <X v-else :size="18" />
             </button>
@@ -82,26 +80,26 @@
             <div class="flex flex-col gap-1">
               <router-link to="/" @click="mobileMenuOpen = false"
                 class="px-4 py-3 text-sm font-semibold rounded-lg transition-all duration-200 active:scale-[0.98]"
-                :class="$route.path === '/' ? 'text-blue-500 bg-blue-50 dark:bg-blue-950/20' : 'text-dark-700 dark:text-dark-300 hover:bg-dark-100 dark:hover:bg-dark-800'">
+                :class="$route.path === '/' ? 'text-primary bg-primary-50 dark:bg-primary-950/20' : 'text-foreground hover:bg-muted'">
                 Beranda
               </router-link>
               <router-link to="/transactions" @click="mobileMenuOpen = false"
                 class="px-4 py-3 text-sm font-semibold rounded-lg transition-all duration-200 active:scale-[0.98]"
-                :class="$route.path.startsWith('/transactions') ? 'text-blue-500 bg-blue-50 dark:bg-blue-950/20' : 'text-dark-700 dark:text-dark-300 hover:bg-dark-100 dark:hover:bg-dark-800'">
+                :class="$route.path.startsWith('/transactions') ? 'text-primary bg-primary-50 dark:bg-primary-950/20' : 'text-foreground hover:bg-muted'">
                 Riwayat Transaksi
               </router-link>
               <router-link to="/profile" @click="mobileMenuOpen = false"
                 class="px-4 py-3 text-sm font-semibold rounded-lg transition-all duration-200 active:scale-[0.98]"
-                :class="$route.path.startsWith('/profile') ? 'text-blue-500 bg-blue-50 dark:bg-blue-950/20' : 'text-dark-700 dark:text-dark-300 hover:bg-dark-100 dark:hover:bg-dark-800'">
+                :class="$route.path.startsWith('/profile') ? 'text-primary bg-primary-50 dark:bg-primary-950/20' : 'text-foreground hover:bg-muted'">
                 Profil
               </router-link>
               <router-link v-if="isAuthenticated" to="/admin/dashboard" @click="mobileMenuOpen = false"
                 class="px-4 py-3 text-sm font-semibold rounded-lg transition-all duration-200 active:scale-[0.98]"
-                :class="$route.path.startsWith('/admin') ? 'text-blue-500 bg-blue-50 dark:bg-blue-950/20' : 'text-dark-700 dark:text-dark-300 hover:bg-dark-100 dark:hover:bg-dark-800'">
+                :class="$route.path.startsWith('/admin') ? 'text-primary bg-primary-50 dark:bg-primary-950/20' : 'text-foreground hover:bg-muted'">
                 Dashboard Admin
               </router-link>
               <button v-if="isAuthenticated" @click="handleLogout"
-                class="px-4 py-3 text-sm font-semibold text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-lg transition-all duration-200 text-left active:scale-[0.98]">
+                class="px-4 py-3 text-sm font-semibold text-error hover:bg-error-light rounded-lg transition-all duration-200 text-left active:scale-[0.98]">
                 Logout
               </button>
             </div>
@@ -122,7 +120,7 @@
     <!-- Scroll to Top -->
     <transition name="fade">
       <button v-if="showScrollTop" @click="scrollToTop"
-        class="fixed z-40 p-3 rounded-full bg-gradient-to-r from-blue-500 to-cyan-400 text-white shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 focus:outline-none"
+        class="fixed z-40 p-3 rounded-full bg-gradient-to-r from-primary to-accent text-white shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 focus:outline-none"
         :class="isMobile ? 'bottom-24 right-4' : 'bottom-8 right-8'"
         aria-label="Scroll to top">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

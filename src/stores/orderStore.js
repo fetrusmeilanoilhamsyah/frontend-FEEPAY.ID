@@ -37,7 +37,7 @@ export const useOrderStore = defineStore('order', () => {
   // Simpan max 50 order terakhir
   // ============================================
   watch(
-    () => orderHistory.value,
+    orderHistory, // FIX: tanpa .value agar deep watch bekerja benar
     (newHistory) => {
       const historyToSave = newHistory.slice(0, 50)
       localStorage.setItem('feepay_order_history', JSON.stringify(historyToSave))
@@ -51,7 +51,6 @@ export const useOrderStore = defineStore('order', () => {
 
   /**
    * Buat order baru ke backend
-   * Return: data order dari backend (termasuk order_id)
    */
   async function createOrder(orderData) {
     loading.value = true
@@ -79,10 +78,6 @@ export const useOrderStore = defineStore('order', () => {
 
   /**
    * Submit bukti pembayaran (manual transfer)
-   * 
-   * ✅ FIX: Status TIDAK lagi di-update manual di frontend
-   * Status hanya diupdate dari response API backend
-   * Kenapa? Supaya status selalu sinkron dengan database
    */
   async function submitPayment(orderId, paymentData) {
     loading.value = true
@@ -91,8 +86,8 @@ export const useOrderStore = defineStore('order', () => {
     try {
       const response = await api.payments.submit(paymentData)
       
-      // ✅ FIX: Fetch status terbaru dari backend (jangan asumsi sendiri)
-      await getOrderById(orderId)
+      const email = currentOrder.value?.customer_email
+      await getOrderById(orderId, email)
       
       return response
     } catch (err) {
@@ -105,14 +100,16 @@ export const useOrderStore = defineStore('order', () => {
 
   /**
    * Ambil data order dari backend berdasarkan orderId
-   * Otomatis update orderHistory dan currentOrder
+   * FIX H-06: Wajib kirim email untuk verifikasi kepemilikan order
    */
-  async function getOrderById(orderId) {
+  async function getOrderById(orderId, email = null) {
     loading.value = true
     error.value = null
     
+    const verifyEmail = email || currentOrder.value?.customer_email
+
     try {
-      const order = await api.orders.get(orderId)
+      const order = await api.orders.get(orderId, verifyEmail)
       
       const index = orderHistory.value.findIndex(o => o.order_id === orderId)
       if (index !== -1) {
@@ -137,11 +134,11 @@ export const useOrderStore = defineStore('order', () => {
 
   /**
    * Cek status order terbaru dari backend
-   * Return: string status ('pending' | 'processing' | 'success' | 'failed')
    */
   async function checkOrderStatus(orderId) {
     try {
-      const order = await getOrderById(orderId)
+      const email = currentOrder.value?.customer_email
+      const order = await getOrderById(orderId, email)
       return order.status
     } catch (err) {
       console.error('Failed to check order status:', err)
@@ -151,7 +148,6 @@ export const useOrderStore = defineStore('order', () => {
 
   /**
    * Update status order secara manual (hanya dari response backend)
-   * Dipakai di PaymentSuccessView saat polling
    */
   function updateOrderStatus(orderId, status) {
     const index = orderHistory.value.findIndex(o => o.order_id === orderId)
@@ -188,6 +184,11 @@ export const useOrderStore = defineStore('order', () => {
     } else {
       orderHistory.value.unshift(order)
     }
+  }
+
+  // FIX: Hapus order dari localStorage kalau 404 di backend
+  function removeFromHistory(orderId) {
+    orderHistory.value = orderHistory.value.filter(o => o.order_id !== orderId)
   }
 
   function restoreHistory() {
@@ -227,6 +228,7 @@ export const useOrderStore = defineStore('order', () => {
     clearCurrentOrder,
     restoreCurrentOrder,
     addToHistory,
+    removeFromHistory, // FIX: export fungsi baru
     restoreHistory,
     clearHistory
   }

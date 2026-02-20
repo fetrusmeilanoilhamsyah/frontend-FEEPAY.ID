@@ -1,60 +1,52 @@
 <template>
-  <span
-    :class="badgeClasses"
-    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold transition-colors"
+  <span 
+    class="inline-flex items-center gap-1 px-2 py-1 rounded-md border font-medium text-xs"
+    :class="badgeConfig.className"
   >
-    <span class="w-1.5 h-1.5 rounded-full" :class="dotClass"></span>
-    {{ label }}
+    <component :is="badgeConfig.icon" :size="size === 'sm' ? 12 : 14" />
+    {{ badgeConfig.label }}
   </span>
 </template>
 
 <script setup>
 import { computed } from 'vue'
+import { CheckCircle2, Clock, XCircle, AlertCircle } from 'lucide-vue-next'
 
 const props = defineProps({
   status: {
     type: String,
     required: true,
-    // FIX: validator dihapus agar tidak crash saat backend kirim status tak terduga
-    // seperti 'cancelled', 'refunded', dll
+    validator: (val) => ['success', 'pending', 'failed', 'processing'].includes(val)
+  },
+  size: {
+    type: String,
+    default: 'md',
+    validator: (val) => ['sm', 'md'].includes(val)
   }
 })
 
-const badgeClasses = computed(() => {
-  const classes = {
-    pending:    'bg-yellow-50 text-yellow-700 border border-yellow-200 dark:bg-yellow-950/20 dark:text-yellow-400 dark:border-yellow-800',
-    processing: 'bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950/20 dark:text-blue-400 dark:border-blue-800',
-    success:    'bg-green-50 text-green-700 border border-green-200 dark:bg-green-950/20 dark:text-green-400 dark:border-green-800',
-    failed:     'bg-red-50 text-red-700 border border-red-200 dark:bg-red-950/20 dark:text-red-400 dark:border-red-800',
-    cancelled:  'bg-gray-50 text-gray-700 border border-gray-200 dark:bg-gray-950/20 dark:text-gray-400 dark:border-gray-800',
-    refunded:   'bg-purple-50 text-purple-700 border border-purple-200 dark:bg-purple-950/20 dark:text-purple-400 dark:border-purple-800',
-  }
-  // FIX: fallback ke 'pending' style kalau status tidak dikenal — tidak crash
-  return classes[props.status] ?? classes.pending
-})
+const config = {
+  success: {
+    label: 'Berhasil',
+    icon: CheckCircle2,
+    className: 'bg-success-light text-success border-success/20',
+  },
+  pending: {
+    label: 'Menunggu',
+    icon: Clock,
+    className: 'bg-warning-light text-warning border-warning/20',
+  },
+  failed: {
+    label: 'Gagal',
+    icon: XCircle,
+    className: 'bg-error-light text-error border-error/20',
+  },
+  processing: {
+    label: 'Diproses',
+    icon: AlertCircle,
+    className: 'bg-info-light text-info border-info/20',
+  },
+}
 
-const dotClass = computed(() => {
-  const classes = {
-    pending:    'bg-yellow-500 dark:bg-yellow-400',
-    processing: 'bg-blue-500 dark:bg-blue-400 animate-pulse',
-    success:    'bg-green-500 dark:bg-green-400',
-    failed:     'bg-red-500 dark:bg-red-400',
-    cancelled:  'bg-gray-500 dark:bg-gray-400',
-    refunded:   'bg-purple-500 dark:bg-purple-400',
-  }
-  return classes[props.status] ?? classes.pending
-})
-
-const label = computed(() => {
-  const labels = {
-    pending:    'Menunggu Verifikasi',
-    processing: 'Sedang Diproses',
-    success:    'Berhasil',
-    failed:     'Gagal',
-    cancelled:  'Dibatalkan',
-    refunded:   'Dikembalikan',
-  }
-  // FIX: fallback tampilkan status aslinya kalau tidak dikenal
-  return labels[props.status] ?? props.status
-})
+const badgeConfig = computed(() => config[props.status])
 </script>

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="product-card"
+    class="product-card group"
     @click="handleSelect"
     @keypress.enter="handleSelect"
     @keypress.space.prevent="handleSelect"
@@ -8,7 +8,7 @@
     role="button"
     :aria-label="`Order ${product.name}`"
   >
-    <!-- Badge Container (Tengah) -->
+    <!-- Badge Container -->
     <div class="badge-container">
       <OperatorBadge 
         v-if="isPulsaOrData"
@@ -30,10 +30,15 @@
       </div>
     </div>
 
+    <!-- Product Name -->
     <h3 class="product-name">
       {{ product.name }}
     </h3>
 
+    <!-- Divider -->
+    <div class="price-divider"></div>
+
+    <!-- Product Price -->
     <div class="product-price">
       Rp{{ formatPrice(product.selling_price) }}
     </div>
@@ -144,30 +149,21 @@ const handleSelect = () => {
   position: relative;
   display: flex;
   flex-direction: column;
-  min-height: 130px;
-  padding: 14px 12px;
-  background: white;
-  border: 1.5px solid rgb(229 231 235);
+  align-items: center;
+  min-height: 120px;
+  padding: 12px 10px 10px;
+  background: var(--card);
+  border: 1.5px solid var(--border);
   border-radius: 16px;
   cursor: pointer;
   transition: all 0.2s ease;
   overflow: hidden;
 }
 
-.dark .product-card {
-  background: rgb(15 20 25);
-  border-color: rgb(42 49 66);
-}
-
 .product-card:hover {
-  border-color: rgb(59 130 246);
+  border-color: var(--primary);
   transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(59, 130, 246, 0.12);
-}
-
-.dark .product-card:hover {
-  border-color: rgb(96 165 250);
-  box-shadow: 0 8px 16px rgba(96, 165, 250, 0.15);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.1);
 }
 
 .product-card:active {
@@ -177,50 +173,40 @@ const handleSelect = () => {
 .badge-container {
   display: flex;
   justify-content: center;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .product-logo-badge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 10px;
-  background: rgb(243 244 246);
+  padding: 3px 8px;
+  background: var(--muted);
   border-radius: 8px;
   font-size: 0.625rem;
   font-weight: 700;
-  color: rgb(55 65 81);
-}
-
-.dark .product-logo-badge {
-  background: rgb(31 41 55);
-  color: rgb(209 213 219);
+  color: var(--foreground);
 }
 
 .fallback-badge {
   display: inline-block;
-  padding: 4px 10px;
-  background: rgb(243 244 246);
+  padding: 3px 8px;
+  background: var(--muted);
   border-radius: 8px;
   font-size: 0.625rem;
   font-weight: 600;
   text-transform: uppercase;
-  color: rgb(107 114 128);
-}
-
-.dark .fallback-badge {
-  background: rgb(31 41 55);
-  color: rgb(156 163 175);
+  color: var(--muted-foreground);
 }
 
 .product-name {
-  font-size: 0.875rem;
-  font-weight: 700;
+  font-size: 0.8rem;
+  font-weight: 600;
   line-height: 1.3;
-  color: rgb(17 24 39);
+  color: var(--foreground);
   text-align: center;
-  margin: 0 0 auto 0;
-  padding: 0 4px;
+  flex: 1;
+  padding: 0 2px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -228,35 +214,35 @@ const handleSelect = () => {
   text-overflow: ellipsis;
 }
 
-.dark .product-name {
-  color: rgb(243 244 246);
+/* FIX: garis pemisah tipis antara nama dan harga */
+.price-divider {
+  width: 100%;
+  height: 1px;
+  background: var(--border);
+  margin: 8px 0 6px;
 }
 
 .product-price {
-  font-size: 1.125rem;
+  font-size: 0.9375rem;
   font-weight: 800;
-  color: rgb(59 130 246);
-  letter-spacing: -0.025em;
-  margin-top: 10px;
+  color: var(--primary);
+  letter-spacing: -0.02em;
   text-align: center;
-}
-
-.dark .product-price {
-  color: rgb(96 165 250);
+  width: 100%;
 }
 
 @media (min-width: 640px) {
   .product-card {
-    min-height: 140px;
-    padding: 16px 14px;
+    min-height: 130px;
+    padding: 14px 12px 12px;
   }
 
   .product-name {
-    font-size: 0.9375rem;
+    font-size: 0.875rem;
   }
 
   .product-price {
-    font-size: 1.25rem;
+    font-size: 1rem;
   }
 }
 </style>

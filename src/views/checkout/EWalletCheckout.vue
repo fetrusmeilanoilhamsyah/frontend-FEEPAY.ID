@@ -1,21 +1,22 @@
 <template>
   <div class="e-wallet-wrapper">
     <div class="min-h-screen bg-background pb-20">
-      <div class="sticky top-0 z-40 bg-white dark:bg-dark-900 border-b border-border">
+      <!-- Header -->
+      <div class="sticky top-0 z-40 bg-card border-b border-border">
         <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
               <button 
                 @click="$router.back()"
-                class="p-2 hover:bg-dark-100 dark:hover:bg-dark-800 rounded-lg transition-colors"
+                class="p-2 hover:bg-muted rounded-lg transition-colors"
               >
-                <ArrowLeft :size="20" class="text-dark-700 dark:text-dark-300" />
+                <ArrowLeft :size="20" class="text-foreground" />
               </button>
               <div>
-                <h1 class="text-lg sm:text-xl font-bold text-dark-950 dark:text-white">
+                <h1 class="text-lg sm:text-xl font-bold text-foreground">
                   Top Up E-Wallet
                 </h1>
-                <p class="text-xs text-dark-500 dark:text-dark-400">
+                <p class="text-xs text-muted-foreground">
                   Isi saldo GoPay, OVO, DANA, dll
                 </p>
               </div>
@@ -26,38 +27,41 @@
 
       <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
         
+        <!-- Wallet Selector -->
         <WalletSelector 
           v-model="selectedWallet"
           :wallets="availableWallets"
           class="mb-6"
         />
 
+        <!-- Phone Input -->
         <div v-if="selectedWallet" class="mb-6">
-          <label class="block text-sm font-semibold mb-2 text-dark-700 dark:text-dark-300">
+          <label class="block text-sm font-semibold mb-2 text-foreground">
             Nomor HP / Email
           </label>
           
           <div class="relative">
             <div class="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
-              <Smartphone :size="18" class="text-dark-400" />
-              <span class="text-sm font-medium text-dark-600 dark:text-dark-400">+62</span>
+              <Smartphone :size="18" class="text-muted-foreground" />
+              <span class="text-sm font-medium text-muted-foreground">+62</span>
             </div>
             
             <input
               v-model="phoneNumber"
               type="text"
               placeholder="812-3456-7890"
-              class="w-full h-12 sm:h-14 pl-20 pr-4 bg-white dark:bg-dark-900 border-2 border-border rounded-xl text-base font-medium text-dark-950 dark:text-white placeholder:text-dark-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 dark:focus:ring-primary-950/20 outline-none transition-all"
+              class="w-full h-12 sm:h-14 pl-20 pr-4 bg-input border-2 border-border rounded-xl text-base font-medium text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none transition-all"
               maxlength="15"
               @input="handlePhoneInput"
             />
           </div>
 
-          <p class="mt-2 text-xs text-dark-500 dark:text-dark-400">
+          <p class="mt-2 text-xs text-muted-foreground">
             {{ walletHint }}
           </p>
         </div>
 
+        <!-- Recent Numbers -->
         <RecentNumbers 
           v-if="selectedWallet && recentNumbers.length > 0"
           :numbers="recentNumbers"
@@ -65,16 +69,18 @@
           class="mb-6"
         />
 
+        <!-- Loading Skeletons -->
         <div v-if="productStore.loading" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
           <SkeletonProductCard v-for="i in 8" :key="i" />
         </div>
 
+        <!-- Products -->
         <div v-else-if="filteredProducts.length > 0">
           <div class="mb-4 flex items-center justify-between">
-            <h2 class="text-base font-bold text-dark-950 dark:text-white">
+            <h2 class="text-base font-bold text-foreground">
               Pilih Nominal
             </h2>
-            <span class="text-xs text-dark-500 dark:text-dark-400 font-medium">
+            <span class="text-xs text-muted-foreground font-medium">
               {{ filteredProducts.length }} nominal tersedia
             </span>
           </div>
@@ -89,22 +95,24 @@
           </div>
         </div>
 
+        <!-- Empty State - No Wallet Selected -->
         <div v-else-if="!selectedWallet" class="text-center py-16">
-          <Wallet class="mx-auto mb-4 text-dark-300 dark:text-dark-700" :size="64" />
-          <h3 class="text-lg font-semibold text-dark-950 dark:text-white mb-2">
+          <Wallet class="mx-auto mb-4 text-muted-foreground" :size="64" />
+          <h3 class="text-lg font-semibold text-foreground mb-2">
             Pilih E-Wallet Terlebih Dahulu
           </h3>
-          <p class="text-sm text-dark-600 dark:text-dark-400">
+          <p class="text-sm text-muted-foreground">
             Pilih e-wallet dari daftar di atas untuk melanjutkan
           </p>
         </div>
 
+        <!-- Empty State - No Products -->
         <div v-else class="text-center py-16">
-          <Package class="mx-auto mb-4 text-dark-300 dark:text-dark-700" :size="64" />
-          <h3 class="text-lg font-semibold text-dark-950 dark:text-white mb-2">
+          <Package class="mx-auto mb-4 text-muted-foreground" :size="64" />
+          <h3 class="text-lg font-semibold text-foreground mb-2">
             Nominal Tidak Tersedia
           </h3>
-          <p class="text-sm text-dark-600 dark:text-dark-400">
+          <p class="text-sm text-muted-foreground">
             Belum ada nominal top up untuk {{ selectedWallet }}
           </p>
         </div>
@@ -112,6 +120,7 @@
       </div>
     </div>
 
+    <!-- Payment Modal -->
     <PaymentModal
       v-if="selectedProduct"
       :product="selectedProduct"

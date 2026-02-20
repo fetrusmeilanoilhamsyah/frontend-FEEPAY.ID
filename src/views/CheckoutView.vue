@@ -99,16 +99,12 @@
                   required
                 />
 
-                <div
+                <!-- ✅ FIX: Ganti inline operator display dengan komponen OperatorBadge -->
+                <OperatorBadge
                   v-if="detectedOperator"
-                  class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2 px-3 py-1 rounded-lg"
-                  :style="{ backgroundColor: detectedOperator.color + '15' }"
-                >
-                  <span class="text-xl">{{ detectedOperator.logo }}</span>
-                  <span class="text-xs font-bold" :style="{ color: detectedOperator.color }">
-                    {{ detectedOperator.name }}
-                  </span>
-                </div>
+                  :operator="detectedOperator.name"
+                  class="absolute right-3 top-1/2 -translate-y-1/2"
+                />
               </div>
 
               <p class="mt-1 text-xs text-dark-500 dark:text-dark-400">
@@ -175,6 +171,8 @@ import { ChevronLeft, Loader, AlertCircle, Info } from 'lucide-vue-next'
 import { useProductStore } from '@/stores/productStore'
 import { useOrderStore } from '@/stores/orderStore'
 import { useOperatorDetector } from '@/composables/useOperatorDetector'
+// ✅ FIX: Import komponen OperatorBadge
+import OperatorBadge from '@/components/OperatorBadge.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -192,7 +190,6 @@ const formData = ref({
   customer_email: ''
 })
 
-// Price filter UI — hanya untuk tampilan, tidak memfilter produk
 const priceFilters = [
   { label: 'Semua', min: 0, max: Infinity },
   { label: '5k-20k', min: 5000, max: 20000 },

@@ -3,12 +3,7 @@
     <div class="min-h-screen bg-background flex items-center justify-center p-4">
       <div class="max-w-md w-full">
 
-        <!-- 
-          ICON DINAMIS berdasarkan status order:
-          - success  → centang hijau
-          - failed   → silang merah
-          - lainnya  → loading spinner (masih processing)
-        -->
+        <!-- Icon Dinamis -->
         <div class="text-center mb-6">
           <div class="status-icon mx-auto mb-4">
 
@@ -22,47 +17,41 @@
               <X :size="48" class="text-white" />
             </div>
 
-            <!-- Still Processing Icon (polling aktif) -->
+            <!-- Still Processing Icon -->
             <div v-else class="processing-icon">
               <Loader :size="48" class="text-white animate-spin" />
             </div>
 
           </div>
 
-          <!-- 
-            JUDUL DINAMIS:
-            - success    → "Pembayaran Berhasil!"
-            - failed     → "Pembayaran Gagal"
-            - processing → "Sedang Diproses..."
-            - pending    → "Menunggu Verifikasi"
-          -->
-          <h1 class="text-2xl sm:text-3xl font-black text-dark-950 dark:text-white mb-2">
+          <!-- Judul Dinamis -->
+          <h1 class="text-2xl sm:text-3xl font-black text-foreground mb-2">
             {{ pageTitle }}
           </h1>
-          <p class="text-sm text-dark-600 dark:text-dark-400">
+          <p class="text-sm text-muted-foreground">
             {{ pageSubtitle }}
           </p>
 
-          <!-- Info polling aktif (tampil saat masih processing) -->
+          <!-- Info polling -->
           <div 
             v-if="isPolling" 
-            class="mt-3 inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 rounded-full"
+            class="mt-3 inline-flex items-center gap-2 px-3 py-1.5 bg-info-light border border-info/20 rounded-full"
           >
-            <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-            <span class="text-xs font-semibold text-blue-600 dark:text-blue-400">
+            <div class="w-2 h-2 bg-info rounded-full animate-pulse"></div>
+            <span class="text-xs font-semibold text-info">
               Auto-refresh setiap 5 detik...
             </span>
           </div>
         </div>
 
         <!-- Order Details Card -->
-        <div class="bg-white dark:bg-dark-900 rounded-2xl border border-border p-6 mb-4">
+        <div class="bg-card rounded-2xl border border-border p-6 mb-4">
           
           <!-- Loading skeleton -->
           <div v-if="loading" class="space-y-4">
-            <div class="h-4 bg-dark-100 dark:bg-dark-800 rounded animate-pulse"></div>
-            <div class="h-4 bg-dark-100 dark:bg-dark-800 rounded animate-pulse w-3/4"></div>
-            <div class="h-4 bg-dark-100 dark:bg-dark-800 rounded animate-pulse w-1/2"></div>
+            <div class="h-4 bg-muted rounded animate-pulse"></div>
+            <div class="h-4 bg-muted rounded animate-pulse w-3/4"></div>
+            <div class="h-4 bg-muted rounded animate-pulse w-1/2"></div>
           </div>
 
           <!-- Order Info -->
@@ -70,76 +59,69 @@
             
             <!-- Order ID -->
             <div class="flex items-center justify-between pb-4 border-b border-border">
-              <span class="text-sm text-dark-600 dark:text-dark-400">Order ID</span>
+              <span class="text-sm text-muted-foreground">Order ID</span>
               <div class="flex items-center gap-2">
-                <span class="text-sm font-bold text-dark-950 dark:text-white font-mono">
+                <span class="text-sm font-bold text-foreground font-mono">
                   {{ order.order_id }}
                 </span>
                 <button 
                   @click="copyOrderId"
-                  class="p-1.5 hover:bg-dark-100 dark:hover:bg-dark-800 rounded transition-colors"
+                  class="p-1.5 hover:bg-muted rounded transition-colors"
                 >
-                  <Copy :size="14" class="text-dark-500" />
+                  <Copy :size="14" class="text-muted-foreground" />
                 </button>
               </div>
             </div>
 
             <!-- Produk -->
             <div class="flex items-center justify-between">
-              <span class="text-sm text-dark-600 dark:text-dark-400">Produk</span>
-              <span class="text-sm font-semibold text-dark-950 dark:text-white text-right">
+              <span class="text-sm text-muted-foreground">Produk</span>
+              <span class="text-sm font-semibold text-foreground text-right">
                 {{ order.product_name }}
               </span>
             </div>
 
             <!-- Nomor Tujuan -->
             <div class="flex items-center justify-between">
-              <span class="text-sm text-dark-600 dark:text-dark-400">Nomor Tujuan</span>
-              <span class="text-sm font-semibold text-dark-950 dark:text-white">
+              <span class="text-sm text-muted-foreground">Nomor Tujuan</span>
+              <span class="text-sm font-semibold text-foreground font-mono">
                 {{ order.target_number }}
               </span>
             </div>
 
-            <!-- 
-              SERIAL NUMBER (hanya tampil kalau sudah ada SN dari Digiflazz)
-              SN = kode voucher, token listrik, dll
-              Muncul otomatis setelah Digiflazz callback + polling detect
-            -->
+            <!-- Serial Number -->
             <div 
               v-if="order.sn" 
-              class="p-4 bg-primary-50 dark:bg-primary-950/20 border border-primary-200 dark:border-primary-800 rounded-xl"
+              class="p-4 bg-success-light border border-success/20 rounded-xl"
             >
               <div class="flex items-start gap-3">
-                <Key :size="18" class="text-primary-600 dark:text-primary-400 flex-shrink-0 mt-0.5" />
+                <Key :size="18" class="text-success flex-shrink-0 mt-0.5" />
                 <div class="flex-1">
-                  <p class="text-xs font-semibold text-primary-700 dark:text-primary-300 mb-1">
+                  <p class="text-xs font-semibold text-success mb-1">
                     Serial Number / Kode Voucher
                   </p>
-                  <p class="text-sm font-mono font-bold text-primary-950 dark:text-primary-100 break-all">
+                  <p class="text-sm font-mono font-bold text-success break-all">
                     {{ order.sn }}
                   </p>
                 </div>
                 <button 
                   @click="copySN"
-                  class="p-2 hover:bg-primary-100 dark:hover:bg-primary-900/30 rounded-lg transition-colors"
+                  class="p-2 hover:bg-success/10 rounded-lg transition-colors"
                 >
-                  <Copy :size="16" class="text-primary-600 dark:text-primary-400" />
+                  <Copy :size="16" class="text-success" />
                 </button>
               </div>
             </div>
 
             <!-- Total Bayar -->
             <div class="flex items-center justify-between pt-4 border-t border-border">
-              <span class="text-base font-semibold text-dark-700 dark:text-dark-300">Total Bayar</span>
-              <span class="text-2xl font-black text-primary-600 dark:text-primary-400">
+              <span class="text-base font-semibold text-foreground">Total Bayar</span>
+              <span class="text-2xl font-black text-primary">
                 Rp {{ formatPrice(order.total_price || 0) }}
               </span>
             </div>
 
-            <!-- 
-              STATUS BADGE DINAMIS
-              Warna dan teks berubah sesuai status terbaru dari backend
-            -->
+            <!-- Status Badge Dinamis -->
             <div class="flex items-center justify-center pt-2">
               <div 
                 class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border"
@@ -156,8 +138,8 @@
 
           <!-- Error State -->
           <div v-else class="text-center py-8">
-            <AlertCircle class="mx-auto mb-3 text-red-500" :size="48" />
-            <p class="text-sm text-red-600 dark:text-red-400">Gagal memuat detail order</p>
+            <AlertCircle class="mx-auto mb-3 text-error" :size="48" />
+            <p class="text-sm text-error">Gagal memuat detail order</p>
           </div>
 
         </div>
@@ -166,14 +148,14 @@
         <div class="space-y-3">
           <button
             @click="$router.push('/')"
-            class="w-full h-12 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl transition-all"
+            class="w-full h-12 bg-primary hover:bg-primary-hover text-primary-foreground font-semibold rounded-xl transition-all active:scale-95"
           >
             Kembali ke Beranda
           </button>
           
           <button
             @click="$router.push('/transactions')"
-            class="w-full h-12 border-2 border-border hover:bg-dark-50 dark:hover:bg-dark-800 text-dark-950 dark:text-white font-semibold rounded-xl transition-all"
+            class="w-full h-12 border-2 border-border hover:bg-muted text-foreground font-semibold rounded-xl transition-all active:scale-95"
           >
             Lihat Riwayat Transaksi
           </button>
@@ -183,7 +165,7 @@
         <div class="mt-6 text-center">
           <button 
             @click="openChat"
-            class="inline-flex items-center gap-2 text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 font-semibold transition-colors"
+            class="inline-flex items-center gap-2 text-sm text-primary hover:text-primary-hover font-semibold transition-colors"
           >
             <MessageCircle :size="16" />
             <span>Butuh bantuan? Hubungi Customer Service</span>
@@ -195,10 +177,10 @@
 
     <!-- Toast -->
     <Transition name="toast">
-      <div v-if="showToast" class="fixed bottom-4 right-4 bg-white dark:bg-dark-900 border border-primary-600 rounded-xl shadow-lg p-4 z-50 max-w-sm">
+      <div v-if="showToast" class="fixed bottom-4 right-4 bg-card border border-primary rounded-xl shadow-lg p-4 z-50 max-w-sm">
         <div class="flex items-center gap-2">
-          <Check class="text-primary-600 flex-shrink-0" :size="18" />
-          <span class="text-sm font-semibold text-dark-800 dark:text-white">{{ toastMessage }}</span>
+          <Check class="text-primary flex-shrink-0" :size="18" />
+          <span class="text-sm font-semibold text-foreground">{{ toastMessage }}</span>
         </div>
       </div>
     </Transition>
@@ -210,9 +192,11 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Check, X, Copy, Key, AlertCircle, MessageCircle, Loader } from 'lucide-vue-next'
 import api from '@/services/api'
+import { useOrderStore } from '@/stores/orderStore'
 
 const route = useRoute()
 const router = useRouter()
+const orderStore = useOrderStore()
 
 const loading = ref(true)
 const order = ref(null)
@@ -222,22 +206,12 @@ const isPolling = ref(false)
 
 const orderId = route.params.orderId
 
-// Interval ID untuk polling, disimpan supaya bisa di-clear saat komponen unmount
 let pollingInterval = null
-
-// Maksimal polling: 20x × 5 detik = 100 detik (sekitar 1.5 menit)
-// Kalau lewat batas ini, polling berhenti otomatis
 const MAX_POLL_COUNT = 20
 const POLL_INTERVAL_MS = 5000
 let pollCount = 0
 
-// ============================================
-// COMPUTED: Teks & Style dinamis berdasarkan status
-// ============================================
-
-/**
- * Judul halaman berdasarkan status order
- */
+// Computed
 const pageTitle = computed(() => {
   switch (order.value?.status) {
     case 'success':    return 'Pembayaran Berhasil!'
@@ -247,9 +221,6 @@ const pageTitle = computed(() => {
   }
 })
 
-/**
- * Subtitle halaman berdasarkan status order
- */
 const pageSubtitle = computed(() => {
   switch (order.value?.status) {
     case 'success':    return 'Transaksi Anda telah berhasil diproses'
@@ -259,9 +230,6 @@ const pageSubtitle = computed(() => {
   }
 })
 
-/**
- * Label status badge
- */
 const statusLabel = computed(() => {
   switch (order.value?.status) {
     case 'success':    return 'Sukses'
@@ -271,52 +239,39 @@ const statusLabel = computed(() => {
   }
 })
 
-/**
- * CSS class untuk badge container berdasarkan status
- */
 const statusBadgeClass = computed(() => {
   switch (order.value?.status) {
-    case 'success': return 'bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800'
-    case 'failed':  return 'bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-800'
-    default:        return 'bg-yellow-50 dark:bg-yellow-950/20 border-yellow-200 dark:border-yellow-800'
+    case 'success': return 'bg-success-light border-success/20'
+    case 'failed':  return 'bg-error-light border-error/20'
+    default:        return 'bg-warning-light border-warning/20'
   }
 })
 
-/**
- * CSS class untuk dot di dalam badge
- */
 const statusDotClass = computed(() => {
   switch (order.value?.status) {
-    case 'success': return 'bg-green-600 animate-pulse'
-    case 'failed':  return 'bg-red-600'
-    default:        return 'bg-yellow-500 animate-pulse'
+    case 'success': return 'bg-success animate-pulse'
+    case 'failed':  return 'bg-error'
+    default:        return 'bg-warning animate-pulse'
   }
 })
 
-/**
- * CSS class untuk teks badge
- */
 const statusTextClass = computed(() => {
   switch (order.value?.status) {
-    case 'success': return 'text-green-700 dark:text-green-400'
-    case 'failed':  return 'text-red-700 dark:text-red-400'
-    default:        return 'text-yellow-700 dark:text-yellow-400'
+    case 'success': return 'text-success'
+    case 'failed':  return 'text-error'
+    default:        return 'text-warning'
   }
 })
-
-// ============================================
-// METHODS
-// ============================================
 
 const formatPrice = (price) => new Intl.NumberFormat('id-ID').format(price)
 
-/**
- * Fetch data order dari backend
- * Dipanggil saat pertama load DAN saat polling
- */
 const fetchOrderDetails = async () => {
   try {
-    const response = await api.orders.get(orderId)
+    // FIX: Ambil email dari orderStore, fallback ke localStorage
+    const email = orderStore.currentOrder?.customer_email 
+      || localStorage.getItem(`order_email_${orderId}`) 
+      || null
+    const response = await api.orders.get(orderId, email)
     order.value = response
     return response
   } catch (err) {
@@ -327,21 +282,7 @@ const fetchOrderDetails = async () => {
   }
 }
 
-/**
- * POLLING MECHANISM
- * 
- * Cara kerja:
- * 1. Cek status order setiap 5 detik
- * 2. Kalau status jadi 'success' atau 'failed' → stop polling
- * 3. Kalau sudah 20x polling belum selesai → stop otomatis
- * 
- * Kenapa polling?
- * - Kita gak bisa tau kapan Digiflazz callback masuk
- * - Polling memastikan UI update otomatis tanpa user refresh manual
- * - Max 100 detik polling, setelah itu user bisa cek manual
- */
 const startPolling = () => {
-  // Jangan start polling kalau sudah final
   if (['success', 'failed'].includes(order.value?.status)) return
 
   isPolling.value = true
@@ -350,7 +291,6 @@ const startPolling = () => {
   pollingInterval = setInterval(async () => {
     pollCount++
 
-    // Stop kalau sudah maksimal
     if (pollCount >= MAX_POLL_COUNT) {
       stopPolling()
       return
@@ -358,7 +298,6 @@ const startPolling = () => {
 
     const updatedOrder = await fetchOrderDetails()
 
-    // Stop polling kalau status sudah final
     if (updatedOrder && ['success', 'failed'].includes(updatedOrder.status)) {
       stopPolling()
     }
@@ -397,20 +336,12 @@ const openChat = () => {
   window.dispatchEvent(new CustomEvent('open-chat'))
 }
 
-// ============================================
-// LIFECYCLE
-// ============================================
 onMounted(async () => {
-  // Fetch order pertama kali
   await fetchOrderDetails()
-
-  // Start polling kalau status belum final
   startPolling()
 })
 
 onUnmounted(() => {
-  // PENTING: Hentikan polling saat user pindah halaman
-  // Kalau gak dihentikan → memory leak + request terus jalan di background
   stopPolling()
 })
 </script>
@@ -418,24 +349,29 @@ onUnmounted(() => {
 <style scoped>
 .success-page-wrapper { /* single root wrapper */ }
 
-/* Success Icon - hijau */
+/* FIX: Semua icon di-center dengan margin auto */
+.success-checkmark,
+.failed-icon,
+.processing-icon {
+  margin: 0 auto;
+}
+
 .success-checkmark {
   width: 100px;
   height: 100px;
-  background: linear-gradient(135deg, rgb(34, 197, 94) 0%, rgb(22, 163, 74) 100%);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8px 24px rgba(34, 197, 94, 0.3);
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
   animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* Failed Icon - merah */
 .failed-icon {
   width: 100px;
   height: 100px;
-  background: linear-gradient(135deg, rgb(239, 68, 68) 0%, rgb(220, 38, 38) 100%);
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -444,11 +380,10 @@ onUnmounted(() => {
   animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* Processing Icon - biru */
 .processing-icon {
   width: 100px;
   height: 100px;
-  background: linear-gradient(135deg, rgb(59, 130, 246) 0%, rgb(37, 99, 235) 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;

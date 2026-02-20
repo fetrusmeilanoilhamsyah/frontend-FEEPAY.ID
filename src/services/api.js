@@ -15,6 +15,9 @@ const api = axios.create({
   }
 })
 
+// ✅ FIX C-04: Admin path diambil dari env, tidak hardcode di source code
+const ADMIN_PATH = import.meta.env.VITE_ADMIN_PATH
+
 // 1. REQUEST INTERCEPTOR
 api.interceptors.request.use(
   (config) => {
@@ -26,7 +29,6 @@ api.interceptors.request.use(
     const adminPin = sessionStorage.getItem('feepay_admin_pin')
     if (adminPin) config.headers['X-Admin-Pin'] = adminPin
 
-    // Smart Idempotency
     if (['post', 'put', 'patch', 'delete'].includes(config.method.toLowerCase())) {
       config.headers['X-Idempotency-Key'] = `FP-${Date.now()}-${Math.random().toString(36).substring(7)}`
     }
@@ -43,7 +45,6 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => {
     isApiProcessing.value = false
-    // Kalau response blob (untuk download file), langsung return
     if (response.config.responseType === 'blob') return response.data
     return response.data.data || response.data
   },
@@ -101,18 +102,19 @@ export default {
 
   products: {
     getAll: (p) => api.get('/products', { params: p }),
-    sync: () => api.post('/admin/yQIhhAOQ/products/sync'),
-    update: (id, d) => api.put(`/admin/yQIhhAOQ/products/${id}`, d),
-    bulkMargin: (margin) => api.post('/admin/yQIhhAOQ/products/bulk-margin', { margin }), // ✅ BARU
+    sync: () => api.post(`/admin/${ADMIN_PATH}/products/sync`),
+    update: (id, d) => api.put(`/admin/${ADMIN_PATH}/products/${id}`, d),
+    bulkMargin: (margin) => api.post(`/admin/${ADMIN_PATH}/products/bulk-margin`, { margin }),
   },
 
   orders: {
     create: (d) => api.post('/orders/create', d),
-    get: (id) => api.get(`/orders/${id}`),
+    // ✅ FIX H-06: POST + email untuk verifikasi kepemilikan order
+    get: (id, email) => api.post(`/orders/${id}`, { email }),
     list: () => api.get('/orders'),
-    getAll: (p) => api.get('/admin/yQIhhAOQ/orders', { params: p }), 
-    confirm: (id) => api.post(`/admin/yQIhhAOQ/orders/${id}/confirm`),
-    sync: (id) => api.post(`/admin/yQIhhAOQ/orders/${id}/sync`), 
+    getAll: (p) => api.get(`/admin/${ADMIN_PATH}/orders`, { params: p }),
+    confirm: (id) => api.post(`/admin/${ADMIN_PATH}/orders/${id}/confirm`),
+    sync: (id) => api.post(`/admin/${ADMIN_PATH}/orders/${id}/sync`),
   },
 
   payments: {
@@ -120,23 +122,23 @@ export default {
       create: (data) => api.post('/payments/midtrans/create', data)
     },
     submit: (fd) => api.post('/payments/submit', fd, { headers: { 'Content-Type': 'multipart/form-data' } }),
-    getAll: (p) => api.get('/admin/yQIhhAOQ/payments', { params: p }),
-    verify: (id, d) => api.post(`/admin/yQIhhAOQ/payments/${id}/verify`, d),
+    getAll: (p) => api.get(`/admin/${ADMIN_PATH}/payments`, { params: p }),
+    verify: (id, d) => api.post(`/admin/${ADMIN_PATH}/payments/${id}/verify`, d),
   },
 
   usdt: {
     getRate: () => api.get('/usdt/rate'),
     submit: (fd) => api.post('/usdt/submit', fd, { headers: { 'Content-Type': 'multipart/form-data' } }),
     get: (id) => api.get(`/usdt/${id}`),
-    getAll: (p) => api.get('/admin/yQIhhAOQ/usdt', { params: p }),
-    approve: (id, d) => api.post(`/admin/yQIhhAOQ/usdt/${id}/approve`, d),
-    updateRate: (d) => api.post('/admin/yQIhhAOQ/usdt/rate', d),
-    getProof: (id) => api.get(`/admin/yQIhhAOQ/usdt/${id}/proof`, { responseType: 'blob' }), // ✅ BARU
+    getAll: (p) => api.get(`/admin/${ADMIN_PATH}/usdt`, { params: p }),
+    approve: (id, d) => api.post(`/admin/${ADMIN_PATH}/usdt/${id}/approve`, d),
+    updateRate: (d) => api.post(`/admin/${ADMIN_PATH}/usdt/rate`, d),
+    getProof: (id) => api.get(`/admin/${ADMIN_PATH}/usdt/${id}/proof`, { responseType: 'blob' }),
   },
 
   dashboard: {
-    getStats: (p) => api.get('/admin/yQIhhAOQ/dashboard/stats', { params: p }),
-    getBalance: () => api.get('/admin/yQIhhAOQ/dashboard/balance'),
+    getStats: (p) => api.get(`/admin/${ADMIN_PATH}/dashboard/stats`, { params: p }),
+    getBalance: () => api.get(`/admin/${ADMIN_PATH}/dashboard/balance`),
   },
 
   support: {

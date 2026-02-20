@@ -1,27 +1,23 @@
 <template>
   <div v-if="numbers.length > 0" class="recent-numbers">
-    <h3 class="text-sm font-semibold mb-3 text-dark-700 dark:text-dark-300">
-      Nomor yang Sering Dipakai
-    </h3>
+    <h3 class="section-title">Nomor Terakhir</h3>
     
-    <div class="flex gap-2 overflow-x-auto pb-2 -mx-3 px-3 sm:mx-0 sm:px-0 scrollbar-hide">
+    <div class="numbers-scroll">
       <button
         v-for="(number, index) in numbers"
         :key="index"
-        @click="$emit('select', number)"
-        class="flex-shrink-0 flex items-center gap-2 px-3 py-2 bg-white dark:bg-dark-900 border-2 border-border hover:border-primary-500 rounded-lg transition-all"
+        @click="handleSelect(number)"
+        class="number-chip"
       >
-        <Phone :size="14" class="text-dark-500 dark:text-dark-400" />
-        <span class="text-sm font-medium text-dark-700 dark:text-dark-300">
-          {{ formatNumber(number) }}
-        </span>
+        <User :size="14" class="text-muted-foreground" />
+        <span class="number-text">0{{ number }}</span>
       </button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { Phone } from 'lucide-vue-next'
+import { User } from 'lucide-vue-next'
 
 defineProps({
   numbers: {
@@ -30,24 +26,63 @@ defineProps({
   }
 })
 
-defineEmits(['select'])
+const emit = defineEmits(['select'])
 
-const formatNumber = (number) => {
-  // Format: 0812-3456-7890
-  const cleaned = number.replace(/\D/g, '')
-  if (cleaned.length > 10) {
-    return `0${cleaned.substring(0, 3)}-${cleaned.substring(3, 7)}-${cleaned.substring(7)}`
-  }
-  return `0${cleaned}`
+const handleSelect = (number) => {
+  emit('select', number)
 }
 </script>
 
 <style scoped>
-.scrollbar-hide::-webkit-scrollbar {
+.recent-numbers {
+  margin-bottom: 1.5rem;
+}
+
+.section-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin-bottom: 0.75rem;
+}
+
+.numbers-scroll {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  scrollbar-width: none;
+}
+
+.numbers-scroll::-webkit-scrollbar {
   display: none;
 }
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+
+.number-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--foreground);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.number-chip:hover {
+  border-color: var(--primary);
+  background: var(--card-hover);
+}
+
+.number-chip:active {
+  transform: scale(0.95);
+}
+
+.number-text {
+  font-family: 'JetBrains Mono', monospace;
 }
 </style>

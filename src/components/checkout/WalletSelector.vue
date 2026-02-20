@@ -1,6 +1,6 @@
 <template>
   <div class="wallet-selector">
-    <h3 class="text-sm font-semibold mb-3 text-dark-700 dark:text-dark-300">
+    <h3 class="text-sm font-semibold mb-3 text-foreground">
       Pilih E-Wallet
     </h3>
     
@@ -24,8 +24,7 @@
           <Wallet 
             v-else
             :size="32" 
-            class="transition-transform duration-300 group-hover:scale-110"
-            :class="modelValue === wallet ? 'text-primary-600 dark:text-primary-400' : 'text-dark-500 dark:text-dark-400'"
+            class="transition-transform duration-300 group-hover:scale-110 text-muted-foreground"
           />
         </div>
         
@@ -37,9 +36,9 @@
         <!-- Selected Indicator -->
         <div 
           v-if="modelValue === wallet"
-          class="absolute top-2 right-2 w-5 h-5 bg-primary-600 dark:bg-primary-500 rounded-full flex items-center justify-center"
+          class="absolute top-2 right-2 w-5 h-5 bg-primary rounded-full flex items-center justify-center"
         >
-          <Check :size="14" class="text-white" />
+          <Check :size="14" class="text-primary-foreground" />
         </div>
       </button>
     </div>
@@ -101,40 +100,24 @@ const formatWalletName = (name) => {
   gap: 0.75rem;
   padding: 1rem;
   min-height: 120px;
-  background: white;
-  border: 2px solid rgb(229 231 235);
+  background: var(--card);
+  border: 2px solid var(--border);
   border-radius: 1rem;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
 }
 
-.dark .wallet-card {
-  background: rgb(15 20 25);
-  border-color: rgb(42 49 66);
-}
-
 .wallet-card:hover {
-  border-color: rgb(79 172 254);
+  border-color: var(--primary);
   transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(79, 172, 254, 0.15);
-}
-
-.dark .wallet-card:hover {
-  border-color: rgb(59 143 212);
-  box-shadow: 0 8px 16px rgba(59, 143, 212, 0.2);
+  box-shadow: 0 8px 16px rgba(37, 99, 235, 0.15);
 }
 
 .wallet-card.active {
-  border-color: rgb(79 172 254);
-  background: rgb(239 246 255);
-  box-shadow: 0 4px 12px rgba(79, 172, 254, 0.2);
-}
-
-.dark .wallet-card.active {
-  border-color: rgb(59 143 212);
-  background: rgba(59, 143, 212, 0.1);
-  box-shadow: 0 4px 12px rgba(59, 143, 212, 0.25);
+  border-color: var(--primary);
+  background: var(--primary-light);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
 }
 
 .wallet-logo {
@@ -143,29 +126,23 @@ const formatWalletName = (name) => {
   justify-content: center;
   width: 56px;
   height: 56px;
-  background: rgb(243 244 246);
+  background: white !important; /* ✅ Background putih solid */
   border-radius: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.06);
   transition: all 0.3s ease;
 }
 
 .dark .wallet-logo {
-  background: rgb(26 31 46);
+  background: rgba(255, 255, 255, 0.95) !important; /* Dark mode tetap putih */
 }
 
 .wallet-card:hover .wallet-logo {
-  background: rgb(239 246 255);
-}
-
-.dark .wallet-card:hover .wallet-logo {
-  background: rgba(59, 143, 212, 0.15);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
 .wallet-card.active .wallet-logo {
-  background: rgb(219 234 254);
-}
-
-.dark .wallet-card.active .wallet-logo {
-  background: rgba(59, 143, 212, 0.2);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
 }
 
 .wallet-name {
@@ -173,19 +150,11 @@ const formatWalletName = (name) => {
   font-weight: 700;
   text-align: center;
   line-height: 1.2;
-  color: rgb(31 41 55);
+  color: var(--foreground);
   transition: color 0.3s ease;
 }
 
-.dark .wallet-name {
-  color: rgb(243 244 246);
-}
-
 .wallet-card.active .wallet-name {
-  color: rgb(79 172 254);
-}
-
-.dark .wallet-card.active .wallet-name {
-  color: rgb(59 143 212);
+  color: var(--primary);
 }
 </style>

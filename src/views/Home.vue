@@ -1,42 +1,56 @@
 <template>
-  <div class="min-h-screen bg-background">
-    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
+  <div class="home">
+    <div class="home-inner">
 
       <!-- Banner -->
-      <SkeletonBanner v-if="productStore.loading" class="mb-4" />
-      <BannerSlider v-else class="mb-4" @action="handleBannerAction" />
+      <SkeletonBanner v-if="productStore.loading" class="mb-3" />
+      <BannerSlider v-else class="mb-3" @action="handleBannerAction" />
 
       <!-- Trust bar -->
-      <div class="trust-bar mb-4">
+      <div class="trust-bar mb-3">
         <div class="trust-item">
           <span class="trust-dot"></span>
           <span>24 Jam Aktif</span>
         </div>
-        <div class="trust-divider"></div>
+        <div class="trust-sep"></div>
         <div class="trust-item">
-          <span class="trust-icon"></span>
+          <Zap :size="12" class="trust-icon" />
           <span>Proses Cepat</span>
         </div>
-        <div class="trust-divider"></div>
+        <div class="trust-sep"></div>
         <div class="trust-item">
-          <span class="trust-icon"></span>
+          <ShieldCheck :size="12" class="trust-icon" />
           <span>Aman Terpercaya</span>
         </div>
       </div>
 
+      <!-- Pending Order Banner -->
+      <div
+        v-if="pendingOrders.length > 0"
+        class="notif-bar mb-3"
+        @click="router.push('/transactions')"
+      >
+        <div class="notif-dot"></div>
+        <div class="notif-text">
+          <span class="notif-title">{{ pendingOrders.length }} pesanan sedang diproses</span>
+          <span class="notif-sub">{{ pendingOrders[0].product_name }} · Ketuk untuk lihat</span>
+        </div>
+        <ChevronRight :size="16" class="notif-arrow" />
+      </div>
+
       <!-- Tabs -->
-      <div class="tab-wrapper mb-4">
+      <div class="tabs mb-4">
         <button
           @click="activeTab = 'products'"
-          class="tab-btn"
-          :class="activeTab === 'products' ? 'tab-active' : 'tab-inactive'"
+          class="tab"
+          :class="{ 'tab--active': activeTab === 'products' }"
         >
           Layanan Digital
         </button>
         <button
           @click="activeTab = 'usdt'"
-          class="tab-btn"
-          :class="activeTab === 'usdt' ? 'tab-active' : 'tab-inactive'"
+          class="tab"
+          :class="{ 'tab--active': activeTab === 'usdt' }"
         >
           Konversi USDT
         </button>
@@ -50,180 +64,121 @@
 
       <!-- USDT TAB -->
       <div v-if="activeTab === 'usdt'">
-        <div class="max-w-2xl mx-auto">
-          <div class="bg-white dark:bg-dark-900 border border-border rounded-2xl p-4 sm:p-6 lg:p-8">
-            <div class="text-center mb-5 sm:mb-6">
-              <h2 class="text-xl sm:text-2xl font-bold text-dark-800 dark:text-white mb-1.5">
-                Konversi USDT ke Rupiah
-              </h2>
-              <p class="text-xs sm:text-sm text-dark-500 dark:text-dark-400">
-                Pencairan ke rekening atau e-wallet Anda
-              </p>
-            </div>
-
-            <form @submit.prevent="handleUsdtSubmit" class="space-y-4">
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                <div>
-                  <label class="block text-xs font-semibold mb-1.5 text-dark-600 dark:text-dark-400">
-                    Jumlah USDT
-                  </label>
-                  <input
-                    v-model="usdtForm.amount"
-                    type="number"
-                    step="0.01"
-                    class="w-full h-11 bg-white dark:bg-dark-950 border border-border rounded-lg px-3 text-sm font-medium text-dark-700 dark:text-white focus:border-primary-500 focus:ring-2 focus:ring-primary-100 dark:focus:ring-primary-950/20 outline-none transition-all"
-                    placeholder="100.00"
-                    required
-                  />
-                </div>
-                <div>
-                  <label class="block text-xs font-semibold mb-1.5 text-dark-600 dark:text-dark-400">
-                    Jaringan Blockchain
-                  </label>
-                  <div class="flex gap-2">
-                    <button
-                      type="button"
-                      v-for="net in ['TRC20', 'BEP20']"
-                      :key="net"
-                      @click="usdtForm.network = net"
-                      class="flex-1 h-11 border rounded-lg font-semibold text-xs sm:text-sm transition-all"
-                      :class="usdtForm.network === net
-                        ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/20 text-primary-600 dark:text-primary-400'
-                        : 'border-border text-dark-600 dark:text-dark-400 hover:border-primary-300'"
-                    >
-                      {{ net }}
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <div class="bg-dark-50 dark:bg-dark-800 p-3 rounded-xl border border-border">
-                <div class="flex justify-between items-center mb-2">
-                  <span class="text-xs font-semibold text-dark-600 dark:text-dark-400">
-                    Alamat Wallet Tujuan Transfer
-                  </span>
-                  <button
-                    type="button"
-                    @click="copyWalletAddress"
-                    class="text-primary-500 text-xs font-semibold hover:underline flex items-center gap-1"
-                  >
-                    <Copy :size="13" /> Salin
-                  </button>
-                </div>
-                <div class="bg-white dark:bg-dark-900 p-2.5 rounded-lg font-mono text-xs break-all border border-border text-dark-700 dark:text-dark-300">
-                  {{ walletAddresses[usdtForm.network] }}
-                </div>
-              </div>
-
-              <div class="space-y-2.5">
-                <label class="block text-xs font-semibold text-dark-600 dark:text-dark-400">
-                  Informasi Rekening Penerima Dana
-                </label>
-                <input
-                  v-model="usdtForm.customer_email"
-                  type="email"
-                  class="w-full h-11 bg-white dark:bg-dark-950 border border-border rounded-lg px-3 text-sm text-dark-700 dark:text-white focus:border-primary-500 outline-none transition-all"
-                  placeholder="Alamat email Anda"
-                  required
-                />
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                  <input
-                    v-model="usdtForm.bank_name"
-                    type="text"
-                    class="w-full h-11 bg-white dark:bg-dark-950 border border-border rounded-lg px-3 text-sm text-dark-700 dark:text-white focus:border-primary-500 outline-none transition-all"
-                    placeholder="Nama Bank atau E-Wallet"
-                    required
-                  />
-                  <input
-                    v-model="usdtForm.account_number"
-                    type="text"
-                    class="w-full h-11 bg-white dark:bg-dark-950 border border-border rounded-lg px-3 text-sm text-dark-700 dark:text-white focus:border-primary-500 outline-none transition-all"
-                    placeholder="Nomor Rekening"
-                    required
-                  />
-                </div>
-                <input
-                  v-model="usdtForm.account_name"
-                  type="text"
-                  class="w-full h-11 bg-white dark:bg-dark-950 border border-border rounded-lg px-3 text-sm text-dark-700 dark:text-white focus:border-primary-500 outline-none transition-all"
-                  placeholder="Nama Pemilik Rekening"
-                  required
-                />
-              </div>
-
-              <div>
-                <label class="block text-xs font-semibold mb-1.5 text-dark-600 dark:text-dark-400">
-                  Bukti Transfer USDT
-                </label>
-                <div
-                  @click="triggerUsdtFileInput"
-                  class="border-2 border-dashed border-border rounded-xl p-5 text-center cursor-pointer hover:border-primary-500 hover:bg-primary-50 dark:hover:bg-primary-950/10 transition-all"
-                >
-                  <Upload class="mx-auto mb-2 text-dark-400" :size="24" />
-                  <p class="text-sm font-medium text-dark-600 dark:text-dark-400">
-                    {{ usdtForm.proof ? usdtForm.proof.name : 'Klik untuk upload screenshot' }}
-                  </p>
-                  <p class="text-xs text-dark-400 mt-1">Format JPG atau PNG, maksimal 5MB</p>
-                </div>
-                <input
-                  ref="usdtFileInput"
-                  type="file"
-                  class="hidden"
-                  @change="handleUsdtFileSelect"
-                  accept="image/*"
-                  required
-                />
-              </div>
-
-              <button
-                type="submit"
-                class="w-full h-11 text-white rounded-xl font-semibold text-sm transition-all disabled:opacity-50 active:scale-95"
-                style="background: linear-gradient(135deg, #3b82f6, #22d3ee)"
-                :disabled="usdtSubmitting"
-              >
-                <Loader v-if="usdtSubmitting" class="inline animate-spin mr-2" :size="16" />
-                {{ usdtSubmitting ? 'Memproses Permintaan' : 'Kirim Permintaan Konversi' }}
-              </button>
-            </form>
-
-            <div class="mt-4 bg-primary-50 dark:bg-primary-950/20 border border-primary-200 dark:border-primary-800 rounded-lg p-3">
-              <p class="text-xs text-center text-primary-600 dark:text-primary-400 font-medium">
-                Proses verifikasi 5-15 menit setelah transfer dikonfirmasi
-              </p>
-            </div>
+        <div class="usdt-card">
+          <div class="usdt-header">
+            <p class="usdt-title">Konversi USDT ke Rupiah</p>
+            <p class="usdt-sub">Pencairan ke rekening atau e-wallet Anda</p>
           </div>
+
+          <form @submit.prevent="handleUsdtSubmit" class="usdt-form">
+
+            <div class="field">
+              <label class="field-label">Jumlah USDT</label>
+              <input v-model="usdtForm.amount" type="number" step="0.01" class="field-input" placeholder="0.00" required />
+            </div>
+
+            <div class="field">
+              <label class="field-label">Jaringan</label>
+              <div class="network-btns">
+                <button
+                  type="button"
+                  v-for="net in ['TRC20', 'BEP20']"
+                  :key="net"
+                  @click="usdtForm.network = net"
+                  class="network-btn"
+                  :class="{ 'network-btn--active': usdtForm.network === net }"
+                >
+                  {{ net }}
+                </button>
+              </div>
+            </div>
+
+            <div class="wallet-box">
+              <div class="wallet-top">
+                <span class="field-label">Alamat Wallet Tujuan</span>
+                <button type="button" class="copy-btn" @click="copyWalletAddress">
+                  <Copy :size="12" />
+                  <span>{{ copied ? 'Disalin!' : 'Salin' }}</span>
+                </button>
+              </div>
+              <p class="wallet-addr">{{ walletAddresses[usdtForm.network] }}</p>
+            </div>
+
+            <div class="form-divider">
+              <span>Informasi Rekening Penerima</span>
+            </div>
+
+            <div class="field">
+              <input v-model="usdtForm.customer_email" type="email" class="field-input" placeholder="Email Anda" required />
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <input v-model="usdtForm.bank_name" type="text" class="field-input" placeholder="Bank / E-Wallet" required />
+              </div>
+              <div class="field">
+                <input v-model="usdtForm.account_number" type="text" class="field-input" placeholder="No. Rekening" required />
+              </div>
+            </div>
+
+            <div class="field">
+              <input v-model="usdtForm.account_name" type="text" class="field-input" placeholder="Nama Pemilik Rekening" required />
+            </div>
+
+            <div class="upload-area" @click="triggerUsdtFileInput" :class="{ 'upload-area--filled': usdtForm.proof }">
+              <Upload :size="20" class="upload-icon" />
+              <span class="upload-text">{{ usdtForm.proof ? usdtForm.proof.name : 'Upload bukti transfer' }}</span>
+              <span class="upload-hint">JPG / PNG, maks 5MB</span>
+            </div>
+            <input ref="usdtFileInput" type="file" class="hidden" @change="handleUsdtFileSelect" accept="image/*" required />
+
+            <button type="submit" class="submit-btn" :disabled="usdtSubmitting">
+              <Loader v-if="usdtSubmitting" class="animate-spin" :size="16" />
+              <span>{{ usdtSubmitting ? 'Memproses...' : 'Kirim Permintaan' }}</span>
+            </button>
+
+          </form>
+
+          <p class="usdt-note">Verifikasi 5–15 menit setelah transfer dikonfirmasi</p>
         </div>
       </div>
 
     </div>
 
+    <!-- Toast -->
     <transition name="toast">
-      <div v-if="showToast" class="fixed bottom-4 right-4 bg-white dark:bg-dark-900 border border-primary-500 rounded-xl shadow-lg p-3 sm:p-4 z-50 max-w-sm">
-        <div class="flex items-center gap-2">
-          <Check class="text-primary-500 flex-shrink-0" :size="18" />
-          <span class="text-sm font-semibold text-dark-800 dark:text-white">{{ toastMessage }}</span>
-        </div>
+      <div v-if="showToast" class="toast">
+        <Check :size="15" />
+        <span>{{ toastMessage }}</span>
       </div>
     </transition>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { Check, Upload, Loader, Copy } from 'lucide-vue-next'
+import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { Check, Upload, Loader, Copy, Zap, ShieldCheck, ChevronRight } from 'lucide-vue-next'
 import BannerSlider from '@/components/BannerSlider.vue'
 import QuickGrid from '@/components/home/QuickGrid.vue'
 import SkeletonBanner from '@/components/SkeletonBanner.vue'
 import HowItWorks from '@/components/home/HowItWorks.vue'
 import { useProductStore } from '@/stores/productStore'
+import { useOrderStore } from '@/stores/orderStore'
 import api from '../services/api'
 
+const router = useRouter()
 const productStore = useProductStore()
+const orderStore = useOrderStore()
+
 const activeTab = ref('products')
 const usdtSubmitting = ref(false)
 const showToast = ref(false)
 const toastMessage = ref('')
 const usdtFileInput = ref(null)
+const copied = ref(false)
+
+const pendingOrders = computed(() => orderStore.pendingOrders)
 
 const usdtForm = ref({
   amount: '', network: 'TRC20', customer_email: '',
@@ -235,7 +190,7 @@ const walletAddresses = {
   BEP20: import.meta.env.VITE_WALLET_BEP20 || 'BSetWalletAddressInENV'
 }
 
-const handleServiceSelect = (type) => { console.log('Service selected:', type) }
+const handleServiceSelect = (type) => {}
 const handleBannerAction = ({ type, value }) => { if (type === 'tab') activeTab.value = value }
 
 onMounted(async () => { await productStore.fetchProducts() })
@@ -243,13 +198,34 @@ onMounted(async () => { await productStore.fetchProducts() })
 const triggerUsdtFileInput = () => { usdtFileInput.value?.click() }
 const handleUsdtFileSelect = (e) => { usdtForm.value.proof = e.target.files[0] }
 
+const showToastMsg = (msg) => {
+  toastMessage.value = msg
+  showToast.value = true
+  setTimeout(() => showToast.value = false, 2000)
+}
+
 const copyWalletAddress = async () => {
+  const text = walletAddresses[usdtForm.value.network]
   try {
-    await navigator.clipboard.writeText(walletAddresses[usdtForm.value.network])
-    toastMessage.value = 'Alamat berhasil disalin'
-    showToast.value = true
-    setTimeout(() => showToast.value = false, 2000)
-  } catch { alert('Gagal menyalin alamat') }
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text)
+    } else {
+      const el = document.createElement('textarea')
+      el.value = text
+      el.style.position = 'fixed'
+      el.style.opacity = '0'
+      document.body.appendChild(el)
+      el.focus()
+      el.select()
+      document.execCommand('copy')
+      document.body.removeChild(el)
+    }
+    copied.value = true
+    showToastMsg('Alamat berhasil disalin')
+    setTimeout(() => copied.value = false, 2000)
+  } catch {
+    showToastMsg('Gagal menyalin')
+  }
 }
 
 const handleUsdtSubmit = async () => {
@@ -257,7 +233,6 @@ const handleUsdtSubmit = async () => {
   usdtSubmitting.value = true
   try {
     const fd = new FormData()
-    const rate = 16000
     fd.append('amount', usdtForm.value.amount)
     fd.append('network', usdtForm.value.network)
     fd.append('customer_email', usdtForm.value.customer_email)
@@ -265,121 +240,367 @@ const handleUsdtSubmit = async () => {
     fd.append('account_number', usdtForm.value.account_number)
     fd.append('account_name', usdtForm.value.account_name)
     fd.append('proof', usdtForm.value.proof)
-    fd.append('idr_received', parseFloat(usdtForm.value.amount) * rate)
+    fd.append('idr_received', parseFloat(usdtForm.value.amount) * 16000)
     await api.usdt.submit(fd)
-    toastMessage.value = 'Permintaan berhasil dikirim'
-    showToast.value = true
-    setTimeout(() => showToast.value = false, 3000)
+    showToastMsg('Permintaan berhasil dikirim')
     usdtForm.value = { amount: '', network: 'TRC20', customer_email: '', bank_name: '', account_number: '', account_name: '', proof: null }
-  } catch { alert('Gagal mengirim permintaan') }
-  finally { usdtSubmitting.value = false }
+  } catch {
+    showToastMsg('Gagal mengirim permintaan')
+  } finally {
+    usdtSubmitting.value = false
+  }
 }
 </script>
 
 <style scoped>
+.home {
+  min-height: 100vh;
+  background: var(--background);
+}
+
+.home-inner {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 12px 16px 32px;
+}
+
 /* Trust bar */
 .trust-bar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-  padding: 0.625rem 1rem;
-  background: white;
-  border: 1px solid rgba(56, 189, 248, 0.2);
-  border-radius: 10px;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.trust-bar::-webkit-scrollbar { display: none; }
-
-.dark .trust-bar {
-  background: rgb(10 10 10);
-  border-color: rgba(56, 189, 248, 0.1);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 16px;
 }
 
 .trust-item {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.375rem;
+  gap: 5px;
   flex: 1;
-  font-size: 0.7rem;
+  justify-content: center;
+  font-size: 11px;
   font-weight: 600;
-  color: rgb(75 85 99);
-  white-space: nowrap;
-  font-family: 'Outfit', sans-serif;
+  color: var(--muted-foreground);
 }
 
-.dark .trust-item { color: rgb(156 163 175); }
-
 .trust-dot {
-  display: block;
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  background: #00c853;
-  box-shadow: 0 0 0 2px rgba(0, 200, 83, 0.2);
+  background: #22c55e;
   flex-shrink: 0;
+  animation: glow 2s ease-in-out infinite;
 }
 
 .trust-icon {
-  display: block;
-  font-size: 0.75rem;
+  color: var(--muted-foreground);
   flex-shrink: 0;
 }
 
-.trust-divider {
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.4); }
+  50% { box-shadow: 0 0 0 4px rgba(34,197,94,0.1); }
+}
+
+.trust-sep {
   width: 1px;
-  height: 14px;
-  background: rgb(229 231 235);
+  height: 16px;
+  background: var(--border);
   flex-shrink: 0;
 }
 
-.dark .trust-divider { background: rgb(42 49 66); }
+/* Notif bar */
+.notif-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 3px solid #f59e0b;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.notif-bar:hover { background: var(--muted); }
+
+.notif-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #f59e0b;
+  flex-shrink: 0;
+  animation: glow-yellow 1.5s ease-in-out infinite;
+}
+
+@keyframes glow-yellow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(245,158,11,0.5); }
+  50% { box-shadow: 0 0 0 4px rgba(245,158,11,0.1); }
+}
+
+.notif-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.notif-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--foreground);
+}
+
+.notif-sub {
+  font-size: 11px;
+  color: var(--muted-foreground);
+}
+
+.notif-arrow { color: var(--muted-foreground); flex-shrink: 0; }
 
 /* Tabs */
-.tab-wrapper {
+.tabs {
   display: flex;
-  background: white;
-  border: 1px solid rgb(229 231 235);
+  background: var(--card);
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 3px;
   gap: 3px;
 }
 
-.dark .tab-wrapper {
-  background: rgb(10 10 10);
-  border-color: rgb(42 49 66);
-}
-
-.tab-btn {
+.tab {
   flex: 1;
-  padding: 0.5rem 1rem;
-  font-size: 0.8125rem;
+  padding: 8px 12px;
+  font-size: 13px;
   font-weight: 600;
   border-radius: 9px;
   transition: all 0.2s;
-  font-family: 'Outfit', sans-serif;
-  letter-spacing: -0.01em;
-}
-
-.tab-active {
-  background: linear-gradient(135deg, #3b82f6, #22d3ee);
-  color: white;
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
-}
-
-.tab-inactive {
-  color: rgb(107 114 128);
+  color: var(--muted-foreground);
   background: transparent;
 }
 
-.dark .tab-inactive { color: rgb(156 163 175); }
-.tab-inactive:hover { background: rgb(243 244 246); }
-.dark .tab-inactive:hover { background: rgb(31 41 55); }
+.tab--active {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow: 0 2px 8px rgba(59,130,246,0.25);
+}
+
+.tab:not(.tab--active):hover {
+  background: var(--muted);
+  color: var(--foreground);
+}
+
+/* USDT Card */
+.usdt-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.usdt-header {
+  padding: 20px 20px 0;
+  text-align: center;
+}
+
+.usdt-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--foreground);
+  margin-bottom: 4px;
+}
+
+.usdt-sub {
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+
+.usdt-form {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.field { display: flex; flex-direction: column; gap: 6px; }
+
+.field-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.field-input {
+  height: 44px;
+  background: var(--background);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 0 14px;
+  font-size: 14px;
+  color: var(--foreground);
+  outline: none;
+  transition: border-color 0.15s;
+  width: 100%;
+}
+
+.field-input:focus { border-color: var(--primary); }
+.field-input::placeholder { color: var(--muted-foreground); opacity: 0.6; }
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.network-btns { display: flex; gap: 8px; }
+
+.network-btn {
+  flex: 1;
+  height: 40px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  background: var(--background);
+  transition: all 0.15s;
+}
+
+.network-btn--active {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 8%, transparent);
+}
+
+.wallet-box {
+  background: var(--background);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+.wallet-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.copy-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--primary);
+  padding: 4px 10px;
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+  border-radius: 6px;
+  transition: all 0.15s;
+}
+
+.copy-btn:hover { background: color-mix(in srgb, var(--primary) 15%, transparent); }
+
+.wallet-addr {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  color: var(--foreground);
+  word-break: break-all;
+  line-height: 1.5;
+}
+
+.form-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.form-divider::before,
+.form-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.upload-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 20px;
+  border: 1.5px dashed var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.upload-area:hover,
+.upload-area--filled {
+  border-color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 5%, transparent);
+}
+
+.upload-icon { color: var(--muted-foreground); }
+.upload-text { font-size: 13px; font-weight: 600; color: var(--foreground); }
+.upload-hint { font-size: 11px; color: var(--muted-foreground); }
+
+.submit-btn {
+  height: 48px;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+.submit-btn:hover:not(:disabled) { opacity: 0.92; }
+.submit-btn:active:not(:disabled) { transform: scale(0.98); }
+.submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.usdt-note {
+  text-align: center;
+  font-size: 11px;
+  color: var(--muted-foreground);
+  padding: 12px 20px 16px;
+  border-top: 1px solid var(--border);
+}
 
 /* Toast */
-.toast-enter-active, .toast-leave-active { transition: all 0.3s ease; }
-.toast-enter-from, .toast-leave-to { opacity: 0; transform: translateX(100%); }
+.toast {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--foreground);
+  color: var(--background);
+  padding: 10px 18px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 100;
+  white-space: nowrap;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+.toast-enter-active, .toast-leave-active { transition: all 0.25s ease; }
+.toast-enter-from, .toast-leave-to { opacity: 0; transform: translateX(-50%) translateY(8px); }
 </style>

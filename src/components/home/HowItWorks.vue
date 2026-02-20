@@ -6,46 +6,48 @@
       <div 
         v-for="(step, index) in steps" 
         :key="index"
-        class="step-card"
+        class="step-wrapper"
       >
-        <div class="step-number">{{ index + 1 }}</div>
-        <div class="step-icon" :style="{ background: step.gradient }">
-          <component :is="step.icon" :size="20" class="text-white" />
+        <!-- Connector line (kecuali step terakhir) -->
+        <div v-if="index < steps.length - 1" class="connector">
+          <div class="connector-line"></div>
+          <div class="connector-arrow">›</div>
         </div>
-        <h3 class="step-title">{{ step.title }}</h3>
-        <p class="step-desc">{{ step.desc }}</p>
+
+        <div class="step-card">
+          <div class="step-number">{{ index + 1 }}</div>
+          <div class="step-icon">
+            <img :src="step.img" alt="" class="step-img" />
+          </div>
+          <h3 class="step-title">{{ step.title }}</h3>
+          <p class="step-desc">{{ step.desc }}</p>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ShoppingCart, FileText, CreditCard, CheckCircle } from 'lucide-vue-next'
-
 const steps = [
   {
-    icon: ShoppingCart,
+    img: '/icons/step-cart.png',
     title: 'Pilih Produk',
-    desc: 'Pulsa, token PLN, atau voucher game',
-    gradient: 'linear-gradient(135deg, #60a5fa, #3b82f6)'
+    desc: 'Pulsa, token PLN, atau voucher game'
   },
   {
-    icon: FileText,
+    img: '/icons/step-data.png',
     title: 'Isi Data',
-    desc: 'Nomor HP atau ID pelanggan',
-    gradient: 'linear-gradient(135deg, #4ade80, #22c55e)'
+    desc: 'Nomor HP atau ID pelanggan'
   },
   {
-    icon: CreditCard,
+    img: '/icons/step-pay.png',
     title: 'Bayar',
-    desc: 'QRIS, transfer bank, atau e-wallet',
-    gradient: 'linear-gradient(135deg, #fb923c, #f97316)'
+    desc: 'QRIS, transfer bank, atau e-wallet'
   },
   {
-    icon: CheckCircle,
+    img: '/icons/step-done.png',
     title: 'Selesai',
-    desc: 'Masuk otomatis ke akun Anda',
-    gradient: 'linear-gradient(135deg, #22d3ee, #06b6d4)'
+    desc: 'Masuk otomatis ke akun Anda'
   }
 ]
 </script>
@@ -59,26 +61,81 @@ const steps = [
 .section-title {
   font-size: 1rem;
   font-weight: 700;
-  color: rgb(17 24 39);
-  letter-spacing: -0.02em;
+  color: var(--foreground);
   margin-bottom: 1rem;
-  font-family: 'Outfit', sans-serif;
-}
-
-.dark .section-title {
-  color: rgb(243 244 246);
 }
 
 .steps-container {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 0.75rem;
+  position: relative;
 }
 
 @media (min-width: 640px) {
   .steps-container {
-    grid-template-columns: repeat(4, 1fr);
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 0;
   }
+}
+
+/* Wrapper per step untuk posisi connector */
+.step-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+@media (min-width: 640px) {
+  .step-wrapper {
+    flex: 1;
+  }
+}
+
+/* Connector hanya tampil di desktop (row layout) */
+.connector {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .connector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 24px;
+    gap: 2px;
+    z-index: 1;
+  }
+
+  .connector-line {
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--border), var(--primary), var(--border));
+    background-size: 200% 100%;
+    animation: flowLine 2s linear infinite;
+    border-radius: 2px;
+  }
+
+  .connector-arrow {
+    font-size: 0.75rem;
+    color: var(--primary);
+    line-height: 1;
+    animation: bounce 1s ease-in-out infinite;
+  }
+}
+
+@keyframes flowLine {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(2px); }
 }
 
 .step-card {
@@ -88,24 +145,32 @@ const steps = [
   align-items: center;
   text-align: center;
   padding: 1.25rem 0.75rem;
-  background: white;
-  border: 1px solid rgb(229 231 235);
+  background: var(--card);
+  border: 1px solid var(--border);
   border-radius: 16px;
   transition: all 0.2s;
+  width: 100%;
+  animation: fadeUp 0.4s ease both;
 }
 
-.dark .step-card {
-  background: rgb(10 10 10);
-  border-color: rgb(42 49 66);
+.step-wrapper:nth-child(1) .step-card { animation-delay: 0s; }
+.step-wrapper:nth-child(2) .step-card { animation-delay: 0.1s; }
+.step-wrapper:nth-child(3) .step-card { animation-delay: 0.2s; }
+.step-wrapper:nth-child(4) .step-card { animation-delay: 0.3s; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .step-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-3px);
+  border-color: var(--primary);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
 }
 
 .dark .step-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
 }
 
 .step-number {
@@ -119,15 +184,9 @@ const steps = [
   justify-content: center;
   font-size: 0.625rem;
   font-weight: 800;
-  color: rgb(156 163 175);
-  background: rgb(243 244 246);
+  color: var(--muted-foreground);
+  background: var(--muted);
   border-radius: 50%;
-  font-family: 'Outfit', sans-serif;
-}
-
-.dark .step-number {
-  background: rgb(31 41 55);
-  color: rgb(107 114 128);
 }
 
 .step-icon {
@@ -137,39 +196,49 @@ const steps = [
   width: 48px;
   height: 48px;
   border-radius: 14px;
+  background: white !important; /* ✅ Background putih solid */
   margin-bottom: 0.75rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.06);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.dark .step-icon {
+  background: rgba(255, 255, 255, 0.95) !important; /* Dark mode tetap putih */
+}
+
+.step-card:hover .step-icon {
+  transform: scale(1.1) rotate(-3deg);
+}
+
+.step-img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
 }
 
 .step-title {
   font-size: 0.875rem;
   font-weight: 700;
-  color: rgb(17 24 39);
+  color: var(--foreground);
   margin-bottom: 0.375rem;
-  font-family: 'Outfit', sans-serif;
-  letter-spacing: -0.01em;
-}
-
-.dark .step-title {
-  color: rgb(243 244 246);
 }
 
 .step-desc {
   font-size: 0.75rem;
   font-weight: 500;
-  color: rgb(107 114 128);
+  color: var(--muted-foreground);
   line-height: 1.4;
-  font-family: 'Outfit', sans-serif;
-}
-
-.dark .step-desc {
-  color: rgb(156 163 175);
 }
 
 @media (min-width: 640px) {
   .step-icon {
     width: 52px;
     height: 52px;
+  }
+
+  .step-img {
+    width: 28px;
+    height: 28px;
   }
 
   .step-title {

@@ -1,57 +1,39 @@
 <template>
   <div class="phone-input-wrapper">
-    <label class="block text-sm font-semibold mb-2 text-dark-700 dark:text-dark-300">
+    <label class="input-label">
       Nomor HP
+      <span class="text-error">*</span>
     </label>
-    
-    <div class="relative">
-      <div class="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
-        <Smartphone :size="18" class="text-dark-400" />
-        <span class="text-sm font-medium text-dark-600 dark:text-dark-400">+62</span>
-      </div>
+
+    <div class="input-container">
+      <div class="prefix">+62</div>
       
       <input
         :value="modelValue"
         @input="handleInput"
         type="tel"
-        inputmode="numeric"
-        placeholder="812-3456-7890"
-        class="w-full h-12 sm:h-14 pl-20 pr-24 bg-white dark:bg-dark-900 border-2 border-border rounded-xl text-base font-medium text-dark-950 dark:text-white placeholder:text-dark-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 dark:focus:ring-primary-950/20 outline-none transition-all"
-        maxlength="15"
+        class="phone-input"
+        placeholder="81234567890"
+        maxlength="13"
       />
-      
-      <!-- Operator Badge -->
-      <div 
-        v-if="detectedOperator"
-        class="absolute right-3 top-1/2 -translate-y-1/2"
-      >
-        <OperatorBadge :operator="detectedOperator" />
-      </div>
 
-      <!-- Contact Picker Button -->
-      <button
-        v-if="!modelValue"
-        type="button"
-        @click="openContactPicker"
-        class="absolute right-3 top-1/2 -translate-y-1/2 p-2 hover:bg-dark-100 dark:hover:bg-dark-800 rounded-lg transition-colors"
-        title="Pilih dari kontak"
-      >
-        <User :size="18" class="text-dark-500 dark:text-dark-400" />
-      </button>
+      <OperatorBadge 
+        v-if="detectedOperator" 
+        :operator="detectedOperator"
+        class="operator-badge"
+      />
     </div>
 
-    <!-- Helper Text -->
-    <p class="mt-2 text-xs text-dark-500 dark:text-dark-400">
-      Masukkan nomor tanpa +62 atau 0 di depan
+    <p v-if="modelValue && modelValue.length >= 10" class="input-hint">
+      Nomor: 0{{ modelValue }}
     </p>
   </div>
 </template>
 
 <script setup>
 import { computed } from 'vue'
-import { Smartphone, User } from 'lucide-vue-next'
-import { useOperatorDetector } from '@/composables/useOperatorDetector'
 import OperatorBadge from './OperatorBadge.vue'
+import { useOperatorDetector } from '@/composables/useOperatorDetector'
 
 const props = defineProps({
   modelValue: {
@@ -62,50 +44,81 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue'])
 
-const { detectedOperator } = useOperatorDetector(computed(() => props.modelValue))
+const { detectOperator } = useOperatorDetector()
+
+const detectedOperator = computed(() => {
+  if (!props.modelValue || props.modelValue.length < 3) return null
+  return detectOperator(props.modelValue)
+})
 
 const handleInput = (e) => {
-  let value = e.target.value.replace(/\D/g, '') // Remove non-numeric
-  
-  // Remove leading 0 or 62
-  if (value.startsWith('0')) {
-    value = value.substring(1)
-  }
-  if (value.startsWith('62')) {
-    value = value.substring(2)
-  }
-  
+  const value = e.target.value.replace(/\D/g, '')
   emit('update:modelValue', value)
-}
-
-const openContactPicker = () => {
-  // Contact picker API (if supported)
-  if ('contacts' in navigator && 'ContactsManager' in window) {
-    navigator.contacts.select(['tel'], { multiple: false })
-      .then(contacts => {
-        if (contacts.length > 0) {
-          const phone = contacts[0].tel[0].replace(/\D/g, '')
-          emit('update:modelValue', phone)
-        }
-      })
-      .catch(err => {
-        console.log('Contact picker cancelled or not supported')
-      })
-  } else {
-    alert('Fitur pilih kontak tidak tersedia di browser ini')
-  }
 }
 </script>
 
 <style scoped>
-/* Remove spinner from number input */
-input[type="tel"]::-webkit-outer-spin-button,
-input[type="tel"]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+.phone-input-wrapper {
+  margin-bottom: 1rem;
 }
 
-input[type="tel"] {
-  -moz-appearance: textfield;
+.input-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin-bottom: 0.5rem;
+}
+
+.input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: var(--input-background);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  transition: all 0.2s;
+}
+
+.input-container:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.prefix {
+  padding: 0 0 0 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.phone-input {
+  flex: 1;
+  height: 48px;
+  padding: 0 0.75rem;
+  font-size: 1rem;
+  font-weight: 500;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--foreground);
+  background: transparent;
+  border: none;
+  outline: none;
+}
+
+.phone-input::placeholder {
+  color: var(--muted-foreground);
+  font-weight: 400;
+}
+
+.operator-badge {
+  margin-right: 0.75rem;
+}
+
+.input-hint {
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--muted-foreground);
 }
 </style>
