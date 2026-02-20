@@ -172,7 +172,7 @@ import { useProductStore } from '@/stores/productStore'
 import { useOrderStore } from '@/stores/orderStore'
 import { useOperatorDetector } from '@/composables/useOperatorDetector'
 // ✅ FIX: Import komponen OperatorBadge
-import OperatorBadge from '@/components/OperatorBadge.vue'
+import OperatorBadge from '@/components/checkout/OperatorBadge.vue'
 
 const route = useRoute()
 const router = useRouter()
