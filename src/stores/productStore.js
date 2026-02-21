@@ -47,7 +47,6 @@ export const useProductStore = defineStore('product', () => {
 
   async function fetchProducts(forceRefresh = false) {
     if (!forceRefresh && isCacheValid.value && products.value.length > 0) {
-      console.log('📦 Using cached products')
       return products.value
     }
 
@@ -56,15 +55,12 @@ export const useProductStore = defineStore('product', () => {
     const startTime = Date.now()
 
     try {
-      console.log('🌐 Fetching products from API...')
       const data = await api.products.getAll()
       products.value = data
       lastFetch.value = Date.now()
-      console.log(`✅ Fetched ${data.length} products`)
       return data
     } catch (err) {
       error.value = err.message || 'Failed to fetch products'
-      console.error('❌ Fetch products error:', err)
       throw err
     } finally {
       const elapsed = Date.now() - startTime
