@@ -18,3 +18,4 @@ export default defineConfig({
     }
   }
 })
+// Update for production build
