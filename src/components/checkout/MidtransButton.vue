@@ -43,48 +43,40 @@ const handlePayment = async () => {
       customer_email: props.customerEmail
     }
 
-    console.log('📦 Creating order via orderStore:', orderData)
     const orderResponse = await orderStore.createOrder(orderData)
-    console.log('📊 Order response:', orderResponse)
 
     if (!orderResponse || !orderResponse.order_id) {
       throw new Error('Failed to create order')
     }
 
     const orderId = orderResponse.order_id
-    console.log('✅ Order created and saved to history:', orderId)
     localStorage.setItem(`order_email_${orderId}`, props.customerEmail)
 
     pay(orderId, {
       onSuccess: (result, oid) => {
-        console.log('🎉 Payment success! Updating order status...', oid)
         orderStore.updateOrderStatus(oid, 'success')
         emit('success', oid)
         emit('close')
         setTimeout(() => { router.push(`/payment/${oid}/success`); isProcessing.value = false }, 300)
       },
       onPending: (result, oid) => {
-        console.log('⏳ Payment pending! Updating order status...', oid)
         orderStore.updateOrderStatus(oid, 'pending')
         emit('pending', oid)
         emit('close')
         setTimeout(() => { router.push(`/payment/${oid}/pending`); isProcessing.value = false }, 300)
       },
       onError: (result) => {
-        console.error('❌ Payment error:', result)
         alert('Pembayaran gagal. Silakan coba lagi.')
         emit('close')
         isProcessing.value = false
       },
       onClose: () => {
-        console.log('🚪 User closed payment popup')
         emit('close')
         isProcessing.value = false
       }
     })
 
   } catch (err) {
-    console.error('❌ Payment error:', err)
     alert(err.message || 'Terjadi kesalahan. Silakan coba lagi.')
     emit('close')
     isProcessing.value = false
