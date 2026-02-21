@@ -2,7 +2,6 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import path from 'path'
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [vue()],
   resolve: {
@@ -10,10 +9,8 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
-  // ✅ FIX L-03: Hapus semua console.log & debugger saat build production
-  // Di development tetap muncul normal
   build: {
-    terserOptions: {
+    terser: {  // ← INI YANG BENER
       compress: {
         drop_console: true,
         drop_debugger: true,
