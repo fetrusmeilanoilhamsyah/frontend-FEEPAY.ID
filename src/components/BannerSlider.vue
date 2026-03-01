@@ -18,7 +18,6 @@
       </div>
     </div>
 
-    <!-- Dots -->
     <div class="dots">
       <button
         v-for="(_, i) in banners"
@@ -114,29 +113,29 @@ onUnmounted(() => clearInterval(autoplayInterval))
   overflow: hidden;
   user-select: none;
   border-radius: 18px;
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border: 1px solid rgba(22, 163, 74, 0.1);
 }
 
 @media (min-width: 768px)  { .banner-slider { height: 300px; } }
 @media (min-width: 1024px) { .banner-slider { height: 300px; } }
 @media (min-width: 1280px) { .banner-slider { height: 340px; } }
 
-/* Dot grid pattern di atas background hijau */
 .banner-slider::before {
   content: '';
   position: absolute; inset: 0;
-  background-image: radial-gradient(circle, rgba(22,163,74,0.15) 1px, transparent 1px);
+  background-image: radial-gradient(circle, rgba(22,163,74,0.1) 1px, transparent 1px);
   background-size: 20px 20px;
   z-index: 0; pointer-events: none;
   border-radius: 18px;
 }
 
-/* Glow putih pojok kiri atas */
 .banner-slider::after {
   content: '';
   position: absolute;
   top: -30px; left: -30px;
   width: 180px; height: 180px;
-  background: radial-gradient(circle, rgba(22,163,74,0.2) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(74, 222, 128, 0.2) 0%, transparent 70%);
   z-index: 0; pointer-events: none;
 }
 
@@ -146,7 +145,6 @@ onUnmounted(() => clearInterval(autoplayInterval))
   width: 100%; height: 100%;
 }
 
-/* Semua kartu: anchor kiri 50%, geser via transform */
 .card {
   position: absolute;
   width: 84%;
@@ -155,13 +153,12 @@ onUnmounted(() => clearInterval(autoplayInterval))
   border-radius: 14px;
   overflow: hidden;
   cursor: pointer;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
   transition:
     transform 0.42s cubic-bezier(0.25, 0.46, 0.45, 0.94),
     opacity   0.42s ease;
   will-change: transform, opacity;
   aspect-ratio: 16 / 9;
-  /* Background hijau brand — keliatan kalau gambar belum load */
   background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
 }
 
@@ -178,30 +175,29 @@ onUnmounted(() => clearInterval(autoplayInterval))
   border-radius: 14px;
 }
 
-/* Dots */
 .dots {
   position: absolute;
-  bottom: -16px; left: 50%;
+  bottom: 12px; left: 50%;
   transform: translateX(-50%);
-  display: flex; gap: 5px;
+  display: flex; gap: 6px;
   z-index: 20;
 }
 .dot {
-  width: 6px; height: 6px;
+  width: 8px; height: 8px;
   border-radius: 999px;
-  background: #d1d5db;
+  background: rgba(22, 163, 74, 0.3);
   border: none; padding: 0;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 .dot--active {
-  width: 20px;
+  width: 24px;
   background: #16a34a;
 }
 
 @media (min-width: 768px) {
-  .dots { bottom: -24px; gap: 6px; }
-  .dot { width: 8px; height: 8px; }
-  .dot--active { width: 28px; }
+  .dots { bottom: 16px; gap: 8px; }
+  .dot { width: 10px; height: 10px; }
+  .dot--active { width: 30px; }
 }
 </style>
