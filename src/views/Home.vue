@@ -4,6 +4,8 @@
     <!-- TOP HEADER -->
     <div class="home-header">
       <div class="header-brand">
+        <img src="/icons/top-up-game.webp" class="brand-icon" alt=""
+          @error="(e) => e.target.style.display='none'" />
         <span class="brand-fee">FEE</span><span class="brand-pay">PAY</span>
       </div>
       <div class="header-actions">
@@ -21,7 +23,7 @@
           <span class="ripple-ring tr1"></span><span class="ripple-ring tr2"></span>
           <span class="dot td1"></span><span class="dot td2"></span>
           <span class="dot td3"></span><span class="dot td4"></span>
-          <img src="/icons/nav/history.png" class="hbtn-icon" alt="transaksi"
+          <img src="/icons/nav/history.webp" class="hbtn-icon" alt="transaksi"
             @error="(e) => e.target.style.display='none'" />
         </button>
         <!-- Profil -->
@@ -29,7 +31,7 @@
           <span class="ripple-ring tr1"></span><span class="ripple-ring tr2"></span>
           <span class="dot td1"></span><span class="dot td2"></span>
           <span class="dot td3"></span><span class="dot td4"></span>
-          <img src="/icons/nav/profile.png" class="hbtn-icon" alt="profil"
+          <img src="/icons/nav/profile.webp" class="hbtn-icon" alt="profil"
             @error="(e) => e.target.style.display='none'" />
         </button>
       </div>
@@ -77,10 +79,10 @@
       </div>
 
       <!-- LAYANAN SECTION -->
-      <div class="section">
+      <div class="section section--brand">
         <div class="section-header">
           <div class="section-title-wrap">
-            <img src="/icons/section/layanan.png" class="section-icon" alt=""
+            <img src="/icons/section/layanan.webp" class="section-icon" alt=""
               @error="(e) => e.target.style.display='none'" />
             <div>
               <h2 class="section-title">Layanan Kami</h2>
@@ -100,10 +102,10 @@
       </div>
 
       <!-- TOP GAME SECTION -->
-      <div class="section">
+      <div class="section section--brand">
         <div class="section-header">
           <div class="section-title-wrap">
-            <img src="/icons/section/game.png" class="section-icon" alt=""
+            <img src="/icons/section/game.webp" class="section-icon" alt=""
               @error="(e) => e.target.style.display='none'" />
             <div>
               <h2 class="section-title">Top Up Game</h2>
@@ -120,7 +122,6 @@
             :class="{ active: activeCategory === cat.value }"
             @click="activeCategory = cat.value"
           >
-            <span class="cat-icon">{{ cat.icon }}</span>
             <span>{{ cat.label }}</span>
           </button>
         </div>
@@ -165,11 +166,11 @@
       </div>
 
       <!-- CS HELP BUTTON -->
-      <!-- CS SECTION — selaras Layanan & Top Up Game -->
+      <!-- CS SECTION -->
       <div class="section">
         <div class="section-header">
           <div class="section-title-wrap">
-            <img src="/icons/section/cs.png" class="section-icon" alt=""
+            <img src="/icons/section/cs.webp" class="section-icon" alt=""
               @error="(e) => e.target.style.display='none'" />
             <div>
               <h2 class="section-title">Butuh Bantuan?</h2>
@@ -178,14 +179,7 @@
           </div>
         </div>
         <div class="cs-card" @click="openChat">
-          <div class="cs-card-content">
-            <p class="cs-card-text">Hubungi kami kapan saja, kami siap membantu transaksi dan pertanyaan kamu.</p>
-            <div class="cs-card-tags">
-              <span class="cs-tag">💬 Live Chat</span>
-              <span class="cs-tag">⚡ Respon Cepat</span>
-              <span class="cs-tag">🕐 24 Jam</span>
-            </div>
-          </div>
+          <span class="cs-card-label">Chat langsung dengan CS kami</span>
           <button class="cs-card-btn">
             Chat CS
             <ChevronRight :size="14" />
@@ -267,10 +261,10 @@ const onBtnTap = (e, action) => {
 }
 
 const categories = [
-  { value: 'all',     label: 'Semua',        icon: '' },
-  { value: 'mobile',  label: 'Mobile',       icon: '' },
-  { value: 'pc',      label: 'PC / Console', icon: '' },
-  { value: 'voucher', label: 'Voucher',      icon: '' },
+  { value: 'all',     label: 'Semua'        },
+  { value: 'mobile',  label: 'Mobile'       },
+  { value: 'pc',      label: 'PC / Console' },
+  { value: 'voucher', label: 'Voucher'      },
 ]
 
 const MOBILE_GAMES  = ['MOBILE LEGENDS', 'FREE FIRE', 'PUBG MOBILE', 'CALL OF DUTY MOBILE', 'HONOR OF KINGS', 'GENSHIN IMPACT', 'WILD RIFT']
@@ -278,11 +272,11 @@ const PC_GAMES      = ['VALORANT', 'LEAGUE OF LEGENDS', 'STEAM', 'POINT BLANK', 
 const VOUCHER_GAMES = ['ROBLOX', 'MINECRAFT', 'XBOX', 'PLAYSTATION', 'GOOGLE PLAY', 'NINTENDO']
 
 const services = [
-  { img: '/icons/pulsa.png',        label: 'Pulsa',        to: '/checkout/pulsa',        bg: '#FEF3C7', badge: 'MURAH' },
-  { img: '/icons/kuota.png',        label: 'Kuota Data',   to: '/checkout/data',         bg: '#DBEAFE', badge: 'MURAH' },
-  { img: '/icons/pln.png',          label: 'Token PLN',    to: '/checkout/pln',          bg: '#FEE2E2', badge: null   },
-  { img: '/icons/top-up-game.png',  label: 'Top Up Game',  to: '/checkout/top-up-game',  bg: '#D1FAE5', badge: null   },
-  { img: '/icons/voucher-game.png', label: 'Voucher Game', to: '/checkout/game-voucher', bg: '#EDE9FE', badge: null   },
+  { img: '/icons/pulsa.png',        label: 'Pulsa',        to: '/checkout/pulsa',        bg: '#f0fdf4', badge: 'MURAH' },
+  { img: '/icons/kuota.png',        label: 'Kuota Data',   to: '/checkout/data',         bg: '#f0fdf4', badge: 'MURAH' },
+  { img: '/icons/pln.png',          label: 'Token PLN',    to: '/checkout/pln',          bg: '#f0fdf4', badge: null   },
+  { img: '/icons/top-up-game.png',  label: 'Top Up Game',  to: '/checkout/top-up-game',  bg: '#f0fdf4', badge: null   },
+  { img: '/icons/voucher-game.png', label: 'Voucher Game', to: '/checkout/game-voucher', bg: '#f0fdf4', badge: null   },
 ]
 
 const GAME_ASSETS = {
@@ -352,7 +346,15 @@ onMounted(async () => {
   padding: 10px 16px;
   display: flex; align-items: center; justify-content: space-between;
 }
-.header-brand { font-size: 1.25rem; font-weight: 900; letter-spacing: -0.03em; }
+.header-brand {
+  font-size: 1.25rem; font-weight: 900; letter-spacing: -0.03em;
+  display: flex; align-items: center; gap: 7px;
+}
+.brand-icon {
+  width: 28px; height: 28px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
 .brand-fee { color: var(--foreground, #111827); }
 .brand-pay { color: #16a34a; }
 .header-actions { display: flex; gap: 10px; }
@@ -450,26 +452,28 @@ onMounted(async () => {
 }
 
 .banner-wrap {
-  border-radius: 16px;
+  border-radius: 18px;
   overflow: visible;
-  padding-bottom: 24px;
+  padding-bottom: 30px;
   position: relative;
+  margin: 0 -2px;
 }
 
-/* Gradien hijau samar di belakang */
+/* Gradien mewah samar — sama kayak background page */
 .banner-wrap::before {
   content: '';
   position: absolute;
-  inset: -40px -50px;
-  background: radial-gradient(ellipse 90% 70% at 50% 50%,
-    rgba(22, 163, 74, 0.25) 0%,
-    rgba(22, 163, 74, 0.1) 50%,
+  inset: -20px -24px;
+  background: radial-gradient(ellipse 80% 60% at 50% 50%,
+    rgba(22, 163, 74, 0.08) 0%,
+    rgba(22, 163, 74, 0.03) 50%,
     transparent 75%
   );
   border-radius: 24px;
   z-index: 0;
   pointer-events: none;
 }
+
 
 .banner-wrap > * {
   position: relative;
@@ -601,6 +605,44 @@ onMounted(async () => {
 
 /* SECTION */
 .section { display: flex; flex-direction: column; gap: 12px; }
+
+/* Brand background subtle di section utama */
+.section--brand {
+  background: var(--card, #fff);
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 18px;
+  padding: 14px 14px 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Green glow pojok kiri atas */
+.section--brand::before {
+  content: '';
+  position: absolute;
+  top: -30px; left: -30px;
+  width: 120px; height: 120px;
+  background: radial-gradient(circle, rgba(22,163,74,0.12) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Green glow pojok kanan bawah */
+.section--brand::after {
+  content: '';
+  position: absolute;
+  bottom: -20px; right: -20px;
+  width: 100px; height: 100px;
+  background: radial-gradient(circle, rgba(22,163,74,0.08) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Pastikan konten di atas glow */
+.section--brand > * {
+  position: relative;
+  z-index: 1;
+}
 .section-header { display: flex; align-items: center; justify-content: space-between; }
 
 .section-title-wrap {
@@ -631,25 +673,46 @@ onMounted(async () => {
 }
 
 /* SERVICE GRID */
-.service-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.service-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
 .service-card {
-  display: flex; flex-direction: column; align-items: center; gap: 6px;
-  text-decoration: none; position: relative; transition: transform 0.2s;
+  display: flex; flex-direction: column; align-items: center; gap: 7px;
+  text-decoration: none; position: relative;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-.service-card:active { transform: scale(0.92); }
+.service-card:active { transform: scale(0.88); }
 .service-icon-wrap {
-  width: 52px; height: 52px; border-radius: 16px;
-  display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+  width: 58px; height: 58px;
+  border-radius: 18px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 1.5px solid rgba(22,163,74,0.15);
+  box-shadow:
+    0 2px 0 rgba(22,163,74,0.08),
+    0 4px 12px rgba(22,163,74,0.1),
+    0 1px 3px rgba(0,0,0,0.06);
 }
-.service-card:hover .service-icon-wrap { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.1); }
-.service-icon { width: 28px; height: 28px; object-fit: contain; }
-.service-label { font-size: 0.6rem; font-weight: 600; color: var(--foreground, #374151); text-align: center; line-height: 1.2; }
+.service-card:hover .service-icon-wrap {
+  transform: translateY(-4px) scale(1.05);
+  border-color: rgba(22,163,74,0.3);
+  box-shadow:
+    0 4px 0 rgba(22,163,74,0.12),
+    0 10px 24px rgba(22,163,74,0.18),
+    0 2px 6px rgba(0,0,0,0.08);
+}
+.service-icon { width: 34px; height: 34px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.12)); }
+.service-label {
+  font-size: 0.625rem; font-weight: 700;
+  color: var(--foreground, #374151);
+  text-align: center; line-height: 1.2;
+  letter-spacing: -0.01em;
+}
 .service-badge {
-  position: absolute; top: -4px; left: 50%; transform: translateX(-50%);
+  position: absolute; top: -5px; left: 50%; transform: translateX(-50%);
   background: #ef4444; color: #fff;
   font-size: 7px; font-weight: 800;
-  padding: 2px 5px; border-radius: 4px;
+  padding: 2px 6px; border-radius: 5px;
   white-space: nowrap; border: 1.5px solid #fff;
+  box-shadow: 0 2px 4px rgba(239,68,68,0.3);
 }
 
 /* CATEGORY PILLS */
@@ -666,7 +729,6 @@ onMounted(async () => {
 }
 .cat-pill:hover  { border-color: #16a34a; background: #f0fdf4; }
 .cat-pill.active { background: #16a34a; color: #fff; border-color: #16a34a; }
-.cat-icon { font-size: 1rem; }
 
 /* GAME GRID */
 .game-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
@@ -707,13 +769,13 @@ onMounted(async () => {
 }
 .game-empty-btn:hover { background: #15803d; }
 
-/* CS CARD — selaras HowItWorks */
+/* CS CARD */
 .cs-card {
   background: var(--card, #fff);
   border: 1px solid var(--border, #e5e7eb);
   border-left: 3px solid #16a34a;
   border-radius: 18px;
-  padding: 16px;
+  padding: 14px 16px;
   cursor: pointer;
   transition: all 0.2s;
   display: flex;
@@ -723,27 +785,18 @@ onMounted(async () => {
 }
 .cs-card:hover {
   border-color: #16a34a;
-  box-shadow: 0 4px 16px rgba(22,163,74,0.12);
+  box-shadow: 0 4px 16px rgba(22,163,74,0.1);
   transform: translateY(-1px);
 }
-.cs-card-content { flex: 1; }
-.cs-card-text {
-  font-size: 0.75rem;
+.cs-card-label {
+  font-size: 0.8125rem;
+  font-weight: 500;
   color: var(--muted-foreground, #6b7280);
-  line-height: 1.5;
-  margin-bottom: 10px;
-}
-.cs-card-tags { display: flex; flex-wrap: wrap; gap: 4px; }
-.cs-tag {
-  font-size: 0.6rem; font-weight: 600;
-  padding: 2px 8px; border-radius: 999px;
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
-  color: #16a34a;
+  flex: 1;
 }
 .cs-card-btn {
   display: flex; align-items: center; gap: 4px;
-  padding: 10px 16px;
+  padding: 9px 16px;
   background: #16a34a; color: #fff;
   border: none; border-radius: 999px;
   font-size: 0.8125rem; font-weight: 700;

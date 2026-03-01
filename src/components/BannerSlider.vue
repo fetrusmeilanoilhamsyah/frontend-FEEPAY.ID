@@ -11,16 +11,10 @@
         v-for="(banner, index) in banners"
         :key="index"
         class="card"
-        :class="getCardClass(index)"
         :style="getCardStyle(index)"
-        @click="goTo(index)"
+        @click="onCardClick(index)"
       >
-        <img
-          :src="banner.image"
-          :alt="banner.alt"
-          class="card-img"
-          draggable="false"
-        />
+        <img :src="banner.image" :alt="banner.alt" class="card-img" draggable="false" />
       </div>
     </div>
 
@@ -46,70 +40,60 @@ const banners = [
   { image: '/banners/banner1.jpg', alt: 'Banner 1' },
   { image: '/banners/banner2.jpg', alt: 'Banner 2' },
   { image: '/banners/banner3.jpg', alt: 'Banner 3' },
+  { image: '/banners/banner4.jpg', alt: 'Banner 4' },
+  { image: '/banners/banner5.jpg', alt: 'Banner 5' },
 ]
 
 const currentIndex = ref(0)
 let autoplayInterval = null
 let touchStartX = 0
-
 const total = banners.length
 
-// Hitung posisi relatif index terhadap current (-1, 0, 1, dll)
+// Hitung posisi relatif — hasilnya integer: -2,-1,0,1,2,...
 const getRelPos = (index) => {
   let diff = index - currentIndex.value
-  // wrap around
   if (diff > total / 2)  diff -= total
   if (diff < -total / 2) diff += total
   return diff
 }
 
-const getCardClass = (index) => {
-  const pos = getRelPos(index)
-  if (pos === 0)  return 'card--active'
-  if (pos === 1 || pos === -1) return 'card--side'
-  return 'card--hidden'
-}
-
+// Semua posisi pakai translateX saja — TIDAK ada transisi left
 const getCardStyle = (index) => {
   const pos = getRelPos(index)
-  if (pos === 0) return {
-    transform: 'translateX(-50%) scale(1)',
-    zIndex: 10,
-    opacity: 1,
+  const abs = Math.abs(pos)
+
+  // Kartu terlalu jauh — sembunyikan
+  if (abs > 2) return { opacity: 0, pointerEvents: 'none', transform: 'translateX(-50%) translateY(-50%) scale(0.5)', left: '50%', top: '50%' }
+
+  // Scale & opacity berdasar jarak
+  const scale   = pos === 0 ? 1 : abs === 1 ? 0.84 : 0.72
+  const opacity = pos === 0 ? 1 : abs === 1 ? 0.65 : 0.25
+  const zIndex  = pos === 0 ? 10 : abs === 1 ? 5 : 2
+
+  // Offset horizontal: center=0%, side=±62%, far=±118%
+  const offsetMap = { '-2': -118, '-1': -62, 0: 0, 1: 62, 2: 118 }
+  const offset = offsetMap[pos] ?? 0
+
+  // Semua kartu anchor di center (left:50%), geser pakai translateX
+  return {
     left: '50%',
+    transform: `translateX(calc(-50% + ${offset}%)) translateY(-50%) scale(${scale})`,
+    opacity,
+    zIndex,
+    pointerEvents: abs > 1 ? 'none' : 'auto',
   }
-  if (pos === 1) return {
-    transform: 'translateX(-10%) scale(0.82)',
-    zIndex: 5,
-    opacity: 0.7,
-    left: '72%',
-  }
-  if (pos === -1) return {
-    transform: 'translateX(-90%) scale(0.82)',
-    zIndex: 5,
-    opacity: 0.7,
-    left: '28%',
-  }
-  if (pos === 2) return {
-    transform: 'translateX(20%) scale(0.7)',
-    zIndex: 2,
-    opacity: 0.3,
-    left: '80%',
-  }
-  if (pos === -2) return {
-    transform: 'translateX(-120%) scale(0.7)',
-    zIndex: 2,
-    opacity: 0.3,
-    left: '20%',
-  }
-  return { opacity: 0, zIndex: 0, left: '50%', transform: 'translateX(-50%) scale(0.6)' }
 }
 
-const next = () => { currentIndex.value = (currentIndex.value + 1) % total }
-const prev = () => { currentIndex.value = (currentIndex.value - 1 + total) % total }
-const goTo = (i) => { currentIndex.value = i }
-const startAutoplay = () => { autoplayInterval = setInterval(next, 4000) }
-const pauseAutoplay = () => { clearInterval(autoplayInterval) }
+const onCardClick = (index) => {
+  if (index !== currentIndex.value) goTo(index)
+}
+
+const next  = () => { currentIndex.value = (currentIndex.value + 1) % total }
+const prev  = () => { currentIndex.value = (currentIndex.value - 1 + total) % total }
+const goTo  = (i) => { currentIndex.value = i }
+
+const startAutoplay  = () => { autoplayInterval = setInterval(next, 4000) }
+const pauseAutoplay  = () => { clearInterval(autoplayInterval) }
 const resumeAutoplay = () => { startAutoplay() }
 
 const onTouchStart = (e) => { touchStartX = e.changedTouches[0].clientX }
@@ -126,76 +110,69 @@ onUnmounted(() => clearInterval(autoplayInterval))
 .banner-slider {
   position: relative;
   width: 100%;
-  height: 160px;
+  height: 280px;
   overflow: hidden;
   user-select: none;
+  border-radius: 18px;
 }
 
-/* Dot grid pattern samar */
+@media (min-width: 768px)  { .banner-slider { height: 300px; } }
+@media (min-width: 1024px) { .banner-slider { height: 300px; } }
+@media (min-width: 1280px) { .banner-slider { height: 340px; } }
+
+/* Dot grid pattern di atas background hijau */
 .banner-slider::before {
   content: '';
-  position: absolute;
-  inset: 0;
+  position: absolute; inset: 0;
   background-image: radial-gradient(circle, rgba(22,163,74,0.15) 1px, transparent 1px);
-  background-size: 18px 18px;
-  z-index: 0;
-  pointer-events: none;
+  background-size: 20px 20px;
+  z-index: 0; pointer-events: none;
+  border-radius: 18px;
 }
 
-/* Glow pojok kiri atas */
+/* Glow putih pojok kiri atas */
 .banner-slider::after {
   content: '';
   position: absolute;
-  top: -20px; left: -20px;
-  width: 130px; height: 130px;
-  background: radial-gradient(circle, rgba(22,163,74,0.18) 0%, transparent 70%);
-  z-index: 0;
-  pointer-events: none;
+  top: -30px; left: -30px;
+  width: 180px; height: 180px;
+  background: radial-gradient(circle, rgba(22,163,74,0.2) 0%, transparent 70%);
+  z-index: 0; pointer-events: none;
 }
 
-/* Track — jadi stage untuk kartu */
 .cards-track {
   position: relative;
   z-index: 1;
-  width: 100%;
-  height: 100%;
+  width: 100%; height: 100%;
 }
 
-/* Tiap kartu absolute, transisi smooth */
+/* Semua kartu: anchor kiri 50%, geser via transform */
 .card {
   position: absolute;
-  width: 78%;
-  top: 0; bottom: 0;
+  width: 84%;
+  top: 50%;
+  transform-origin: center center;
   border-radius: 14px;
   overflow: hidden;
   cursor: pointer;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
   transition:
-    transform  0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    opacity    0.45s ease,
-    left       0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    box-shadow 0.45s ease;
+    transform 0.42s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    opacity   0.42s ease;
   will-change: transform, opacity;
+  aspect-ratio: 16 / 9;
+  /* Background hijau brand — keliatan kalau gambar belum load */
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
 }
 
-.card--active {
-  box-shadow: 0 8px 32px rgba(0,0,0,0.22);
-}
-
-.card--side {
-  cursor: pointer;
-}
-.card--side:hover {
-  opacity: 0.85 !important;
-}
-
-.card--hidden {
-  pointer-events: none;
-}
+@media (min-width: 768px)  { .card { width: 55%; top: 14px; bottom: 14px; } }
+@media (min-width: 1024px) { .card { width: 50%; } }
+@media (min-width: 1280px) { .card { width: 45%; } }
 
 .card-img {
-  width: 100%;
-  height: 100%;
+  width: 100%; height: 100%;
   object-fit: cover;
+  object-position: center;
   display: block;
   pointer-events: none;
   border-radius: 14px;
@@ -204,11 +181,9 @@ onUnmounted(() => clearInterval(autoplayInterval))
 /* Dots */
 .dots {
   position: absolute;
-  bottom: -18px;
-  left: 50%;
+  bottom: -16px; left: 50%;
   transform: translateX(-50%);
-  display: flex;
-  gap: 5px;
+  display: flex; gap: 5px;
   z-index: 20;
 }
 .dot {
@@ -220,7 +195,13 @@ onUnmounted(() => clearInterval(autoplayInterval))
   transition: all 0.3s ease;
 }
 .dot--active {
-  width: 18px;
-  background: #111827;
+  width: 20px;
+  background: #16a34a;
+}
+
+@media (min-width: 768px) {
+  .dots { bottom: -24px; gap: 6px; }
+  .dot { width: 8px; height: 8px; }
+  .dot--active { width: 28px; }
 }
 </style>

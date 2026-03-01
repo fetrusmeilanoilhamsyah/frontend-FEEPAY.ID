@@ -161,13 +161,18 @@ const handleSelect = () => {
 }
 
 .product-card:hover {
-  border-color: var(--primary);
+  border-color: #16a34a;
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.1);
+  box-shadow: 0 6px 16px rgba(22, 163, 74, 0.12);
 }
 
 .product-card:active {
   transform: translateY(0);
+}
+
+.product-card:focus-visible {
+  outline: 2px solid #16a34a;
+  outline-offset: 2px;
 }
 
 .badge-container {
@@ -214,7 +219,6 @@ const handleSelect = () => {
   text-overflow: ellipsis;
 }
 
-/* FIX: garis pemisah tipis antara nama dan harga */
 .price-divider {
   width: 100%;
   height: 1px;
@@ -225,7 +229,7 @@ const handleSelect = () => {
 .product-price {
   font-size: 0.9375rem;
   font-weight: 800;
-  color: var(--primary);
+  color: #16a34a;
   letter-spacing: -0.02em;
   text-align: center;
   width: 100%;

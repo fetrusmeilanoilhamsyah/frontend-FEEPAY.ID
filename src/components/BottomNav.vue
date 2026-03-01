@@ -1,5 +1,5 @@
 <template>
-  <nav class="bottom-nav">
+  <nav class="bottom-nav" :class="{ hidden: !isVisible }">
     <div class="nav-inner">
       <router-link
         v-for="item in navItems"
@@ -34,9 +34,12 @@
 </template>
 
 <script setup>
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
+const isVisible = ref(true)
+let lastScrollY = 0
 
 const navItems = [
   { path: '/',             icon: '/icons/nav/home.png',    iconActive: '/icons/nav/home-active.png',    label: 'Beranda' },
@@ -53,6 +56,28 @@ const onTap = (e) => {
   wrap.classList.add('burst')
   setTimeout(() => wrap.classList.remove('burst'), 700)
 }
+
+const handleScroll = () => {
+  const currentScrollY = window.scrollY
+  
+  if (currentScrollY < 10) {
+    isVisible.value = true
+  } else if (currentScrollY > lastScrollY && currentScrollY > 80) {
+    isVisible.value = false
+  } else if (currentScrollY < lastScrollY) {
+    isVisible.value = true
+  }
+  
+  lastScrollY = currentScrollY
+}
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll, { passive: true })
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
+})
 </script>
 
 <style scoped>
@@ -63,7 +88,14 @@ const onTap = (e) => {
   z-index: 50;
   padding-bottom: env(safe-area-inset-bottom);
   box-shadow: 0 -2px 16px rgba(0,0,0,0.06);
+  transform: translateY(0);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+.bottom-nav.hidden {
+  transform: translateY(100%);
+}
+
 @media(min-width: 768px) { .bottom-nav { display: none; } }
 
 .nav-inner {

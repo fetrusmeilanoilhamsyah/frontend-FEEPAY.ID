@@ -1,7 +1,7 @@
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted } from 'vue'
 
 const STORAGE_KEY = 'feepay_theme'
-const currentTheme = ref('light')
+const currentTheme = ref('light') // Default light mode
 
 export function useTheme() {
   const setTheme = (theme) => {
@@ -27,22 +27,14 @@ export function useTheme() {
     if (stored) {
       setTheme(stored)
     } else {
-      // Check system preference
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-      setTheme(prefersDark ? 'dark' : 'light')
+      // DEFAULT LIGHT MODE - gak peduli system preference
+      setTheme('light')
     }
   }
 
-  // Watch for system preference changes
+  // HAPUS listener system preference - user baru selalu light mode
   onMounted(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-    
-    mediaQuery.addEventListener('change', (e) => {
-      // Only auto-switch if user hasn't manually set preference
-      if (!localStorage.getItem(STORAGE_KEY)) {
-        setTheme(e.matches ? 'dark' : 'light')
-      }
-    })
+    initTheme()
   })
 
   return {

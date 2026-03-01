@@ -37,3 +37,5 @@ public/images/
 public/banners/
 public/logos/
 public/icons/
+.vercel
+.env*.local

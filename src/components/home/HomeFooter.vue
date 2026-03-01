@@ -1,10 +1,6 @@
 <template>
   <footer class="home-footer">
-
-    <!-- Card wrapper — sama kayak HowItWorks -->
     <div class="footer-card">
-
-      <!-- Brand -->
       <div class="footer-brand">
         <router-link to="/" class="brand-logo">
           <span class="fee">FEE</span><span class="pay">PAY</span>
@@ -14,7 +10,6 @@
 
       <div class="footer-divider" />
 
-      <!-- Payment Methods -->
       <div class="footer-payment">
         <p class="section-label">Metode Pembayaran</p>
         <div class="payment-icons">
@@ -30,18 +25,16 @@
 
       <div class="footer-divider" />
 
-      <!-- Links -->
       <div class="footer-links">
-        <router-link to="/about"        class="footer-link">Tentang Kami</router-link>
+        <router-link to="/about" class="footer-link">Tentang Kami</router-link>
         <span class="footer-dot">·</span>
-        <router-link to="/privacy"      class="footer-link">Kebijakan Privasi</router-link>
+        <router-link to="/privacy" class="footer-link">Kebijakan Privasi</router-link>
         <span class="footer-dot">·</span>
-        <router-link to="/terms"        class="footer-link">Syarat & Ketentuan</router-link>
+        <router-link to="/terms" class="footer-link">Syarat & Ketentuan</router-link>
         <span class="footer-dot">·</span>
         <router-link to="/transactions" class="footer-link">Cek Transaksi</router-link>
       </div>
 
-      <!-- Social -->
       <div class="footer-social">
         <a :href="socialLinks.instagram" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="Instagram">
           <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24">
@@ -63,7 +56,6 @@
       <div class="footer-divider" />
 
       <div class="footer-copy">© 2025 FeePay · All rights reserved</div>
-
     </div>
   </footer>
 </template>
@@ -85,22 +77,23 @@ const whatsappLink = computed(() => {
 
 <style scoped>
 .home-footer {
-  margin: 4px 0 12px;
+  margin: 20px 0 0 0;
 }
 
-/* Card — persis sama kayak .steps di HowItWorks */
 .footer-card {
   background: var(--card, #fff);
   border: 1px solid var(--border, #e5e7eb);
   border-radius: 18px;
-  padding: 6px 16px 16px;
+  padding: 20px 18px 18px;
   display: flex;
   flex-direction: column;
   gap: 14px;
 }
 
-/* Brand */
-.footer-brand { padding-top: 10px; }
+.footer-brand { 
+  padding-top: 0; 
+}
+
 .brand-logo {
   font-size: 1.25rem;
   font-weight: 900;
@@ -113,19 +106,18 @@ const whatsappLink = computed(() => {
 .brand-logo:hover { opacity: 0.8; }
 .fee { color: var(--foreground, #111827); }
 .pay { color: #16a34a; }
+
 .brand-desc {
   font-size: 0.75rem;
   color: var(--muted-foreground, #6b7280);
   line-height: 1.6;
 }
 
-/* Divider — sama kayak step-body border */
 .footer-divider {
   height: 1px;
   background: var(--border, #f3f4f6);
 }
 
-/* Section label — sama kayak step-badge style */
 .section-label {
   font-size: 0.5625rem;
   font-weight: 900;
@@ -135,17 +127,17 @@ const whatsappLink = computed(() => {
   margin-bottom: 8px;
 }
 
-/* Payment */
 .payment-icons {
   display: flex;
   flex-wrap: wrap;
   gap: 5px;
 }
+
 .pay-icon {
   padding: 3px 10px;
   background: var(--background, #f8fafc);
   border: 1px solid var(--border, #e5e7eb);
-  border-radius: 999px; /* pill — selaras tag di HowItWorks */
+  border-radius: 999px;
   font-size: 0.6rem;
   font-weight: 700;
   color: var(--muted-foreground, #6b7280);
@@ -158,13 +150,13 @@ const whatsappLink = computed(() => {
   background: #f0fdf4;
 }
 
-/* Links */
 .footer-links {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 6px;
 }
+
 .footer-link {
   font-size: 0.75rem;
   color: var(--muted-foreground, #6b7280);
@@ -173,19 +165,26 @@ const whatsappLink = computed(() => {
   transition: color 0.2s;
 }
 .footer-link:hover { color: #16a34a; }
+
 .footer-dot {
   color: var(--border, #d1d5db);
   font-size: 0.875rem;
 }
 
-/* Social */
-.footer-social { display: flex; gap: 8px; }
+.footer-social { 
+  display: flex; 
+  gap: 8px; 
+}
+
 .social-btn {
-  width: 36px; height: 36px;
-  border-radius: 10px; /* selaras step-icon border-radius 14px tapi lebih kecil */
+  width: 36px; 
+  height: 36px;
+  border-radius: 10px;
   background: var(--background, #f8fafc);
   border: 1px solid var(--border, #e5e7eb);
-  display: flex; align-items: center; justify-content: center;
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
   color: var(--muted-foreground, #6b7280);
   text-decoration: none;
   transition: all 0.2s;
@@ -197,11 +196,76 @@ const whatsappLink = computed(() => {
   transform: translateY(-2px);
 }
 
-/* Copy */
 .footer-copy {
   font-size: 0.6875rem;
   color: var(--muted-foreground, #9ca3af);
   text-align: center;
   font-weight: 500;
+}
+
+/* RESPONSIVE DESKTOP */
+@media (min-width: 768px) {
+  .home-footer {
+    margin: 32px 0 0 0;
+  }
+  
+  .footer-card {
+    padding: 28px 32px 24px;
+    gap: 18px;
+  }
+  
+  .footer-brand {
+    text-align: center;
+  }
+  
+  .brand-logo {
+    font-size: 1.5rem;
+  }
+  
+  .brand-desc {
+    font-size: 0.875rem;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  .footer-payment {
+    text-align: center;
+  }
+  
+  .section-label {
+    text-align: center;
+  }
+  
+  .payment-icons {
+    gap: 8px;
+    justify-content: center;
+  }
+  
+  .pay-icon {
+    padding: 6px 16px;
+    font-size: 0.6875rem;
+  }
+  
+  .footer-links {
+    justify-content: center;
+  }
+  
+  .footer-link {
+    font-size: 0.8125rem;
+  }
+  
+  .footer-social {
+    justify-content: center;
+    gap: 12px;
+  }
+  
+  .social-btn {
+    width: 42px;
+    height: 42px;
+  }
+  
+  .footer-copy {
+    font-size: 0.75rem;
+  }
 }
 </style>

@@ -2,7 +2,7 @@
   <div>
     <transition name="scale">
       <button
-        v-if="!isOpen"
+        v-if="!isOpen && isVisible"
         @click="toggleChat"
         class="fixed z-50 w-14 h-14 text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group active:scale-95"
         :class="isMobile ? 'bottom-20 right-4' : 'bottom-6 right-6'"
@@ -174,23 +174,41 @@ const props = defineProps({
 })
 
 const isOpen = ref(false)
+const isVisible = ref(true)
 const step = ref('platform')
 const selectedPlatform = ref(null)
 const sending = ref(false)
 const errorMessage = ref('')
 const isMobile = ref(false)
+let lastScrollY = 0
 
 const checkMobile = () => {
   isMobile.value = window.innerWidth < 768
 }
 
+const handleScroll = () => {
+  const currentScrollY = window.scrollY
+  
+  if (currentScrollY < 10) {
+    isVisible.value = true
+  } else if (currentScrollY > lastScrollY && currentScrollY > 80) {
+    isVisible.value = false
+  } else if (currentScrollY < lastScrollY) {
+    isVisible.value = true
+  }
+  
+  lastScrollY = currentScrollY
+}
+
 onMounted(() => {
   checkMobile()
   window.addEventListener('resize', checkMobile)
+  window.addEventListener('scroll', handleScroll, { passive: true })
 })
 
 onUnmounted(() => {
   window.removeEventListener('resize', checkMobile)
+  window.removeEventListener('scroll', handleScroll)
 })
 
 const hasUnread = computed(() => props.newMessageCount > 0 && !isOpen.value)
@@ -201,12 +219,10 @@ const form = ref({
   message: ''
 })
 
-// EXPOSE METHOD INI AGAR BISA DIPANGGIL DARI PARENT
 const toggleChat = () => {
   isOpen.value = !isOpen.value
 }
 
-// EXPOSE toggleChat ke parent component
 defineExpose({
   toggleChat
 })
