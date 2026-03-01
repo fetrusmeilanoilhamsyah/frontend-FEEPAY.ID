@@ -128,11 +128,11 @@ import { ref, onMounted } from 'vue'
 const loading = ref(true)
 
 const menuItems = [
-  { icon: '/icons/profile/account.png',     label: 'Informasi Akun',    bg: '#DBEAFE', badge: 'Segera'  },
-  { icon: '/icons/profile/history.png',     label: 'Riwayat Transaksi', bg: '#D1FAE5', badge: null      },
-  { icon: '/icons/profile/notification.png',label: 'Notifikasi',        bg: '#FEF3C7', badge: 'Segera'  },
-  { icon: '/icons/profile/security.png',    label: 'Keamanan',          bg: '#FEE2E2', badge: 'Segera'  },
-  { icon: '/icons/profile/help.png',        label: 'Bantuan',           bg: '#EDE9FE', badge: null      },
+  { icon: '/icons/profile/account.webp',     label: 'Informasi Akun',    bg: '#DBEAFE', badge: 'Segera'  },
+  { icon: '/icons/profile/history.webp',     label: 'Riwayat Transaksi', bg: '#D1FAE5', badge: null      },
+  { icon: '/icons/profile/notification.webp',label: 'Notifikasi',        bg: '#FEF3C7', badge: 'Segera'  },
+  { icon: '/icons/profile/security.webp',    label: 'Keamanan',          bg: '#FEE2E2', badge: 'Segera'  },
+  { icon: '/icons/profile/help.webp',        label: 'Bantuan',           bg: '#EDE9FE', badge: null      },
 ]
 
 onMounted(() => {

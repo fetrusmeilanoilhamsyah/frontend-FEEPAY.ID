@@ -42,9 +42,9 @@ const isVisible = ref(true)
 let lastScrollY = 0
 
 const navItems = [
-  { path: '/',             icon: '/icons/nav/home.png',    iconActive: '/icons/nav/home-active.png',    label: 'Beranda' },
-  { path: '/transactions', icon: '/icons/nav/history.png', iconActive: '/icons/nav/history-active.png', label: 'Riwayat' },
-  { path: '/profile',      icon: '/icons/nav/profile.png', iconActive: '/icons/nav/profile-active.png', label: 'Profil'  },
+  { path: '/',             icon: '/icons/nav/home.webp',    iconActive: '/icons/nav/home-active.webp',    label: 'Beranda' },
+  { path: '/transactions', icon: '/icons/nav/history.webp', iconActive: '/icons/nav/history-active.webp', label: 'Riwayat' },
+  { path: '/profile',      icon: '/icons/nav/profile.webp', iconActive: '/icons/nav/profile-active.webp', label: 'Profil'  },
 ]
 
 const isActive = (path) => path === '/' ? route.path === '/' : route.path.startsWith(path)

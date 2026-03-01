@@ -62,18 +62,18 @@ const emit = defineEmits(['update:modelValue'])
 
 // ✅ Key uppercase karena brand dari DB Digiflazz uppercase semua
 const gameLogos = {
-  'MOBILE LEGENDS':      '/logos/games/ml.png',
-  'FREE FIRE':           '/logos/games/ff.png',
-  'PUBG MOBILE':         '/logos/games/pubg.png',
-  'GENSHIN IMPACT':      '/logos/games/genshin.png',
-  'CALL OF DUTY MOBILE': '/logos/games/cod.png',
-  'VALORANT':            '/logos/games/valorant.png',
-  'LEAGUE OF LEGENDS':   '/logos/games/leagueoflegends.png',
-  'ROBLOX':              '/logos/games/roblox.png',
-  'HOK':                 '/logos/games/hok.png',
-  'HONKAI STAR RAIL':    '/logos/games/hsr.png',
-  'STEAM':               '/logos/games/steam.png',
-  'GOOGLE PLAY':         '/logos/games/googleplay.png',
+  'MOBILE LEGENDS':      '/logos/games/ml.webp',
+  'FREE FIRE':           '/logos/games/ff.webp',
+  'PUBG MOBILE':         '/logos/games/pubg.webp',
+  'GENSHIN IMPACT':      '/logos/games/genshin.webp',
+  'CALL OF DUTY MOBILE': '/logos/games/cod.webp',
+  'VALORANT':            '/logos/games/valorant.webp',
+  'LEAGUE OF LEGENDS':   '/logos/games/leagueoflegends.webp',
+  'ROBLOX':              '/logos/games/roblox.webp',
+  'HOK':                 '/logos/games/hok.webp',
+  'HONKAI STAR RAIL':    '/logos/games/hsr.webp',
+  'STEAM':               '/logos/games/steam.webp',
+  'GOOGLE PLAY':         '/logos/games/googleplay.webp',
 }
 
 const getGameLogo = (game) => gameLogos[game?.toUpperCase()] || null

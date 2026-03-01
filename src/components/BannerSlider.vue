@@ -37,11 +37,11 @@ import { ref, onMounted, onUnmounted } from 'vue'
 defineEmits(['action'])
 
 const banners = [
-  { image: '/banners/banner1.jpg', alt: 'Banner 1' },
-  { image: '/banners/banner2.jpg', alt: 'Banner 2' },
-  { image: '/banners/banner3.jpg', alt: 'Banner 3' },
-  { image: '/banners/banner4.jpg', alt: 'Banner 4' },
-  { image: '/banners/banner5.jpg', alt: 'Banner 5' },
+  { image: '/banners/banner1.webp', alt: 'Banner 1' },
+  { image: '/banners/banner2.webp', alt: 'Banner 2' },
+  { image: '/banners/banner3.webp', alt: 'Banner 3' },
+  { image: '/banners/banner4.webp', alt: 'Banner 4' },
+  { image: '/banners/banner5.webp', alt: 'Banner 5' },
 ]
 
 const currentIndex = ref(0)

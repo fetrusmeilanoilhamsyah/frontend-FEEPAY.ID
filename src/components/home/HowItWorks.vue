@@ -33,28 +33,28 @@
 <script setup>
 const steps = [
   {
-    img: '/icons/step-cart.png',
+    img: '/icons/step-cart.webp',
     title: 'Pilih Produk',
     desc: 'Pilih layanan yang kamu butuhkan dari berbagai kategori',
     tags: ['Pulsa', 'Token PLN', 'Top Up Game', 'Voucher'],
     cls: 'purple',
   },
   {
-    img: '/icons/step-data.png',
+    img: '/icons/step-data.webp',
     title: 'Isi Data',
     desc: 'Masukkan nomor HP, ID game, atau nomor meter PLN kamu',
     tags: ['Nomor HP', 'ID Game', 'Nomor Meter'],
     cls: 'blue',
   },
   {
-    img: '/icons/step-pay.png',
+    img: '/icons/step-pay.webp',
     title: 'Bayar',
     desc: 'Pilih metode pembayaran yang paling nyaman buatmu',
     tags: ['QRIS', 'Transfer Bank', 'GoPay', 'OVO', 'Dana'],
     cls: 'yellow',
   },
   {
-    img: '/icons/step-done.png',
+    img: '/icons/step-done.webp',
     title: 'Selesai!',
     desc: 'Produk langsung masuk ke akun kamu dalam hitungan detik',
     tags: ['Instan', 'Otomatis', 'Notifikasi Email'],

@@ -42,7 +42,7 @@
           <button v-for="game in filteredGames" :key="game.brand" @click="selectGame(game)" class="game-card">
             <div class="game-card-bg">
               <img :src="getGameBanner(game.brand)" :alt="game.label" class="game-card-img"
-                @error="(e) => e.target.src='/images/games/banner-default.jpg'" />
+                @error="(e) => e.target.src='/images/games/banner-default.webp'" />
               <div class="game-card-overlay" />
             </div>
             <div class="game-badge">{{ game.count }} Paket</div>
@@ -165,21 +165,21 @@ const PC_GAMES = ['STEAM', 'LEAGUE OF LEGENDS', 'VALORANT', 'ROBLOX', 'HONKAI ST
 const ZONE_ID_BRANDS = ['MOBILE LEGENDS', 'GENSHIN IMPACT', 'HOK']
 
 const GAME_ASSETS = {
-  'MOBILE LEGENDS':      { banner: '/images/games/ml.png',     logo: '/logos/games/ml.png',              label: 'Mobile Legends' },
-  'FREE FIRE':           { banner: '/images/games/ff.png',      logo: '/logos/games/ff.png',              label: 'Free Fire' },
-  'PUBG MOBILE':         { banner: '/images/games/pubg.png',    logo: '/logos/games/pubg.png',            label: 'PUBG Mobile' },
-  'GENSHIN IMPACT':      { banner: '/images/games/genshin.png', logo: '/logos/games/genshin.png',         label: 'Genshin Impact' },
-  'CALL OF DUTY MOBILE': { banner: '/images/games/cod.png',     logo: '/logos/games/cod.png',             label: 'Call of Duty' },
-  'VALORANT':            { banner: '/images/games/valorant.png',logo: '/logos/games/valorant.png',        label: 'Valorant' },
-  'LEAGUE OF LEGENDS':   { banner: '/images/games/lol.png',     logo: '/logos/games/leagueoflegends.png', label: 'League of Legends' },
-  'ROBLOX':              { banner: '/images/games/roblox.png',  logo: '/logos/games/roblox.png',          label: 'Roblox' },
-  'HOK':                 { banner: '/images/games/hok.png',     logo: '/logos/games/hok.png',             label: 'Honor of Kings' },
-  'HONKAI STAR RAIL':    { banner: '/images/games/hsr.png',     logo: '/logos/games/hsr.png',             label: 'Honkai: Star Rail' },
-  'STEAM':               { banner: '/images/games/steam.png',   logo: '/logos/games/steam.png',           label: 'Steam Wallet' },
-  'GOOGLE PLAY':         { banner: '/images/games/gplay.png',   logo: '/logos/games/googleplay.png',      label: 'Google Play' },
+  'MOBILE LEGENDS':      { banner: '/images/games/ml.webp',     logo: '/logos/games/ml.webp',              label: 'Mobile Legends' },
+  'FREE FIRE':           { banner: '/images/games/ff.webp',      logo: '/logos/games/ff.webp',              label: 'Free Fire' },
+  'PUBG MOBILE':         { banner: '/images/games/pubg.webp',    logo: '/logos/games/pubg.webp',            label: 'PUBG Mobile' },
+  'GENSHIN IMPACT':      { banner: '/images/games/genshin.webp', logo: '/logos/games/genshin.webp',         label: 'Genshin Impact' },
+  'CALL OF DUTY MOBILE': { banner: '/images/games/cod.webp',     logo: '/logos/games/cod.webp',             label: 'Call of Duty' },
+  'VALORANT':            { banner: '/images/games/valorant.webp',logo: '/logos/games/valorant.webp',        label: 'Valorant' },
+  'LEAGUE OF LEGENDS':   { banner: '/images/games/lol.webp',     logo: '/logos/games/leagueoflegends.webp', label: 'League of Legends' },
+  'ROBLOX':              { banner: '/images/games/roblox.webp',  logo: '/logos/games/roblox.webp',          label: 'Roblox' },
+  'HOK':                 { banner: '/images/games/hok.webp',     logo: '/logos/games/hok.webp',             label: 'Honor of Kings' },
+  'HONKAI STAR RAIL':    { banner: '/images/games/hsr.webp',     logo: '/logos/games/hsr.webp',             label: 'Honkai: Star Rail' },
+  'STEAM':               { banner: '/images/games/steam.webp',   logo: '/logos/games/steam.webp',           label: 'Steam Wallet' },
+  'GOOGLE PLAY':         { banner: '/images/games/gplay.webp',   logo: '/logos/games/googleplay.webp',      label: 'Google Play' },
 }
 
-const getGameBanner = (brand) => GAME_ASSETS[brand?.toUpperCase()]?.banner || '/images/games/banner-default.jpg'
+const getGameBanner = (brand) => GAME_ASSETS[brand?.toUpperCase()]?.banner || '/images/games/banner-default.webp'
 const getGameLogo   = (brand) => GAME_ASSETS[brand?.toUpperCase()]?.logo   || null
 const getGameLabel  = (brand) => GAME_ASSETS[brand?.toUpperCase()]?.label  || (brand || '').split(' ').map(w => w[0] + w.slice(1).toLowerCase()).join(' ')
 

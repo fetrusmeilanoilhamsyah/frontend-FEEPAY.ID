@@ -179,7 +179,7 @@ const detectedOperator = computed(() => {
 })
 
 const operatorLogo = computed(() =>
-  detectedOperator.value ? `/logos/operators/${detectedOperator.value.file}.png` : null
+  detectedOperator.value ? `/logos/operators/${detectedOperator.value.file}.webp` : null
 )
 const operatorName = computed(() => detectedOperator.value?.label ?? '')
 </script>

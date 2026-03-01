@@ -70,24 +70,24 @@ const extractOperator = (name) => {
 }
 
 const walletLogos = {
-  'gopay': '/logos/wallets/gopay.png',
-  'ovo': '/logos/wallets/ovo.png',
-  'dana': '/logos/wallets/dana.png',
-  'shopeepay': '/logos/wallets/shopeepay.png',
-  'linkaja': '/logos/wallets/linkaja.png'
+  'gopay': '/logos/wallets/gopay.webp',
+  'ovo': '/logos/wallets/ovo.webp',
+  'dana': '/logos/wallets/dana.webp',
+  'shopeepay': '/logos/wallets/shopeepay.webp',
+  'linkaja': '/logos/wallets/linkaja.webp'
 }
 
 const gameLogos = {
-  'mobile legends': '/logos/games/ml.png',
-  'mobilelegend': '/logos/games/ml.png',
-  'free fire': '/logos/games/ff.png',
-  'freefire': '/logos/games/ff.png',
-  'pubg': '/logos/games/pubg.png',
-  'genshin': '/logos/games/genshin.png',
-  'call of duty': '/logos/games/cod.png',
-  'valorant': '/logos/games/valorant.png',
-  'league of legends': '/logos/games/leagueoflegends.png',
-  'roblox': '/logos/games/roblox.png'
+  'mobile legends': '/logos/games/ml.webp',
+  'mobilelegend': '/logos/games/ml.webp',
+  'free fire': '/logos/games/ff.webp',
+  'freefire': '/logos/games/ff.webp',
+  'pubg': '/logos/games/pubg.webp',
+  'genshin': '/logos/games/genshin.webp',
+  'call of duty': '/logos/games/cod.webp',
+  'valorant': '/logos/games/valorant.webp',
+  'league of legends': '/logos/games/leagueoflegends.webp',
+  'roblox': '/logos/games/roblox.webp'
 }
 
 const productLogo = computed(() => {
