@@ -19,6 +19,12 @@ export default defineConfig({
     }
   },
   build: {
+    rollupOptions: {
+      onwarn(warning, warn) {
+        if (warning.code === 'UNRESOLVED_IMPORT') return
+        warn(warning)
+      }
+    },
     terser: {
       compress: {
         drop_console: true,
