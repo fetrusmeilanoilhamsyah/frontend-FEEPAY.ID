@@ -55,7 +55,7 @@
 
       <div class="footer-divider" />
 
-      <div class="footer-copy">© 2025 FeePay · All rights reserved</div>
+      <div class="footer-copy">© 2026 FeePay · All rights reserved</div>
     </div>
   </footer>
 </template>
@@ -65,7 +65,7 @@ import { computed } from 'vue'
 
 const socialLinks = {
   instagram: 'https://instagram.com/meilanoilham',
-  tiktok: 'https://tiktok.com/@fee0199'
+  tiktok: 'https://tiktok.com/@fee010599'
 }
 
 const whatsappLink = computed(() => {
