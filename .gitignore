@@ -33,9 +33,5 @@ dist-ssr
 *.sw?
 
 # Large assets — upload manual ke Vercel/Cloudinary
-public/images/
-public/banners/
-public/logos/
-public/icons/
 .vercel
 .env*.local
