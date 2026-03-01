@@ -159,7 +159,8 @@ onUnmounted(() => clearInterval(autoplayInterval))
     opacity   0.42s ease;
   will-change: transform, opacity;
   aspect-ratio: 16 / 9;
-  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+  /* SUDAH DIPERBAIKI: Gradien hijau lebih terang dan fresh, tidak pekat */
+  background: linear-gradient(135deg, #4ade80 0%, #16a34a 100%);
 }
 
 @media (min-width: 768px)  { .card { width: 55%; top: 14px; bottom: 14px; } }
