@@ -58,14 +58,11 @@
 
     <!-- Main Content -->
     <main class="relative z-10" :class="{ 'pb-16': isMobile }">
-      <!-- Desktop wrapper — center konten dengan max-width -->
-      <div :class="!isMobile ? 'max-w-5xl mx-auto px-6 lg:px-8 py-6' : ''">
-        <router-view v-slot="{ Component, route }">
-          <transition name="page" mode="out-in">
-            <component :is="Component" :key="route.path" />
-          </transition>
-        </router-view>
-      </div>
+      <router-view v-slot="{ Component, route }">
+        <transition name="page" mode="out-in">
+          <component :is="Component" :key="route.path" />
+        </transition>
+      </router-view>
     </main>
 
     <!-- Scroll to Top -->
