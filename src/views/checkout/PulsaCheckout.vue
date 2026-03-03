@@ -51,7 +51,7 @@
       <div class="nominal-section">
         <div class="nominal-section-header">
           <div class="nominal-section-title-wrap">
-            <img src="/icons/sim-card.webp" class="w-5 h-5 object-contain"
+            <img src="/icons/nominal.webp" class="w-5 h-5 object-contain"
               @error="(e) => e.target.style.display='none'" />
             <span class="section-label">Pilih Nominal</span>
           </div>
