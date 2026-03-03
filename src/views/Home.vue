@@ -451,10 +451,18 @@ onMounted(async () => {
 
 @media (min-width: 768px) {
   .home-content {
-    padding: 0 0 40px;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 24px 24px 60px;
   }
   .home-header {
     display: none !important;
+  }
+  .game-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .game-card-img-wrap {
+    aspect-ratio: 3/2;
   }
 }
 
