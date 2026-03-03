@@ -9,12 +9,14 @@
 
     <!-- Top Navbar — HANYA DESKTOP -->
     <nav class="hidden md:block sticky top-0 z-50 backdrop-blur-xl bg-background/95 border-b border-border">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-5xl mx-auto px-6 lg:px-8">
         <div class="flex justify-between items-center h-14">
 
-          <router-link to="/" class="flex items-center select-none">
+          <router-link to="/" class="flex items-center select-none gap-2">
+            <img src="/icons/top-up-game.webp" class="w-7 h-7 object-contain"
+              @error="(e) => e.target.style.display='none'" />
             <span class="text-xl font-black tracking-tight text-foreground">FEE</span>
-            <span class="text-xl font-black tracking-tight text-green-600">PAY</span>
+            <span class="text-xl font-black tracking-tight text-green-600 -ml-1">PAY</span>
           </router-link>
 
           <div class="flex items-center gap-1">
@@ -56,11 +58,14 @@
 
     <!-- Main Content -->
     <main class="relative z-10" :class="{ 'pb-16': isMobile }">
-      <router-view v-slot="{ Component, route }">
-        <transition name="page" mode="out-in">
-          <component :is="Component" :key="route.path" />
-        </transition>
-      </router-view>
+      <!-- Desktop wrapper — center konten dengan max-width -->
+      <div :class="!isMobile ? 'max-w-5xl mx-auto px-6 lg:px-8 py-6' : ''">
+        <router-view v-slot="{ Component, route }">
+          <transition name="page" mode="out-in">
+            <component :is="Component" :key="route.path" />
+          </transition>
+        </router-view>
+      </div>
     </main>
 
     <!-- Scroll to Top -->
@@ -118,23 +123,11 @@ const handleLogout = async () => {
 </script>
 
 <style scoped>
-/* Page transition — ringan, natural, kayak iOS */
-.page-enter-active {
-  transition: opacity 0.2s ease, transform 0.2s ease;
-}
-.page-leave-active {
-  transition: opacity 0.15s ease, transform 0.15s ease;
-}
-.page-enter-from {
-  opacity: 0;
-  transform: translate3d(0, 6px, 0);
-}
-.page-leave-to {
-  opacity: 0;
-  transform: translate3d(0, -4px, 0);
-}
+.page-enter-active { transition: opacity 0.2s ease, transform 0.2s ease; }
+.page-leave-active { transition: opacity 0.15s ease, transform 0.15s ease; }
+.page-enter-from   { opacity: 0; transform: translate3d(0, 6px, 0); }
+.page-leave-to     { opacity: 0; transform: translate3d(0, -4px, 0); }
 
-/* Scroll to top button */
 .fade-enter-active { transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.34,1.56,0.64,1); }
 .fade-leave-active { transition: opacity 0.15s ease; }
 .fade-enter-from   { opacity: 0; transform: translate3d(0, 8px, 0); }

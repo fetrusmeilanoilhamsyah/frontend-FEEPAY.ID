@@ -4,7 +4,7 @@
     <!-- TOP HEADER -->
     <div class="home-header">
       <div class="header-brand">
-        <img src="/icons/top-up-game.webp" class="brand-icon" alt=""
+        <img src="/icons/top-up-game.png" class="brand-icon" alt=""
           @error="(e) => e.target.style.display='none'" />
         <span class="brand-fee">FEE</span><span class="brand-pay">PAY</span>
       </div>
@@ -15,7 +15,7 @@
           <span class="ripple-ring tr1"></span><span class="ripple-ring tr2"></span>
           <span class="dot td1"></span><span class="dot td2"></span>
           <span class="dot td3"></span><span class="dot td4"></span>
-          <img :src="isDark() ? '/icons/theme-light.webp' : '/icons/theme-dark.webp'"
+          <img :src="isDark() ? '/icons/theme-light.png' : '/icons/theme-dark.png'"
             class="hbtn-icon" alt="theme" @error="(e) => e.target.style.display='none'" />
         </button>
         <!-- Transaksi -->
@@ -23,7 +23,7 @@
           <span class="ripple-ring tr1"></span><span class="ripple-ring tr2"></span>
           <span class="dot td1"></span><span class="dot td2"></span>
           <span class="dot td3"></span><span class="dot td4"></span>
-          <img src="/icons/nav/history.webp" class="hbtn-icon" alt="transaksi"
+          <img src="/icons/nav/history.png" class="hbtn-icon" alt="transaksi"
             @error="(e) => e.target.style.display='none'" />
         </button>
         <!-- Profil -->
@@ -31,7 +31,7 @@
           <span class="ripple-ring tr1"></span><span class="ripple-ring tr2"></span>
           <span class="dot td1"></span><span class="dot td2"></span>
           <span class="dot td3"></span><span class="dot td4"></span>
-          <img src="/icons/nav/profile.webp" class="hbtn-icon" alt="profil"
+          <img src="/icons/nav/profile.png" class="hbtn-icon" alt="profil"
             @error="(e) => e.target.style.display='none'" />
         </button>
       </div>
@@ -82,7 +82,7 @@
       <div class="section section--brand">
         <div class="section-header">
           <div class="section-title-wrap">
-            <img src="/icons/section/layanan.webp" class="section-icon" alt=""
+            <img src="/icons/section/layanan.png" class="section-icon" alt=""
               @error="(e) => e.target.style.display='none'" />
             <div>
               <h2 class="section-title">Layanan Kami</h2>
@@ -105,7 +105,7 @@
       <div class="section section--brand">
         <div class="section-header">
           <div class="section-title-wrap">
-            <img src="/icons/section/game.webp" class="section-icon" alt=""
+            <img src="/icons/section/game.png" class="section-icon" alt=""
               @error="(e) => e.target.style.display='none'" />
             <div>
               <h2 class="section-title">Top Up Game</h2>
@@ -142,7 +142,7 @@
                 :src="getGameBanner(game.brand)"
                 :alt="game.label"
                 class="game-card-img"
-                @error="(e) => e.target.src='/images/games/banner-default.webp'"
+                @error="(e) => e.target.src='/images/games/banner-default.jpg'"
               />
               <div class="game-card-overlay" />
               <div class="game-card-logo-wrap">
@@ -170,7 +170,7 @@
       <div class="section">
         <div class="section-header">
           <div class="section-title-wrap">
-            <img src="/icons/section/cs.webp" class="section-icon" alt=""
+            <img src="/icons/section/cs.png" class="section-icon" alt=""
               @error="(e) => e.target.style.display='none'" />
             <div>
               <h2 class="section-title">Butuh Bantuan?</h2>
@@ -233,11 +233,11 @@ const activeCategory = ref('all')
 const chatWidgetRef = ref(null)
 
 const trustPills = [
-  { icon: '/icons/trust/support.webp',  label: 'CS 24 Jam'      },
-  { icon: '/icons/trust/flash.webp',    label: 'Proses Instan'  },
-  { icon: '/icons/trust/shield.webp',   label: '100% Aman'      },
-  { icon: '/icons/trust/verified.webp', label: 'Terpercaya'     },
-  { icon: '/icons/trust/cheap.webp',    label: 'Harga Terbaik'  },
+  { icon: '/icons/trust/support.png',  label: 'CS 24 Jam'      },
+  { icon: '/icons/trust/flash.png',    label: 'Proses Instan'  },
+  { icon: '/icons/trust/shield.png',   label: '100% Aman'      },
+  { icon: '/icons/trust/verified.png', label: 'Terpercaya'     },
+  { icon: '/icons/trust/cheap.png',    label: 'Harga Terbaik'  },
 ]
 
 const onPillTap = (e) => {
@@ -272,25 +272,25 @@ const PC_GAMES      = ['VALORANT', 'LEAGUE OF LEGENDS', 'STEAM', 'POINT BLANK', 
 const VOUCHER_GAMES = ['ROBLOX', 'MINECRAFT', 'XBOX', 'PLAYSTATION', 'GOOGLE PLAY', 'NINTENDO']
 
 const services = [
-  { img: '/icons/pulsa.webp',        label: 'Pulsa',        to: '/checkout/pulsa',        bg: '#f0fdf4', badge: 'MURAH' },
-  { img: '/icons/kuota.webp',        label: 'Kuota Data',   to: '/checkout/data',         bg: '#f0fdf4', badge: 'MURAH' },
-  { img: '/icons/pln.webp',          label: 'Token PLN',    to: '/checkout/pln',          bg: '#f0fdf4', badge: null   },
-  { img: '/icons/top-up-game.webp',  label: 'Top Up Game',  to: '/checkout/top-up-game',  bg: '#f0fdf4', badge: null   },
-  { img: '/icons/voucher-game.webp', label: 'Voucher Game', to: '/checkout/game-voucher', bg: '#f0fdf4', badge: null   },
+  { img: '/icons/pulsa.png',        label: 'Pulsa',        to: '/checkout/pulsa',        bg: '#f0fdf4', badge: 'MURAH' },
+  { img: '/icons/kuota.png',        label: 'Kuota Data',   to: '/checkout/data',         bg: '#f0fdf4', badge: 'MURAH' },
+  { img: '/icons/pln.png',          label: 'Token PLN',    to: '/checkout/pln',          bg: '#f0fdf4', badge: null   },
+  { img: '/icons/top-up-game.png',  label: 'Top Up Game',  to: '/checkout/top-up-game',  bg: '#f0fdf4', badge: null   },
+  { img: '/icons/voucher-game.png', label: 'Voucher Game', to: '/checkout/game-voucher', bg: '#f0fdf4', badge: null   },
 ]
 
 const GAME_ASSETS = {
-  'MOBILE LEGENDS':      { banner: '/images/games/ml.webp',      logo: '/logos/games/ml.webp',              label: 'Mobile Legends'   },
-  'FREE FIRE':           { banner: '/images/games/ff.webp',       logo: '/logos/games/ff.webp',              label: 'Free Fire'        },
-  'PUBG MOBILE':         { banner: '/images/games/pubg.webp',     logo: '/logos/games/pubg.webp',            label: 'PUBG Mobile'      },
-  'GENSHIN IMPACT':      { banner: '/images/games/genshin.webp',  logo: '/logos/games/genshin.webp',         label: 'Genshin Impact'   },
-  'CALL OF DUTY MOBILE': { banner: '/images/games/cod.webp',      logo: '/logos/games/cod.webp',             label: 'Call of Duty'     },
-  'VALORANT':            { banner: '/images/games/valorant.webp', logo: '/logos/games/valorant.webp',        label: 'Valorant'         },
-  'LEAGUE OF LEGENDS':   { banner: '/images/games/lol.webp',      logo: '/logos/games/leagueoflegends.webp', label: 'League of Legends'},
-  'ROBLOX':              { banner: '/images/games/roblox.webp',   logo: '/logos/games/roblox.webp',          label: 'Roblox'           },
+  'MOBILE LEGENDS':      { banner: '/images/games/ml.png',      logo: '/logos/games/ml.png',              label: 'Mobile Legends'   },
+  'FREE FIRE':           { banner: '/images/games/ff.png',       logo: '/logos/games/ff.png',              label: 'Free Fire'        },
+  'PUBG MOBILE':         { banner: '/images/games/pubg.png',     logo: '/logos/games/pubg.png',            label: 'PUBG Mobile'      },
+  'GENSHIN IMPACT':      { banner: '/images/games/genshin.png',  logo: '/logos/games/genshin.png',         label: 'Genshin Impact'   },
+  'CALL OF DUTY MOBILE': { banner: '/images/games/cod.png',      logo: '/logos/games/cod.png',             label: 'Call of Duty'     },
+  'VALORANT':            { banner: '/images/games/valorant.png', logo: '/logos/games/valorant.png',        label: 'Valorant'         },
+  'LEAGUE OF LEGENDS':   { banner: '/images/games/lol.png',      logo: '/logos/games/leagueoflegends.png', label: 'League of Legends'},
+  'ROBLOX':              { banner: '/images/games/roblox.png',   logo: '/logos/games/roblox.png',          label: 'Roblox'           },
 }
 
-const getGameBanner = (brand) => GAME_ASSETS[brand?.toUpperCase()]?.banner || '/images/games/banner-default.webp'
+const getGameBanner = (brand) => GAME_ASSETS[brand?.toUpperCase()]?.banner || '/images/games/banner-default.jpg'
 const getGameLogo   = (brand) => GAME_ASSETS[brand?.toUpperCase()]?.logo   || null
 const getGameLabel  = (brand) => GAME_ASSETS[brand?.toUpperCase()]?.label  || (brand||'').split(' ').map(w=>w[0]+w.slice(1).toLowerCase()).join(' ')
 
@@ -444,11 +444,18 @@ onMounted(async () => {
 
 /* CONTENT */
 .home-content {
-  max-width: 480px;
-  margin: 0 auto;
   padding: 16px 16px 90px;
   display: flex; flex-direction: column; gap: 20px;
   overflow: visible;
+}
+
+@media (min-width: 768px) {
+  .home-content {
+    padding: 0 0 40px;
+  }
+  .home-header {
+    display: none !important;
+  }
 }
 
 .banner-wrap {
