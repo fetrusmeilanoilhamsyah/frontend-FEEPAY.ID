@@ -4,7 +4,7 @@
     <!-- TOP HEADER -->
     <div class="home-header">
       <div class="header-brand">
-        <img src="/icons/top-up-game.webp" class="brand-icon" alt=""
+        <img src="/icons/game.webp" class="brand-icon" alt=""
           @error="(e) => e.target.style.display='none'" />
         <span class="brand-fee">FEE</span><span class="brand-pay">PAY</span>
       </div>
