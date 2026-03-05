@@ -2,7 +2,7 @@
   <nav class="bottom-nav" :class="{ hidden: !isVisible }">
     <div class="nav-inner">
       <router-link
-        v-for="item in navItems"
+        v-for="item in visibleNavItems"
         :key="item.path"
         :to="item.path"
         class="nav-item"
@@ -29,15 +29,44 @@
         </div>
         <span class="nav-label">{{ item.label }}</span>
       </router-link>
+
+      <!-- Admin Logout Button (Mobile Only) -->
+      <button
+        v-if="isAuthenticated"
+        @click="handleLogoutClick"
+        class="nav-item nav-logout"
+      >
+        <div class="nav-icon-wrap">
+          <span class="ripple-ring r1"></span>
+          <span class="ripple-ring r2"></span>
+          <span class="dot d1"></span>
+          <span class="dot d2"></span>
+          <span class="dot d3"></span>
+          <span class="dot d4"></span>
+          <span class="dot d5"></span>
+          <span class="dot d6"></span>
+          <span class="dot d7"></span>
+          <span class="dot d8"></span>
+          <svg class="nav-img-logout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+        </div>
+        <span class="nav-label">Logout</span>
+      </button>
     </div>
   </nav>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useAuth } from '../composables/useAuth'
 
 const route = useRoute()
+const router = useRouter()
+const { isAuthenticated, logout } = useAuth()
 const isVisible = ref(true)
 let lastScrollY = 0
 
@@ -47,14 +76,43 @@ const navItems = [
   { path: '/profile',      icon: '/icons/nav/profile.webp', iconActive: '/icons/nav/profile-active.webp', label: 'Profil'  },
 ]
 
+// Add admin dashboard to nav when authenticated
+const visibleNavItems = computed(() => {
+  if (isAuthenticated.value) {
+    return [
+      ...navItems,
+      { path: '/admin/dashboard', icon: '/icons/nav/profile.webp', iconActive: '/icons/nav/profile-active.webp', label: 'Admin' }
+    ]
+  }
+  return navItems
+})
+
 const isActive = (path) => path === '/' ? route.path === '/' : route.path.startsWith(path)
 
 const onTap = (e) => {
   const wrap = e.currentTarget.querySelector('.nav-icon-wrap')
+  if (!wrap) return
   wrap.classList.remove('burst')
   void wrap.offsetWidth
   wrap.classList.add('burst')
   setTimeout(() => wrap.classList.remove('burst'), 700)
+}
+
+const handleLogoutClick = async (e) => {
+  onTap(e)
+  
+  // Confirm logout
+  if (!confirm('Yakin ingin logout?')) return
+  
+  try {
+    await logout()
+    router.push('/admin/login')
+  } catch (err) {
+    // Force logout even if API fails
+    localStorage.removeItem('admin_token')
+    localStorage.removeItem('admin_pin')
+    router.push('/admin/login')
+  }
 }
 
 const handleScroll = () => {
@@ -113,6 +171,20 @@ onUnmounted(() => {
   -webkit-tap-highlight-color: transparent;
   position: relative;
   cursor: pointer;
+  background: none;
+  border: none;
+}
+
+/* Logout button specific styling */
+.nav-logout .nav-icon-wrap {
+  background: rgba(239, 68, 68, 0.05) !important;
+}
+.nav-logout .nav-label {
+  color: #ef4444 !important;
+  font-weight: 700;
+}
+.nav-logout:active .nav-icon-wrap {
+  background: rgba(239, 68, 68, 0.12) !important;
 }
 
 /* Top indicator */
@@ -128,6 +200,9 @@ onUnmounted(() => {
 }
 .nav-item.active::before {
   transform: translateX(-50%) scaleX(1);
+}
+.nav-logout::before {
+  background: #ef4444;
 }
 
 /* ICON WRAP */
@@ -197,6 +272,19 @@ onUnmounted(() => {
 .nav-item.active .nav-img {
   filter: brightness(0) opacity(1);
   animation: icon-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Logout SVG icon */
+.nav-img-logout {
+  width: 22px; height: 22px;
+  color: #ef4444;
+  position: relative; z-index: 2;
+  opacity: 0.8;
+  transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.nav-logout:active .nav-img-logout {
+  opacity: 1;
+  transform: scale(1.1);
 }
 
 /* Pop ringan — cuma scale, gak naik turun */
