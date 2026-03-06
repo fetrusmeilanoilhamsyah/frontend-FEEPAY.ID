@@ -75,7 +75,7 @@
         <form v-else @submit.prevent="handlePinSubmit">
           <div class="mb-6">
             <label class="block text-sm font-medium text-foreground mb-3">
-              Enter 6-Digit PIN
+              Masukkan PIN Admin
             </label>
             
             <div class="flex gap-2 justify-center">
@@ -85,7 +85,7 @@
                 :ref="el => pinInputs[i - 1] = el"
                 v-model="pinDigits[i - 1]"
                 type="text"
-                inputmode="numeric"
+                inputmode="text"
                 maxlength="1"
                 class="w-12 h-12 text-center text-xl font-bold border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-200"
                 :class="[
@@ -186,10 +186,8 @@ const handleCredentialsSubmit = async () => {
 const handlePinInput = (index, event) => {
   const value = event.target.value
 
-  if (!/^\d*$/.test(value)) {
-    pinDigits.value[index] = ''
-    return
-  }
+  // Izinkan semua karakter (alphanumeric)
+  if (!value) return
 
   pinDigits.value[index] = value
 
@@ -243,14 +241,14 @@ const handlePinPaste = (event) => {
 
 const handlePinSubmit = async () => {
   if (!isPinComplete.value) {
-    errorMessage.value = 'Please enter all 6 digits'
+    errorMessage.value = 'Masukkan PIN lengkap'
     return
   }
 
   const pin = pinDigits.value.join('')
   
-  if (pin.length !== 6 || !/^\d{6}$/.test(pin)) {
-    errorMessage.value = 'Invalid PIN format'
+  if (pin.length < 6) {
+    errorMessage.value = 'PIN minimal 6 karakter'
     return
   }
 

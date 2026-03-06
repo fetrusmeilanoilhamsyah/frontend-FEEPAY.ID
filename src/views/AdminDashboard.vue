@@ -460,7 +460,7 @@ const fetchAllData = async (silent = false) => {
     const currentOrders = o.data || o
 
     if (lastOrderCount.value > 0 && currentOrders.length > lastOrderCount.value) {
-      new Audio('/sounds/notification.mp3').play().catch(() => {})
+      new Audio('/notification.mp3/2869-preview.mp3').play().catch(() => {})
       showToastNotification('Pesanan Baru Masuk!')
     }
 

@@ -15,7 +15,7 @@ const api = axios.create({
   }
 })
 
-// ✅ FIX C-04: Admin path diambil dari env, tidak hardcode di source code
+// Admin path diambil dari env, tidak hardcode di source code
 const ADMIN_PATH = import.meta.env.VITE_ADMIN_PATH
 
 // 1. REQUEST INTERCEPTOR
@@ -50,7 +50,7 @@ api.interceptors.response.use(
   },
   (error) => {
     isApiProcessing.value = false
-    
+
     if (!error.response) {
       return Promise.reject({ message: 'Server FeePay tidak merespon. Cek Koneksi Boss!' })
     }
@@ -82,7 +82,7 @@ api.interceptors.response.use(
           return Promise.reject({ message: 'SALDO DIGIFLAZZ HABIS BOSS! Top up dulu.' })
         }
         return Promise.reject({ message: data.message || 'Server Error (500). Cek Laravel Log!' })
-      
+
       default:
         return Promise.reject(data)
     }
@@ -109,9 +109,7 @@ export default {
 
   orders: {
     create: (d) => api.post('/orders/create', d),
-    // ✅ FIX H-06: POST + email untuk verifikasi kepemilikan order
     get: (id, email) => api.post(`/orders/${id}`, { email }),
-    list: () => api.get('/orders'),
     getAll: (p) => api.get(`/admin/${ADMIN_PATH}/orders`, { params: p }),
     confirm: (id) => api.post(`/admin/${ADMIN_PATH}/orders/${id}/confirm`),
     sync: (id) => api.post(`/admin/${ADMIN_PATH}/orders/${id}/sync`),
@@ -121,19 +119,6 @@ export default {
     midtrans: {
       create: (data) => api.post('/payments/midtrans/create', data)
     },
-    submit: (fd) => api.post('/payments/submit', fd, { headers: { 'Content-Type': 'multipart/form-data' } }),
-    getAll: (p) => api.get(`/admin/${ADMIN_PATH}/payments`, { params: p }),
-    verify: (id, d) => api.post(`/admin/${ADMIN_PATH}/payments/${id}/verify`, d),
-  },
-
-  usdt: {
-    getRate: () => api.get('/usdt/rate'),
-    submit: (fd) => api.post('/usdt/submit', fd, { headers: { 'Content-Type': 'multipart/form-data' } }),
-    get: (id) => api.get(`/usdt/${id}`),
-    getAll: (p) => api.get(`/admin/${ADMIN_PATH}/usdt`, { params: p }),
-    approve: (id, d) => api.post(`/admin/${ADMIN_PATH}/usdt/${id}/approve`, d),
-    updateRate: (d) => api.post(`/admin/${ADMIN_PATH}/usdt/rate`, d),
-    getProof: (id) => api.get(`/admin/${ADMIN_PATH}/usdt/${id}/proof`, { responseType: 'blob' }),
   },
 
   dashboard: {

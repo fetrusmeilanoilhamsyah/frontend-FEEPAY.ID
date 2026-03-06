@@ -19,17 +19,18 @@ export default defineConfig({
     }
   },
   build: {
+    // ✅ FIX: Pakai esbuild (bawaan Vite) bukan terser
+    // drop_console benar-benar bekerja saat production build
+    minify: 'esbuild',
     rollupOptions: {
       onwarn(warning, warn) {
         if (warning.code === 'UNRESOLVED_IMPORT') return
         warn(warning)
       }
     },
-    terser: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true,
-      }
-    }
+  },
+  esbuild: {
+    // ✅ Drop semua console.log dan debugger di production build
+    drop: ['console', 'debugger'],
   }
 })

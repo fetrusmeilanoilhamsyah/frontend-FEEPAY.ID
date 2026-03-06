@@ -77,28 +77,6 @@ export const useOrderStore = defineStore('order', () => {
   }
 
   /**
-   * Submit bukti pembayaran (manual transfer)
-   */
-  async function submitPayment(orderId, paymentData) {
-    loading.value = true
-    error.value = null
-    
-    try {
-      const response = await api.payments.submit(paymentData)
-      
-      const email = currentOrder.value?.customer_email
-      await getOrderById(orderId, email)
-      
-      return response
-    } catch (err) {
-      error.value = err.message || 'Failed to submit payment'
-      throw err
-    } finally {
-      loading.value = false
-    }
-  }
-
-  /**
    * Ambil data order dari backend berdasarkan orderId
    * FIX H-06: Wajib kirim email untuk verifikasi kepemilikan order
    */
@@ -221,7 +199,6 @@ export const useOrderStore = defineStore('order', () => {
     processingOrders,
     completedOrders,
     createOrder,
-    submitPayment,
     getOrderById,
     checkOrderStatus,
     updateOrderStatus,
