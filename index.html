@@ -1,26 +1,69 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FEEPAY.ID - Digital Marketplace</title>
-  
-  <!-- Preconnect untuk speed -->
+
+  <!-- ═══ PRIMARY SEO ═══ -->
+  <title>FEEPAY.ID - Top Up Game, Pulsa & Tagihan Digital</title>
+  <meta name="description" content="Platform top up game, pulsa, paket data, dan tagihan digital terpercaya. Top up Mobile Legends, Free Fire, PUBG, Genshin Impact. Proses otomatis, harga terjangkau, aman & terpercaya.">
+  <meta name="keywords" content="top up game, pulsa murah, paket data, top up mobile legends, free fire diamonds, feepay, topup online, tagihan listrik">
+  <meta name="author" content="FEEPAY.ID">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://feepay.web.id/">
+
+  <!-- ═══ OPEN GRAPH (WhatsApp, Facebook, dll) ═══ -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://feepay.web.id/">
+  <meta property="og:title" content="FEEPAY.ID - Top Up Game, Pulsa & Tagihan Digital">
+  <meta property="og:description" content="Top up game, pulsa, paket data & tagihan digital. Proses otomatis, harga terjangkau, aman & terpercaya.">
+  <meta property="og:image" content="https://feepay.web.id/icon-512.png">
+  <meta property="og:image:width" content="512">
+  <meta property="og:image:height" content="512">
+  <meta property="og:site_name" content="FEEPAY.ID">
+  <meta property="og:locale" content="id_ID">
+
+  <!-- ═══ TWITTER CARD ═══ -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="FEEPAY.ID - Top Up Game, Pulsa & Tagihan Digital">
+  <meta name="twitter:description" content="Top up game, pulsa, paket data & tagihan digital. Proses otomatis, harga terjangkau.">
+  <meta name="twitter:image" content="https://feepay.web.id/icon-512.png">
+
+  <!-- ═══ FAVICON ═══ -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/icon-32.png">
+  <link rel="apple-touch-icon" sizes="192x192" href="/icon-192.png">
+  <link rel="apple-touch-icon" sizes="512x512" href="/icon-512.png">
+
+  <!-- ═══ PWA MANIFEST ═══ -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#2563eb">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="FEEPAY">
+  <meta name="mobile-web-app-capable" content="yes">
+
+  <!-- ═══ PERFORMANCE ═══ -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  
-  <!-- Load Inter font - PRIORITAS TINGGI -->
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" as="style">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  
-  <!-- Inline critical CSS untuk font -->
+  <link rel="dns-prefetch" href="https://api.feepay.web.id">
+  <link rel="dns-prefetch" href="https://app.midtrans.com">
+
+  <!-- ═══ MIDTRANS SNAP ═══ -->
+  <script src="https://app.midtrans.com/snap/snap.js" data-client-key="%VITE_MIDTRANS_CLIENT_KEY%"></script>
+
+  <!-- ═══ CRITICAL CSS ═══ -->
   <style>
     html, body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+      margin: 0;
+      padding: 0;
     }
+    /* Prevent flash of unstyled content */
+    #app { min-height: 100vh; }
   </style>
-  
-  <script src="https://app.midtrans.com/snap/snap.js" data-client-key="%VITE_MIDTRANS_CLIENT_KEY%"></script>
 </head>
 <body>
   <div id="app"></div>

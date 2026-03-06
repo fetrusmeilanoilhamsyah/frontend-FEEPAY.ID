@@ -1,0 +1,26 @@
+{
+  "name": "FEEPAY.ID - Top Up & Tagihan Digital",
+  "short_name": "FEEPAY",
+  "description": "Platform top up game, pulsa, paket data, dan tagihan digital terpercaya. Proses cepat, harga terjangkau.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["finance", "shopping", "utilities"],
+  "lang": "id"
+}
