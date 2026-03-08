@@ -8,43 +8,43 @@ export function useOperatorDetector() {
   const operators = {
     telkomsel: {
       name: 'Telkomsel',
-      logo: '/logos/operators/telkomsel.png',
+      logo: '/logos/operators/telkomsel.webp',
       color: '#E32119',
       prefixes: ['0811', '0812', '0813', '0821', '0822', '0823', '0851', '0852', '0853']
     },
     indosat: {
       name: 'Indosat Ooredoo',
-      logo: '/logos/operators/indosat.png',
+      logo: '/logos/operators/indosat.webp',
       color: '#FFD700',
       prefixes: ['0814', '0815', '0816', '0855', '0856', '0857', '0858']
     },
     xl: {
       name: 'XL Axiata',
-      logo: '/logos/operators/xl.png',
+      logo: '/logos/operators/xl.webp',
       color: '#0071BC',
       prefixes: ['0817', '0818', '0819', '0859', '0877', '0878']
     },
     tri: {
       name: 'Tri (3)',
-      logo: '/logos/operators/three.png',
+      logo: '/logos/operators/three.webp',
       color: '#000000',
       prefixes: ['0895', '0896', '0897', '0898', '0899']
     },
     smartfren: {
       name: 'Smartfren',
-      logo: '/logos/operators/smartfren.png',
+      logo: '/logos/operators/smartfren.webp',
       color: '#EC008C',
       prefixes: ['0881', '0882', '0883', '0884', '0885', '0886', '0887', '0888', '0889']
     },
     axis: {
       name: 'Axis',
-      logo: '/logos/operators/axis.png',
+      logo: '/logos/operators/axis.webp',
       color: '#6B1E78',
       prefixes: ['0831', '0832', '0833', '0838']
     },
     byu: {
       name: 'by.U',
-      logo: '/logos/operators/byu.png',
+      logo: '/logos/operators/byu.webp',
       color: '#00D856',
       prefixes: ['08515'] // Prefix utama by.U
     }
