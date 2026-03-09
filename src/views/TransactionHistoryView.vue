@@ -229,62 +229,25 @@ const copySN = async (sn) => {
   } catch { alert('Gagal menyalin SN') }
 }
 
-// ✅ FIX: Better error handling
 const continuePayment = async (order) => {
   if (isProcessingPayment.value) return
-  
-  // ✅ Validasi order
-  if (!order || !order.order_id) {
-    alert('Data order tidak valid')
-    return
-  }
-
   isProcessingPayment.value = true
-
   try {
-    console.log('🔵 Continue payment for:', order.order_id)
-
-    // ✅ pay() sudah handle error sendiri
-    pay(order.order_id, {
+    await pay(order.order_id, {
       onSuccess: (result, orderId) => {
-        console.log('✅ Payment success')
         isProcessingPayment.value = false
         orderStore.updateOrderStatus(orderId, 'success')
-        toastMessage.value = 'Pembayaran berhasil!'
-        showToast.value = true
-        setTimeout(() => {
-          showToast.value = false
-          router.push(`/payment/${orderId}/success`)
-        }, 1500)
+        toastMessage.value = 'Pembayaran berhasil!'; showToast.value = true
+        setTimeout(() => { showToast.value = false; router.push(`/payment/${orderId}/success`) }, 1500)
       },
-      
       onPending: (result, orderId) => {
-        console.log('⏳ Payment pending')
         isProcessingPayment.value = false
         router.push(`/payment/${orderId}/pending`)
       },
-      
-      onError: (error, orderId) => {
-        console.error('❌ Payment error:', error)
-        isProcessingPayment.value = false
-        
-        // ✅ Better error message
-        const errorMsg = error?.error || error?.message || 'Gagal membuka pembayaran'
-        alert(`Error: ${errorMsg}\n\nSilakan coba lagi atau hubungi customer service.`)
-      },
-      
-      onClose: () => {
-        console.log('🔴 Payment modal closed')
-        isProcessingPayment.value = false
-      }
+      onError: () => { isProcessingPayment.value = false; alert('Gagal membuka pembayaran.') },
+      onClose: () => { isProcessingPayment.value = false }
     })
-
-  } catch (err) {
-    // ✅ Fallback error handler (should not reach here)
-    console.error('🚨 Unexpected error:', err)
-    isProcessingPayment.value = false
-    alert('Terjadi kesalahan tidak terduga. Silakan refresh halaman.')
-  }
+  } catch { isProcessingPayment.value = false; alert('Terjadi kesalahan.') }
 }
 
 const continuePaymentFromModal = async (order) => {
