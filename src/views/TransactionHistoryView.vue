@@ -72,16 +72,18 @@
             </div>
           </div>
 
-          <!-- ✅ UBAH: Tampilkan VA kalau ada, kalau belum baru kasih tombol bayar -->
+          <!-- Action button di card -->
           <div v-if="order.status === 'pending'" class="order-action" @click.stop>
-            <button v-if="!order.midtrans_payment_type" 
-              @click="continuePayment(order)" 
-              :disabled="isProcessingPayment" 
+            <!-- Belum pilih metode bayar sama sekali -->
+            <button v-if="!order.midtrans_payment_type"
+              @click="continuePayment(order)"
+              :disabled="isProcessingPayment"
               class="btn-pay">
               <Loader v-if="isProcessingPayment" class="spin" :size="16" />
               <CreditCard v-else :size="16" />
               {{ isProcessingPayment ? 'Membuka...' : 'Pilih Pembayaran' }}
             </button>
+            <!-- Sudah pilih → lihat info bayar (VA / e-wallet) -->
             <button v-else @click="viewOrderDetail(order)" class="btn-va">
               <Eye :size="16" />
               Lihat Info Pembayaran
@@ -134,19 +136,21 @@
                 <span class="dr-value mono small">{{ selectedOrder.order_id }}</span>
               </div>
 
-              <!-- ✅ TAMBAH: Tampilkan VA kalau ada -->
-              <div v-if="selectedOrder.status === 'pending' && selectedOrder.midtrans_payment_type" 
-                   class="va-box">
-                <div class="va-header">
+              <!-- ────────────────────────────────────────── -->
+              <!-- INFO BAYAR: hanya muncul kalau status pending & sudah ada payment_type -->
+              <!-- ────────────────────────────────────────── -->
+
+              <!-- CASE 1: Virtual Account (BNI, BCA, BRI, Mandiri, dll) -->
+              <div v-if="selectedOrder.status === 'pending' && isVA(selectedOrder.midtrans_payment_type)"
+                   class="payment-box va-box">
+                <div class="payment-header">
                   <CreditCard :size="16" />
-                  <span class="va-title">Virtual Account</span>
+                  <span class="payment-title">Virtual Account</span>
                 </div>
-                
                 <div class="va-bank">
-                  <span class="bank-name">{{ getBankName(selectedOrder.midtrans_payment_type) }}</span>
+                  <span class="bank-name">{{ getPaymentName(selectedOrder.midtrans_payment_type) }}</span>
                   <span class="va-expires">Bayar sebelum {{ formatExpiry(selectedOrder.created_at) }}</span>
                 </div>
-
                 <div class="va-number-box">
                   <span class="va-label">Nomor Virtual Account</span>
                   <div class="va-number-row">
@@ -156,15 +160,39 @@
                     </button>
                   </div>
                 </div>
-
                 <div class="va-amount">
                   <span class="va-amount-label">Jumlah yang harus dibayar</span>
                   <span class="va-amount-value">Rp{{ formatPrice(selectedOrder.total_price) }}</span>
                 </div>
-
-                <div class="va-note">
+                <div class="payment-note">
                   <Info :size="12" />
                   <span>Transfer ke nomor VA di atas melalui ATM, M-Banking, atau Internet Banking</span>
+                </div>
+              </div>
+
+              <!-- CASE 2: E-Wallet (GoPay, DANA, ShopeePay, QRIS) -->
+              <div v-else-if="selectedOrder.status === 'pending' && isEwallet(selectedOrder.midtrans_payment_type)"
+                   class="payment-box ewallet-box">
+                <div class="payment-header">
+                  <Smartphone :size="16" />
+                  <span class="payment-title">{{ getPaymentName(selectedOrder.midtrans_payment_type) }}</span>
+                </div>
+                <div class="ewallet-status">
+                  <div class="ewallet-pulse" />
+                  <span class="ewallet-status-text">Menunggu pembayaran</span>
+                </div>
+                <div class="ewallet-instruction">
+                  <p class="ewallet-main">
+                    Buka aplikasi <strong>{{ getPaymentName(selectedOrder.midtrans_payment_type) }}</strong> dan selesaikan pembayaran
+                  </p>
+                  <div class="ewallet-amount">
+                    <span class="va-amount-label">Jumlah yang harus dibayar</span>
+                    <span class="va-amount-value">Rp{{ formatPrice(selectedOrder.total_price) }}</span>
+                  </div>
+                </div>
+                <div class="payment-note">
+                  <Info :size="12" />
+                  <span>Bayar sebelum {{ formatExpiry(selectedOrder.created_at) }} — setelah bayar, status otomatis update</span>
                 </div>
               </div>
 
@@ -184,10 +212,10 @@
             </div>
 
             <div class="modal-footer">
-              <!-- ✅ UBAH: Kalau belum ada VA, baru kasih tombol bayar -->
+              <!-- Belum pilih metode bayar sama sekali -->
               <button v-if="selectedOrder.status === 'pending' && !selectedOrder.midtrans_payment_type"
                 @click="continuePaymentFromModal(selectedOrder)"
-                :disabled="isProcessingPayment" 
+                :disabled="isProcessingPayment"
                 class="btn-pay full">
                 <Loader v-if="isProcessingPayment" class="spin" :size="16" />
                 <CreditCard v-else :size="16" />
@@ -216,7 +244,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { ArrowLeft, Package, ChevronRight, RefreshCw, ShoppingBag, Check, X, Search, CreditCard, Loader, Copy, Info, Eye } from 'lucide-vue-next'
+import { ArrowLeft, Package, ChevronRight, RefreshCw, ShoppingBag, Check, X, Search, CreditCard, Loader, Copy, Info, Eye, Smartphone } from 'lucide-vue-next'
 import { useOrderStore } from '@/stores/orderStore'
 import { useMidtrans } from '@/composables/useMidtrans'
 import api from '@/services/api'
@@ -235,6 +263,33 @@ const toastMessage = ref('')
 const searchQuery = ref('')
 const isProcessingPayment = ref(false)
 const isSyncing = ref(false)
+
+// ─── Payment Type Helpers ─────────────────────────────────────────────────────
+
+// VA: semua yang pakai nomor rekening / transfer bank
+const isVA = (type) => type?.includes('_va') || type === 'echannel'
+
+// E-wallet: yang perlu buka aplikasi
+const isEwallet = (type) => ['gopay', 'dana', 'shopeepay', 'qris'].includes(type)
+
+// Nama tampilan per payment type
+const getPaymentName = (type) => {
+  const map = {
+    'bni_va':     'BNI',
+    'bca_va':     'BCA',
+    'bri_va':     'BRI',
+    'permata_va': 'Permata',
+    'echannel':   'Mandiri',
+    'other_va':   'Bank Lain',
+    'gopay':      'GoPay',
+    'dana':       'DANA',
+    'shopeepay':  'ShopeePay',
+    'qris':       'QRIS',
+  }
+  return map[type] || type
+}
+
+// ─── Filters ──────────────────────────────────────────────────────────────────
 
 const filters = computed(() => [
   { value: 'all',        label: 'Semua',    count: orderStore.orderHistory.length },
@@ -263,59 +318,35 @@ const filteredOrders = computed(() => {
   return orders
 })
 
+// ─── Formatters ───────────────────────────────────────────────────────────────
+
 const formatPrice = (price) => Number(price).toLocaleString('id')
-const formatDate = (d) => new Intl.DateTimeFormat('id-ID', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }).format(new Date(d))
-
-// ✅ TAMBAH: Helper untuk bank name
-const getBankName = (paymentType) => {
-  const bankMap = {
-    'echannel': 'Mandiri',
-    'bca_va': 'BCA',
-    'bni_va': 'BNI',
-    'bri_va': 'BRI',
-    'permata_va': 'Permata',
-    'other_va': 'Bank Lain',
-  }
-  return bankMap[paymentType] || 'Virtual Account'
-}
-
-// ✅ TAMBAH: Helper untuk expiry time
+const formatDate  = (d) => new Intl.DateTimeFormat('id-ID', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }).format(new Date(d))
 const formatExpiry = (createdAt) => {
   const expiry = new Date(createdAt)
   expiry.setHours(expiry.getHours() + 24)
-  return new Intl.DateTimeFormat('id-ID', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  }).format(expiry)
+  return new Intl.DateTimeFormat('id-ID', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }).format(expiry)
 }
+
+// ─── Actions ──────────────────────────────────────────────────────────────────
 
 const viewOrderDetail = (order) => { selectedOrder.value = order }
 const repeatOrder = () => { router.push('/') }
 
-const copySN = async (sn) => {
-  try {
-    await navigator.clipboard.writeText(sn)
-    toastMessage.value = 'SN berhasil disalin'
-    showToast.value = true
-    setTimeout(() => showToast.value = false, 2000)
-  } catch { 
-    alert('Gagal menyalin SN') 
-  }
+const showToastMsg = (msg) => {
+  toastMessage.value = msg
+  showToast.value = true
+  setTimeout(() => showToast.value = false, 2000)
 }
 
-// ✅ TAMBAH: Copy VA
+const copySN = async (sn) => {
+  try { await navigator.clipboard.writeText(sn); showToastMsg('SN berhasil disalin') }
+  catch { alert('Gagal menyalin SN') }
+}
+
 const copyVA = async (va) => {
-  try {
-    await navigator.clipboard.writeText(va)
-    toastMessage.value = 'Nomor VA berhasil disalin'
-    showToast.value = true
-    setTimeout(() => showToast.value = false, 2000)
-  } catch {
-    alert('Gagal menyalin nomor VA')
-  }
+  try { await navigator.clipboard.writeText(va); showToastMsg('Nomor VA berhasil disalin') }
+  catch { alert('Gagal menyalin nomor VA') }
 }
 
 const continuePayment = async (order) => {
@@ -326,28 +357,19 @@ const continuePayment = async (order) => {
       onSuccess: (result, orderId) => {
         isProcessingPayment.value = false
         orderStore.updateOrderStatus(orderId, 'success')
-        toastMessage.value = 'Pembayaran berhasil!'
-        showToast.value = true
-        setTimeout(() => { 
-          showToast.value = false
-          router.push(`/payment/${orderId}/success`) 
-        }, 1500)
+        showToastMsg('Pembayaran berhasil!')
+        setTimeout(() => router.push(`/payment/${orderId}/success`), 1500)
       },
       onPending: (result, orderId) => {
         isProcessingPayment.value = false
         router.push(`/payment/${orderId}/pending`)
       },
-      onError: () => { 
-        isProcessingPayment.value = false
-        alert('Gagal membuka pembayaran.') 
-      },
-      onClose: () => { 
-        isProcessingPayment.value = false 
-      }
+      onError:  () => { isProcessingPayment.value = false; alert('Gagal membuka pembayaran.') },
+      onClose:  () => { isProcessingPayment.value = false },
     })
-  } catch { 
+  } catch {
     isProcessingPayment.value = false
-    alert('Terjadi kesalahan.') 
+    alert('Terjadi kesalahan.')
   }
 }
 
@@ -370,8 +392,8 @@ const syncOrdersFromBackend = async () => {
         if ((err?.status || err?.response?.status) === 404) orderStore.removeFromHistory(order.order_id)
       }
     }))
-  } finally { 
-    isSyncing.value = false 
+  } finally {
+    isSyncing.value = false
   }
 }
 
@@ -379,21 +401,16 @@ const refreshOrders = async () => {
   refreshing.value = true
   try {
     await syncOrdersFromBackend()
-    toastMessage.value = 'Status berhasil diperbarui'
-    showToast.value = true
-    setTimeout(() => showToast.value = false, 2000)
-  } finally { 
-    refreshing.value = false 
+    showToastMsg('Status berhasil diperbarui')
+  } finally {
+    refreshing.value = false
   }
 }
 
 onMounted(async () => {
   loading.value = true
-  try { 
-    await syncOrdersFromBackend() 
-  } finally { 
-    loading.value = false 
-  }
+  try { await syncOrdersFromBackend() }
+  finally { loading.value = false }
 })
 </script>
 
@@ -427,51 +444,28 @@ onMounted(async () => {
 
 /* Orders */
 .orders-list { display:flex; flex-direction:column; gap:10px; }
-
 .order-card { background:var(--card,#fff); border:1px solid var(--border,#e5e7eb); border-radius:16px; padding:16px; cursor:pointer; transition:all 0.2s; }
 .order-card:hover { border-color:#16a34a; box-shadow:0 4px 16px rgba(22,163,74,0.08); }
-
 .order-top { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin-bottom:12px; }
 .order-left { flex:1; }
 .order-meta { display:flex; align-items:center; gap:8px; margin-bottom:4px; flex-wrap:wrap; }
 .order-date { font-size:0.6875rem; color:var(--muted-foreground,#9ca3af); font-weight:500; }
 .order-name { font-size:0.9375rem; font-weight:700; color:var(--foreground,#111827); }
 .order-chevron { color:var(--muted-foreground,#9ca3af); flex-shrink:0; margin-top:2px; }
-
 .order-bottom { display:flex; justify-content:space-between; align-items:flex-end; padding-top:12px; border-top:1px solid var(--border,#e5e7eb); }
 .detail-label { font-size:0.6875rem; color:var(--muted-foreground,#9ca3af); margin-bottom:2px; }
 .detail-value { font-size:0.8125rem; font-weight:600; color:var(--foreground,#111827); }
 .detail-price { font-size:1rem; font-weight:800; color:#16a34a; }
 .mono { font-family:monospace; }
 
+/* Action buttons */
 .order-action { margin-top:12px; padding-top:12px; border-top:1px solid var(--border,#e5e7eb); display:flex; gap:8px; }
 .btn-pay { flex:1; display:flex; align-items:center; justify-content:center; gap:8px; padding:10px 16px; background:#16a34a; color:#fff; border:none; border-radius:10px; font-size:0.8125rem; font-weight:700; cursor:pointer; transition:background 0.2s; }
 .btn-pay:hover:not(:disabled) { background:#15803d; }
 .btn-pay:disabled { opacity:0.6; cursor:not-allowed; }
 .btn-pay.full { width:100%; }
-
-/* ✅ TAMBAH: Button VA */
-.btn-va {
-  flex:1;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-  padding:10px 16px;
-  background:rgba(22,163,74,0.1);
-  color:#16a34a;
-  border:1.5px solid #16a34a;
-  border-radius:10px;
-  font-size:0.8125rem;
-  font-weight:700;
-  cursor:pointer;
-  transition:all 0.2s;
-}
-.btn-va:hover {
-  background:#16a34a;
-  color:#fff;
-}
-
+.btn-va { flex:1; display:flex; align-items:center; justify-content:center; gap:8px; padding:10px 16px; background:rgba(22,163,74,0.1); color:#16a34a; border:1.5px solid #16a34a; border-radius:10px; font-size:0.8125rem; font-weight:700; cursor:pointer; transition:all 0.2s; }
+.btn-va:hover { background:#16a34a; color:#fff; }
 .btn-secondary { flex:1; padding:9px; background:var(--muted,#f3f4f6); color:var(--foreground,#374151); border:none; border-radius:10px; font-size:0.8125rem; font-weight:600; cursor:pointer; }
 .btn-copy { padding:9px 14px; background:rgba(22,163,74,0.08); color:#16a34a; border:none; border-radius:10px; font-size:0.8125rem; font-weight:600; cursor:pointer; }
 
@@ -501,132 +495,33 @@ onMounted(async () => {
 .modal-header { display:flex; align-items:center; justify-content:space-between; padding:20px 20px 0; }
 .modal-title { font-size:1.0625rem; font-weight:800; color:var(--foreground,#111827); }
 .modal-close { width:32px; height:32px; display:flex; align-items:center; justify-content:center; border-radius:8px; border:none; background:var(--muted,#f3f4f6); color:var(--muted-foreground,#6b7280); cursor:pointer; }
-.modal-body { padding:16px 20px; display:flex; flex-direction:column; gap:12px; }
+.modal-body { padding:16px 20px; display:flex; flex-direction:column; gap:12px; max-height:70vh; overflow-y:auto; }
 .detail-row { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 0; border-bottom:1px solid var(--border,#e5e7eb); }
 .dr-label { font-size:0.75rem; color:var(--muted-foreground,#9ca3af); font-weight:500; flex-shrink:0; }
 .dr-value { font-size:0.875rem; font-weight:600; color:var(--foreground,#111827); text-align:right; }
 .small { font-size:0.75rem; }
 .sn-row { display:flex; align-items:center; gap:8px; }
 .btn-copy-sm { padding:4px 10px; background:#16a34a; color:#fff; border:none; border-radius:6px; font-size:0.6875rem; font-weight:700; cursor:pointer; white-space:nowrap; }
+.detail-total { display:flex; align-items:center; justify-content:space-between; padding-top:8px; }
+.total-price { font-size:1.25rem; font-weight:900; color:#16a34a; }
+.modal-footer { padding:0 20px 20px; }
+.btn-close-modal { width:100%; padding:12px; background:#16a34a; color:#fff; border:none; border-radius:12px; font-size:0.9375rem; font-weight:700; cursor:pointer; }
 
-/* ✅ TAMBAH: VA Box Styles */
-.va-box {
-  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-  border: 1.5px solid #86efac;
+/* ── Payment Box (shared base VA & E-wallet) ── */
+.payment-box {
   border-radius: 16px;
   padding: 16px;
-  margin: 12px 0;
+  margin: 4px 0;
 }
-
-.va-header {
+.payment-header {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-bottom: 12px;
 }
-
-.va-header svg {
-  color: #16a34a;
-}
-
-.va-title {
-  font-size: 0.875rem;
-  font-weight: 700;
-  color: #15803d;
-}
-
-.va-bank {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.bank-name {
-  font-size: 1rem;
-  font-weight: 800;
-  color: #15803d;
-}
-
-.va-expires {
-  font-size: 0.6875rem;
-  color: #16a34a;
-  font-weight: 600;
-}
-
-.va-number-box {
-  background: #fff;
-  border: 1px solid #86efac;
-  border-radius: 12px;
-  padding: 12px;
-  margin-bottom: 12px;
-}
-
-.va-label {
-  display: block;
-  font-size: 0.6875rem;
-  color: #16a34a;
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-
-.va-number-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.va-number {
-  font-family: 'Courier New', monospace;
-  font-size: 1.125rem;
-  font-weight: 700;
-  color: #15803d;
-  letter-spacing: 0.5px;
-}
-
-.btn-copy-va {
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #16a34a;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: background 0.2s;
-}
-
-.btn-copy-va:hover {
-  background: #15803d;
-}
-
-.va-amount {
-  background: rgba(255,255,255,0.6);
-  border-radius: 10px;
-  padding: 10px 12px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.va-amount-label {
-  font-size: 0.75rem;
-  color: #16a34a;
-  font-weight: 600;
-}
-
-.va-amount-value {
-  font-size: 1.125rem;
-  font-weight: 900;
-  color: #15803d;
-}
-
-.va-note {
+.payment-header svg { color: #16a34a; }
+.payment-title { font-size: 0.875rem; font-weight: 700; color: #15803d; }
+.payment-note {
   display: flex;
   align-items: flex-start;
   gap: 6px;
@@ -634,16 +529,39 @@ onMounted(async () => {
   color: #16a34a;
   line-height: 1.4;
 }
+.payment-note svg { flex-shrink: 0; margin-top: 1px; }
 
-.va-note svg {
+/* ── VA Box ── */
+.va-box { background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 1.5px solid #86efac; }
+.va-bank { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.bank-name { font-size: 1rem; font-weight: 800; color: #15803d; }
+.va-expires { font-size: 0.6875rem; color: #16a34a; font-weight: 600; }
+.va-number-box { background: #fff; border: 1px solid #86efac; border-radius: 12px; padding: 12px; margin-bottom: 12px; }
+.va-label { display: block; font-size: 0.6875rem; color: #16a34a; font-weight: 600; margin-bottom: 6px; }
+.va-number-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.va-number { font-family: 'Courier New', monospace; font-size: 1.125rem; font-weight: 700; color: #15803d; letter-spacing: 0.5px; }
+.btn-copy-va { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: #16a34a; color: #fff; border: none; border-radius: 8px; cursor: pointer; flex-shrink: 0; transition: background 0.2s; }
+.btn-copy-va:hover { background: #15803d; }
+.va-amount { background: rgba(255,255,255,0.6); border-radius: 10px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.va-amount-label { font-size: 0.75rem; color: #16a34a; font-weight: 600; }
+.va-amount-value { font-size: 1.125rem; font-weight: 900; color: #15803d; }
+
+/* ── E-Wallet Box ── */
+.ewallet-box { background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 1.5px solid #86efac; }
+.ewallet-status { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.ewallet-pulse {
+  width: 8px; height: 8px; border-radius: 50%; background: #16a34a;
+  animation: pulse 1.5s ease-in-out infinite;
   flex-shrink: 0;
-  margin-top: 1px;
 }
-
-.detail-total { display:flex; align-items:center; justify-content:space-between; padding-top:8px; }
-.total-price { font-size:1.25rem; font-weight:900; color:#16a34a; }
-.modal-footer { padding:0 20px 20px; }
-.btn-close-modal { width:100%; padding:12px; background:#16a34a; color:#fff; border:none; border-radius:12px; font-size:0.9375rem; font-weight:700; cursor:pointer; }
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.3); }
+}
+.ewallet-status-text { font-size: 0.75rem; font-weight: 600; color: #16a34a; }
+.ewallet-instruction { background: #fff; border: 1px solid #86efac; border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+.ewallet-main { font-size: 0.875rem; color: #15803d; font-weight: 500; margin: 0 0 12px; line-height: 1.5; }
+.ewallet-amount { display: flex; justify-content: space-between; align-items: center; padding-top: 10px; border-top: 1px solid #bbf7d0; }
 
 /* Spin */
 .spin { animation:spin 1s linear infinite; }
