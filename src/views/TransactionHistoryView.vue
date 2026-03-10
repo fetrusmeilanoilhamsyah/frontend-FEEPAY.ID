@@ -438,7 +438,13 @@ const syncOrdersFromBackend = async () => {
   if (isSyncing.value) return
   isSyncing.value = true
   try {
-    const toSync = orderStore.orderHistory.filter(o => !['success','failed'].includes(o.status))
+    const toSync = orderStore.orderHistory.filter(o => {
+  // Pending & processing selalu sync
+  if (!["success","failed"].includes(o.status)) return true
+  // Success sync kalau SN belum ada — biar user dapat SN di riwayat
+  if (o.status === "success" && !o.sn) return true
+  return false
+})
     if (toSync.length === 0) return
     await Promise.allSettled(toSync.map(async (order) => {
       try {
