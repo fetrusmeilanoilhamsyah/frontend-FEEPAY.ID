@@ -74,7 +74,6 @@
 
           <!-- Action button di card -->
           <div v-if="order.status === 'pending'" class="order-action" @click.stop>
-            <!-- Belum pilih metode bayar sama sekali -->
             <button v-if="!order.midtrans_payment_type"
               @click="continuePayment(order)"
               :disabled="isProcessingPayment"
@@ -83,7 +82,6 @@
               <CreditCard v-else :size="16" />
               {{ isProcessingPayment ? 'Membuka...' : 'Pilih Pembayaran' }}
             </button>
-            <!-- Sudah pilih → lihat info / lanjut bayar -->
             <button v-else @click="viewOrderDetail(order)" class="btn-va">
               <Eye :size="16" />
               {{ isEwallet(order.midtrans_payment_type) ? 'Lanjut Bayar' : 'Lihat Info Pembayaran' }}
@@ -136,11 +134,59 @@
                 <span class="dr-value mono small">{{ selectedOrder.order_id }}</span>
               </div>
 
+              <!-- ══════════════════════════════════════════════════════ -->
+              <!-- CASE 1: Mandiri Echannel (Bill Payment)               -->
+              <!-- Format data: "BILLER_CODE|BILL_KEY"                   -->
+              <!-- Tampil Kode Perusahaan + Kode Pembayaran secara pisah -->
+              <!-- ══════════════════════════════════════════════════════ -->
+              <div v-if="selectedOrder.status === 'pending' && selectedOrder.midtrans_payment_type === 'echannel'"
+                   class="payment-box va-box">
+                <div class="payment-header">
+                  <CreditCard :size="16" />
+                  <span class="payment-title">Mandiri Bill Payment</span>
+                </div>
+                <div class="va-bank">
+                  <span class="bank-name">Mandiri</span>
+                  <span class="va-expires">Bayar sebelum {{ formatExpiry(selectedOrder.created_at) }}</span>
+                </div>
+
+                <!-- Kode Perusahaan -->
+                <div class="va-number-box" style="margin-bottom:8px">
+                  <span class="va-label">Kode Perusahaan</span>
+                  <div class="va-number-row">
+                    <span class="va-number">{{ getMandiriBillerCode(selectedOrder.midtrans_transaction_id) }}</span>
+                    <button @click="copyVA(getMandiriBillerCode(selectedOrder.midtrans_transaction_id))" class="btn-copy-va">
+                      <Copy :size="14" />
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Kode Pembayaran -->
+                <div class="va-number-box">
+                  <span class="va-label">Kode Pembayaran</span>
+                  <div class="va-number-row">
+                    <span class="va-number">{{ getMandiriBillKey(selectedOrder.midtrans_transaction_id) }}</span>
+                    <button @click="copyVA(getMandiriBillKey(selectedOrder.midtrans_transaction_id))" class="btn-copy-va">
+                      <Copy :size="14" />
+                    </button>
+                  </div>
+                </div>
+
+                <div class="va-amount">
+                  <span class="va-amount-label">Jumlah yang harus dibayar</span>
+                  <span class="va-amount-value">Rp{{ formatPrice(selectedOrder.total_price) }}</span>
+                </div>
+                <div class="payment-note">
+                  <Info :size="12" />
+                  <span>Bayar via ATM Mandiri, Livin' by Mandiri, atau Internet Banking Mandiri</span>
+                </div>
+              </div>
+
               <!-- ══════════════════════════════════════════════════ -->
-              <!-- CASE 1: Virtual Account (BNI, BCA, BRI, Mandiri)  -->
-              <!-- Tampil nomor rekening + tombol copy               -->
+              <!-- CASE 2: Virtual Account (BNI, BCA, BRI, dll)      -->
+              <!-- Tampil nomor VA + tombol copy                      -->
               <!-- ══════════════════════════════════════════════════ -->
-              <div v-if="selectedOrder.status === 'pending' && isVA(selectedOrder.midtrans_payment_type)"
+              <div v-else-if="selectedOrder.status === 'pending' && isVA(selectedOrder.midtrans_payment_type)"
                    class="payment-box va-box">
                 <div class="payment-header">
                   <CreditCard :size="16" />
@@ -170,9 +216,7 @@
               </div>
 
               <!-- ══════════════════════════════════════════════════ -->
-              <!-- CASE 2: E-Wallet & QRIS                           -->
-              <!-- gopay, dana, shopeepay, qris, akulaku, kredivo    -->
-              <!-- Tampil instruksi + tombol buka app di footer      -->
+              <!-- CASE 3: E-Wallet & QRIS                           -->
               <!-- ══════════════════════════════════════════════════ -->
               <div v-else-if="selectedOrder.status === 'pending' && isEwallet(selectedOrder.midtrans_payment_type)"
                    class="payment-box ewallet-box">
@@ -216,12 +260,8 @@
               </div>
             </div>
 
-            <!-- ══════════════════════════════════════════════════ -->
-            <!-- FOOTER: tombol disesuaikan per payment type        -->
-            <!-- ══════════════════════════════════════════════════ -->
+            <!-- Footer -->
             <div class="modal-footer">
-
-              <!-- Belum pilih metode bayar sama sekali -->
               <button v-if="selectedOrder.status === 'pending' && !selectedOrder.midtrans_payment_type"
                 @click="continuePaymentFromModal(selectedOrder)"
                 :disabled="isProcessingPayment"
@@ -231,7 +271,6 @@
                 {{ isProcessingPayment ? 'Membuka...' : 'Pilih Metode Pembayaran' }}
               </button>
 
-              <!-- E-wallet: buka snap lagi (reuse token → langsung ke step e-wallet) -->
               <button v-else-if="selectedOrder.status === 'pending' && isEwallet(selectedOrder.midtrans_payment_type)"
                 @click="continuePaymentFromModal(selectedOrder)"
                 :disabled="isProcessingPayment"
@@ -241,11 +280,9 @@
                 {{ isProcessingPayment ? 'Membuka...' : getPaymentCTA(selectedOrder.midtrans_payment_type) }}
               </button>
 
-              <!-- VA atau status lain: tutup modal -->
               <button v-else @click="selectedOrder = null" class="btn-close-modal">
                 {{ selectedOrder.status === 'pending' ? 'Saya Sudah Paham' : 'Tutup' }}
               </button>
-
             </div>
           </div>
         </div>
@@ -269,7 +306,7 @@ import { useRouter } from 'vue-router'
 import {
   ArrowLeft, Package, ChevronRight, RefreshCw, ShoppingBag,
   Check, X, Search, CreditCard, Loader, Copy, Info, Eye,
-  Smartphone, QrCode, Wallet, Clock
+  Smartphone, QrCode, Clock
 } from 'lucide-vue-next'
 import { useOrderStore } from '@/stores/orderStore'
 import { useMidtrans } from '@/composables/useMidtrans'
@@ -280,28 +317,37 @@ const router     = useRouter()
 const orderStore = useOrderStore()
 const { pay }    = useMidtrans()
 
-const activeFilter       = ref('all')
-const selectedOrder      = ref(null)
-const refreshing         = ref(false)
-const loading            = ref(false)
-const showToast          = ref(false)
-const toastMessage       = ref('')
-const searchQuery        = ref('')
+const activeFilter        = ref('all')
+const selectedOrder       = ref(null)
+const refreshing          = ref(false)
+const loading             = ref(false)
+const showToast           = ref(false)
+const toastMessage        = ref('')
+const searchQuery         = ref('')
 const isProcessingPayment = ref(false)
-const isSyncing          = ref(false)
+const isSyncing           = ref(false)
 
 // ─── Payment Type Helpers ─────────────────────────────────────────────────────
 
-// VA: pakai nomor rekening, transfer manual
-const isVA = (type) => type?.includes('_va') || type === 'echannel'
+// VA biasa (BNI, BCA, BRI, dll) — TIDAK termasuk echannel (Mandiri pakai sistem berbeda)
+const isVA = (type) => type?.includes('_va') || type === 'other_va'
 
-// E-wallet & paylater: butuh buka aplikasi / popup Midtrans
+// E-wallet & paylater
 const isEwallet = (type) => [
   'gopay', 'dana', 'shopeepay', 'qris',
   'akulaku', 'kredivo', 'uob_ezpay'
 ].includes(type)
 
-// Nama tampilan per payment type
+// ✅ FIX: Parse Mandiri echannel — data disimpan sebagai "BILLER_CODE|BILL_KEY"
+const getMandiriBillerCode = (transactionId) => {
+  if (!transactionId || !transactionId.includes('|')) return '-'
+  return transactionId.split('|')[0]
+}
+const getMandiriBillKey = (transactionId) => {
+  if (!transactionId || !transactionId.includes('|')) return '-'
+  return transactionId.split('|')[1]
+}
+
 const getPaymentName = (type) => ({
   'bni_va':     'BNI',
   'bca_va':     'BCA',
@@ -318,14 +364,12 @@ const getPaymentName = (type) => ({
   'uob_ezpay':  'UOB EzPay',
 })[type] ?? type
 
-// Icon per payment type (dari lucide)
 const getPaymentIcon = (type) => {
-  if (type === 'qris')                        return QrCode
-  if (['akulaku', 'kredivo'].includes(type))  return Clock    // paylater
-  return Smartphone                                            // gopay, dana, shopeepay
+  if (type === 'qris')                       return QrCode
+  if (['akulaku', 'kredivo'].includes(type)) return Clock
+  return Smartphone
 }
 
-// Label tombol CTA per payment type
 const getPaymentCTA = (type) => ({
   'gopay':     'Buka GoPay',
   'dana':      'Buka DANA',
@@ -342,8 +386,8 @@ const filters = computed(() => [
   { value: 'all',        label: 'Semua',    count: orderStore.orderHistory.length },
   { value: 'pending',    label: 'Menunggu', count: orderStore.pendingOrders.length },
   { value: 'processing', label: 'Diproses', count: orderStore.processingOrders.length },
-  { value: 'success',    label: 'Berhasil', count: orderStore.completedOrders.filter(o=>o.status==='success').length },
-  { value: 'failed',     label: 'Gagal',    count: orderStore.completedOrders.filter(o=>o.status==='failed').length },
+  { value: 'success',    label: 'Berhasil', count: orderStore.completedOrders.filter(o => o.status === 'success').length },
+  { value: 'failed',     label: 'Gagal',    count: orderStore.completedOrders.filter(o => o.status === 'failed').length },
 ])
 
 const filteredOrders = computed(() => {
@@ -351,8 +395,8 @@ const filteredOrders = computed(() => {
   if      (activeFilter.value === 'all')        orders = orderStore.orderHistory
   else if (activeFilter.value === 'pending')    orders = orderStore.pendingOrders
   else if (activeFilter.value === 'processing') orders = orderStore.processingOrders
-  else if (activeFilter.value === 'success')    orders = orderStore.completedOrders.filter(o=>o.status==='success')
-  else if (activeFilter.value === 'failed')     orders = orderStore.completedOrders.filter(o=>o.status==='failed')
+  else if (activeFilter.value === 'success')    orders = orderStore.completedOrders.filter(o => o.status === 'success')
+  else if (activeFilter.value === 'failed')     orders = orderStore.completedOrders.filter(o => o.status === 'failed')
 
   if (searchQuery.value) {
     const q = searchQuery.value.toLowerCase()
@@ -369,13 +413,13 @@ const filteredOrders = computed(() => {
 
 const formatPrice = (price) => Number(price).toLocaleString('id')
 const formatDate  = (d) => new Intl.DateTimeFormat('id-ID', {
-  day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'
+  day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
 }).format(new Date(d))
 const formatExpiry = (createdAt) => {
   const e = new Date(createdAt)
   e.setHours(e.getHours() + 24)
   return new Intl.DateTimeFormat('id-ID', {
-    day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'
+    day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
   }).format(e)
 }
 
@@ -396,13 +440,10 @@ const copySN = async (sn) => {
 }
 
 const copyVA = async (va) => {
-  try { await navigator.clipboard.writeText(va); showToastMsg('Nomor VA berhasil disalin') }
-  catch { alert('Gagal menyalin nomor VA') }
+  try { await navigator.clipboard.writeText(va); showToastMsg('Berhasil disalin!') }
+  catch { alert('Gagal menyalin') }
 }
 
-// Buka Midtrans Snap — reuse snap token yang sudah ada
-// Backend sudah handle: kalau token ada → return token lama, tidak buat baru
-// Jadi untuk e-wallet: snap akan langsung buka ke step GoPay/QRIS/dll
 const continuePayment = async (order) => {
   if (isProcessingPayment.value) return
   isProcessingPayment.value = true
@@ -439,12 +480,10 @@ const syncOrdersFromBackend = async () => {
   isSyncing.value = true
   try {
     const toSync = orderStore.orderHistory.filter(o => {
-  // Pending & processing selalu sync
-  if (!["success","failed"].includes(o.status)) return true
-  // Success sync kalau SN belum ada — biar user dapat SN di riwayat
-  if (o.status === "success" && !o.sn) return true
-  return false
-})
+      if (!['success', 'failed'].includes(o.status)) return true
+      if (o.status === 'success' && !o.sn) return true
+      return false
+    })
     if (toSync.length === 0) return
     await Promise.allSettled(toSync.map(async (order) => {
       try {
@@ -484,14 +523,12 @@ onMounted(async () => {
 
 .page-content { max-width:720px; margin:0 auto; padding:20px 16px; display:flex; flex-direction:column; gap:16px; }
 
-/* Search */
 .search-wrap { position:relative; }
 .search-icon { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--muted-foreground,#6b7280); }
 .search-input { width:100%; height:46px; background:var(--card,#fff); border:1px solid var(--border,#e5e7eb); border-radius:12px; padding:0 40px 0 44px; font-size:0.9rem; color:var(--foreground,#111827); outline:none; transition:all 0.2s; box-sizing:border-box; }
 .search-input:focus { border-color:#16a34a; box-shadow:0 0 0 3px rgba(22,163,74,0.1); }
 .search-clear { position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:var(--muted-foreground,#6b7280); display:flex; padding:4px; border-radius:6px; }
 
-/* Filters */
 .filter-wrap { display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; }
 .filter-wrap::-webkit-scrollbar { display:none; }
 .filter-tab { padding:7px 14px; border-radius:999px; font-size:0.8125rem; font-weight:600; color:var(--muted-foreground,#6b7280); background:var(--card,#fff); border:1px solid var(--border,#e5e7eb); cursor:pointer; white-space:nowrap; transition:all 0.2s; display:flex; align-items:center; gap:6px; }
@@ -500,7 +537,6 @@ onMounted(async () => {
 .filter-count { font-size:0.6875rem; padding:1px 6px; border-radius:999px; background:rgba(255,255,255,0.2); }
 .filter-count:not(.active) { background:var(--muted,#f3f4f6); color:var(--muted-foreground,#6b7280); }
 
-/* Orders */
 .orders-list { display:flex; flex-direction:column; gap:10px; }
 .order-card { background:var(--card,#fff); border:1px solid var(--border,#e5e7eb); border-radius:16px; padding:16px; cursor:pointer; transition:all 0.2s; }
 .order-card:hover { border-color:#16a34a; box-shadow:0 4px 16px rgba(22,163,74,0.08); }
@@ -516,7 +552,6 @@ onMounted(async () => {
 .detail-price { font-size:1rem; font-weight:800; color:#16a34a; }
 .mono { font-family:monospace; }
 
-/* Action buttons */
 .order-action { margin-top:12px; padding-top:12px; border-top:1px solid var(--border,#e5e7eb); display:flex; gap:8px; }
 .btn-pay { flex:1; display:flex; align-items:center; justify-content:center; gap:8px; padding:10px 16px; background:#16a34a; color:#fff; border:none; border-radius:10px; font-size:0.8125rem; font-weight:700; cursor:pointer; transition:background 0.2s; }
 .btn-pay:hover:not(:disabled) { background:#15803d; }
@@ -527,25 +562,21 @@ onMounted(async () => {
 .btn-secondary { flex:1; padding:9px; background:var(--muted,#f3f4f6); color:var(--foreground,#374151); border:none; border-radius:10px; font-size:0.8125rem; font-weight:600; cursor:pointer; }
 .btn-copy { padding:9px 14px; background:rgba(22,163,74,0.08); color:#16a34a; border:none; border-radius:10px; font-size:0.8125rem; font-weight:600; cursor:pointer; }
 
-/* Skeleton */
 .order-skeleton { height:120px; background:var(--muted,#f3f4f6); border-radius:16px; overflow:hidden; position:relative; }
 .order-skeleton::after { content:''; position:absolute; inset:0; transform:translateX(-100%); background:linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent); animation:shimmer 1.5s infinite; }
 @keyframes shimmer { 100%{ transform:translateX(100%); } }
 
-/* Empty */
 .empty-state { text-align:center; padding:48px 20px; }
 .empty-icon { color:var(--muted-foreground,#d1d5db); margin:0 auto 16px; display:block; }
 .empty-title { font-size:1rem; font-weight:700; color:var(--foreground,#111827); margin-bottom:6px; }
 .empty-sub { font-size:0.875rem; color:var(--muted-foreground,#6b7280); margin-bottom:20px; }
 .btn-shop { display:inline-flex; align-items:center; gap:8px; padding:10px 20px; background:#16a34a; color:#fff; border:none; border-radius:999px; font-size:0.875rem; font-weight:700; cursor:pointer; }
 
-/* Refresh */
 .refresh-wrap { display:flex; justify-content:center; }
 .btn-refresh { display:inline-flex; align-items:center; gap:8px; padding:10px 20px; background:var(--card,#fff); border:1px solid var(--border,#e5e7eb); border-radius:10px; font-size:0.875rem; font-weight:600; color:var(--foreground,#374151); cursor:pointer; transition:all 0.2s; }
 .btn-refresh:hover:not(:disabled) { border-color:#16a34a; color:#16a34a; }
 .btn-refresh:disabled { opacity:0.5; }
 
-/* Modal */
 .modal-overlay { position:fixed; inset:0; z-index:50; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); display:flex; align-items:flex-end; justify-content:center; padding:16px; }
 @media(min-width:480px){ .modal-overlay { align-items:center; } }
 .modal-box { background:var(--card,#fff); border-radius:24px 24px 16px 16px; width:100%; max-width:480px; overflow:hidden; }
@@ -565,7 +596,6 @@ onMounted(async () => {
 .modal-footer { padding:12px 20px 20px; display:flex; flex-direction:column; gap:8px; }
 .btn-close-modal { width:100%; padding:12px; background:#16a34a; color:#fff; border:none; border-radius:12px; font-size:0.9375rem; font-weight:700; cursor:pointer; }
 
-/* ── Payment Box base ── */
 .payment-box { border-radius:16px; padding:16px; margin:4px 0; }
 .payment-header { display:flex; align-items:center; gap:8px; margin-bottom:12px; }
 .payment-header svg { color:#16a34a; }
@@ -573,7 +603,6 @@ onMounted(async () => {
 .payment-note { display:flex; align-items:flex-start; gap:6px; font-size:0.6875rem; color:#16a34a; line-height:1.4; }
 .payment-note svg { flex-shrink:0; margin-top:1px; }
 
-/* ── VA Box ── */
 .va-box { background:linear-gradient(135deg,#f0fdf4 0%,#dcfce7 100%); border:1.5px solid #86efac; }
 .va-bank { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
 .bank-name { font-size:1rem; font-weight:800; color:#15803d; }
@@ -588,7 +617,6 @@ onMounted(async () => {
 .va-amount-label { font-size:0.75rem; color:#16a34a; font-weight:600; }
 .va-amount-value { font-size:1.125rem; font-weight:900; color:#15803d; }
 
-/* ── E-Wallet Box ── */
 .ewallet-box { background:linear-gradient(135deg,#f0fdf4 0%,#dcfce7 100%); border:1.5px solid #86efac; }
 .ewallet-status { display:flex; align-items:center; gap:8px; margin-bottom:12px; }
 .ewallet-pulse { width:8px; height:8px; border-radius:50%; background:#16a34a; animation:pulse 1.5s ease-in-out infinite; flex-shrink:0; }
@@ -598,15 +626,12 @@ onMounted(async () => {
 .ewallet-main { font-size:0.875rem; color:#15803d; font-weight:500; margin:0 0 12px; line-height:1.5; }
 .ewallet-amount { display:flex; justify-content:space-between; align-items:center; padding-top:10px; border-top:1px solid #bbf7d0; }
 
-/* E-wallet CTA button — sedikit beda dari btn-pay biasa */
 .ewallet-cta { background:linear-gradient(135deg,#16a34a,#15803d); box-shadow:0 4px 12px rgba(22,163,74,0.3); }
 .ewallet-cta:hover:not(:disabled) { background:linear-gradient(135deg,#15803d,#166534); box-shadow:0 6px 16px rgba(22,163,74,0.4); }
 
-/* Spin */
 .spin { animation:spin 1s linear infinite; }
 @keyframes spin { to{ transform:rotate(360deg); } }
 
-/* Toast */
 .toast { position:fixed; bottom:80px; left:50%; transform:translateX(-50%); background:#111827; color:#fff; padding:10px 20px; border-radius:999px; font-size:0.8125rem; font-weight:600; display:flex; align-items:center; gap:8px; z-index:100; white-space:nowrap; box-shadow:0 8px 24px rgba(0,0,0,0.2); }
 .toast-enter-active,.toast-leave-active { transition:all 0.3s cubic-bezier(0.4,0,0.2,1); }
 .toast-enter-from,.toast-leave-to { opacity:0; transform:translateX(-50%) translateY(10px); }
