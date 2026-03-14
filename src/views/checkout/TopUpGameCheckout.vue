@@ -91,6 +91,16 @@
           </div>
           <p class="input-hint">{{ userIdHint }}</p>
 
+          <!-- Zone ID for ML, etc -->
+          <div v-if="needsZoneId" class="zone-section">
+            <label class="input-label">Zone ID / Server ID <span class="input-required">*</span></label>
+            <div class="input-wrap">
+              <Hash :size="18" class="input-icon" />
+              <input v-model="zoneId" type="text" placeholder="Masukkan Zone ID" class="game-input" />
+            </div>
+            <p class="input-hint">Contoh: 1234 (4 digit angka di dalam kurung)</p>
+          </div>
+
           <!-- Recent Game IDs -->
           <div v-if="getRecentIds(selectedGame?.brand).length > 0" class="recent-ids">
             <button v-for="recentId in getRecentIds(selectedGame?.brand)" :key="recentId"
@@ -99,7 +109,6 @@
               <span>{{ recentId }}</span>
             </button>
           </div>
-        </div>
 
           <p class="input-hint"><span class="hint-tip">Tips:</span> Buka game &rarr; Profile &rarr; angka di bawah username</p>
         </div>
