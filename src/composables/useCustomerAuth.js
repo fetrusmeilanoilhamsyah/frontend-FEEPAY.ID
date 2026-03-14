@@ -25,8 +25,8 @@ export function useCustomerAuth() {
   const loginWithEmail = async (email, password) => {
     try {
       const response = await api.customerAuth.login({ login: email, password })
-      setAuth(response.data.token, response.data.user)
-      return { success: true, user: response.data.user }
+      setAuth(response.token, response.user)
+      return { success: true, user: response.user }
     } catch (error) {
       clearAuth()
       throw error
@@ -36,8 +36,8 @@ export function useCustomerAuth() {
   const loginWithGoogle = async (idToken) => {
     try {
       const response = await api.customerAuth.google({ id_token: idToken })
-      setAuth(response.data.token, response.data.user)
-      return { success: true, user: response.data.user }
+      setAuth(response.token, response.user)
+      return { success: true, user: response.user }
     } catch (error) {
       clearAuth()
       throw error
@@ -55,9 +55,9 @@ export function useCustomerAuth() {
 
   const verifyOtp = async (phone, otp) => {
     try {
-      const response = await await api.customerAuth.otpVerify({ phone, otp })
-      setAuth(response.data.token, response.data.user)
-      return { success: true, user: response.data.user }
+      const response = await api.customerAuth.otpVerify({ phone, otp })
+      setAuth(response.token, response.user)
+      return { success: true, user: response.user }
     } catch (error) {
       clearAuth()
       throw error
@@ -67,8 +67,8 @@ export function useCustomerAuth() {
   const register = async (userData) => {
     try {
       const response = await api.customerAuth.register(userData)
-      setAuth(response.data.token, response.data.user)
-      return { success: true, user: response.data.user }
+      setAuth(response.token, response.user)
+      return { success: true, user: response.user }
     } catch (error) {
       clearAuth()
       throw error
