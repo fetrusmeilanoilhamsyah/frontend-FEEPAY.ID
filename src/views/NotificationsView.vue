@@ -65,7 +65,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { ArrowLeft, Bell, CheckCircle, ShieldAlert, CreditCard, Tag, Info } from 'lucide-vue-next'
+import { ArrowLeft, Bell, CheckCircle, Shield, CreditCard, Tag, Info } from 'lucide-vue-next'
 
 const activeFilter = ref('all')
 
@@ -79,7 +79,7 @@ const notifications = ref([
   },
   {
     id: 2, read: false, type: 'security',
-    icon: ShieldAlert, bg: '#FEF3C7', color: '#d97706',
+    icon: Shield, bg: '#FEF3C7', color: '#d97706',
     title: 'Login Baru Terdeteksi',
     desc: 'Akun Anda berhasil masuk dari perangkat baru pada sesi ini.',
     time: '5 menit lalu'

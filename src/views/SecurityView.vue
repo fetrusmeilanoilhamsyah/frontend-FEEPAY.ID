@@ -20,7 +20,7 @@
       <div class="card">
         <div class="card-header-row">
           <div class="card-icon-wrap" style="background: #FEE2E2;">
-            <KeyRound :size="18" style="color: #dc2626;" />
+            <Key :size="18" style="color: #dc2626;" />
           </div>
           <div>
             <h2 class="card-title">Ubah Password</h2>
@@ -108,7 +108,7 @@
       <div class="card">
         <div class="card-header-row">
           <div class="card-icon-wrap" style="background: #FEF3C7;">
-            <MonitorSmartphone :size="18" style="color: #d97706;" />
+            <Smartphone :size="18" style="color: #d97706;" />
           </div>
           <div>
             <h2 class="card-title">Sesi Aktif</h2>
@@ -190,7 +190,7 @@
 <script setup>
 import { ref, reactive, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { ArrowLeft, Lock, Eye, EyeOff, ShieldCheck, MonitorSmartphone, Monitor, LogOut, AlertTriangle, Trash2, X, KeyRound, Loader } from 'lucide-vue-next'
+import { ArrowLeft, Lock, Eye, EyeOff, ShieldCheck, Smartphone, Monitor, LogOut, AlertTriangle, Trash2, X, Key, Loader } from 'lucide-vue-next'
 import { useCustomerAuth } from '../composables/useCustomerAuth'
 import api from '../services/api'
 
