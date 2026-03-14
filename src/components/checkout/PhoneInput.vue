@@ -31,7 +31,7 @@
         @click="pickContact"
         title="Pilih dari kontak"
       >
-        <BookUser :size="18" />
+        <User :size="18" />
       </button>
     </div>
 
@@ -43,7 +43,7 @@
 
 <script setup>
 import { ref, watch, onMounted } from 'vue'
-import { BookUser } from 'lucide-vue-next'
+import { User } from 'lucide-vue-next'
 import OperatorBadge from './OperatorBadge.vue'
 import { useOperatorDetector } from '@/composables/useOperatorDetector'
 
