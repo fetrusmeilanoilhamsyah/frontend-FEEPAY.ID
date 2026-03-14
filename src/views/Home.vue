@@ -300,9 +300,16 @@ const allGames = computed(() => {
   productStore.products
     .filter(p => (p.category||'').toLowerCase() === 'games' && p.brand)
     .forEach(p => {
-      if (!map[p.brand]) map[p.brand] = { brand: p.brand, label: getGameLabel(p.brand), minPrice: Infinity }
+      const brandKey = p.brand.toUpperCase().trim()
+      if (!map[brandKey]) {
+        map[brandKey] = { 
+          brand: brandKey, 
+          label: getGameLabel(p.brand), 
+          minPrice: Infinity 
+        }
+      }
       const price = parseFloat(p.selling_price || 0)
-      if (price > 0 && price < map[p.brand].minPrice) map[p.brand].minPrice = price
+      if (price > 0 && price < map[brandKey].minPrice) map[brandKey].minPrice = price
     })
   return Object.values(map)
 })
