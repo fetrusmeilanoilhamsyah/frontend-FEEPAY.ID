@@ -338,6 +338,95 @@
         </div>
       </div>
 
+      <!-- WhatsApp Gateway Tab -->
+      <div v-if="activeTab === 'whatsapp'">
+        <div class="max-w-lg mx-auto">
+          <div class="bg-white dark:bg-dark-900 border border-border rounded-2xl overflow-hidden shadow-sm">
+            <!-- Header Card -->
+            <div class="bg-gradient-to-r from-green-500 to-emerald-600 p-6 text-white">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                  <MessageCircle :size="24" />
+                </div>
+                <div>
+                  <h2 class="text-lg font-black">WhatsApp OTP Gateway</h2>
+                  <p class="text-sm text-green-100">Kelola koneksi WhatsApp untuk pengiriman OTP</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-6">
+
+              <!-- LOADING awal -->
+              <div v-if="waLoading" class="flex flex-col items-center justify-center py-10 space-y-3">
+                <Loader class="animate-spin text-green-500" :size="32" />
+                <p class="text-sm text-dark-500 dark:text-dark-400">Memeriksa status gateway...</p>
+              </div>
+
+              <!-- STATUS: OFFLINE -->
+              <div v-else-if="waStatus === 'offline'" class="flex flex-col items-center py-8 space-y-4 text-center">
+                <div class="w-16 h-16 bg-red-100 dark:bg-red-950/30 rounded-full flex items-center justify-center">
+                  <span class="text-3xl">🔴</span>
+                </div>
+                <div>
+                  <p class="font-bold text-dark-950 dark:text-white">Gateway Tidak Aktif</p>
+                  <p class="text-sm text-dark-500 dark:text-dark-400 mt-1">Jalankan <code class="bg-gray-100 dark:bg-dark-800 px-2 py-0.5 rounded font-mono text-xs">npm start</code> di folder <code class="bg-gray-100 dark:bg-dark-800 px-2 py-0.5 rounded font-mono text-xs">feepay-wa</code> di VPS.</p>
+                </div>
+                <button @click="fetchWAStatus()" class="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-dark-800 hover:bg-gray-200 rounded-xl text-sm font-bold transition-colors">
+                  <RefreshCw :size="14" /> Cek Ulang
+                </button>
+              </div>
+
+              <!-- STATUS: CONNECTED -->
+              <div v-else-if="waStatus === 'connected'" class="flex flex-col items-center py-6 space-y-5 text-center">
+                <div class="w-20 h-20 bg-green-100 dark:bg-green-950/30 rounded-full flex items-center justify-center">
+                  <span class="text-4xl">✅</span>
+                </div>
+                <div>
+                  <p class="text-xl font-black text-green-600 dark:text-green-400">Terhubung!</p>
+                  <p class="text-sm text-dark-500 dark:text-dark-400 mt-1">WhatsApp aktif & siap kirim OTP</p>
+                  <div v-if="waPhone" class="mt-3 inline-flex items-center gap-2 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-xl px-4 py-2">
+                    <span class="text-lg">📱</span>
+                    <span class="font-mono font-bold text-green-700 dark:text-green-300 text-sm">+{{ waPhone }}</span>
+                  </div>
+                </div>
+                <button
+                  @click="handleWADisconnect"
+                  :disabled="waDisconnecting"
+                  class="flex items-center gap-2 px-5 py-2.5 bg-red-100 dark:bg-red-950/30 hover:bg-red-200 text-red-700 dark:text-red-400 rounded-xl text-sm font-bold transition-colors disabled:opacity-50"
+                >
+                  <Loader v-if="waDisconnecting" class="animate-spin" :size="14" />
+                  <span>{{ waDisconnecting ? 'Memutus...' : '🔌 Ganti / Disconnect WhatsApp' }}</span>
+                </button>
+              </div>
+
+              <!-- STATUS: CONNECTING / DISCONNECTED — tampilkan QR -->
+              <div v-else class="flex flex-col items-center py-4 space-y-4 text-center">
+                <div v-if="waQR" class="space-y-3">
+                  <p class="font-bold text-dark-950 dark:text-white">Scan QR Code ini dengan WhatsApp</p>
+                  <p class="text-xs text-dark-500 dark:text-dark-400">Buka WhatsApp → Settings → Linked Devices → Link a Device</p>
+                  <div class="inline-block p-3 bg-white rounded-2xl shadow-md border border-gray-100">
+                    <img :src="waQR" alt="WhatsApp QR Code" class="w-56 h-56 sm:w-64 sm:h-64" />
+                  </div>
+                  <p class="text-xs text-amber-600 dark:text-amber-400 font-medium">
+                    ⏳ QR diperbarui otomatis setiap 5 detik. Scan sebelum expired!
+                  </p>
+                </div>
+                <div v-else class="flex flex-col items-center py-6 space-y-3">
+                  <Loader class="animate-spin text-green-500" :size="32" />
+                  <p class="font-semibold text-dark-950 dark:text-white">Menunggu QR Code...</p>
+                  <p class="text-xs text-dark-500 dark:text-dark-400">QR akan muncul otomatis dalam beberapa detik</p>
+                </div>
+                <button @click="fetchWAStatus()" class="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-dark-800 hover:bg-gray-200 rounded-xl text-sm font-bold transition-colors">
+                  <RefreshCw :size="14" /> Refresh Manual
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
 
     <!-- Edit Price Modal -->
@@ -377,8 +466,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed } from 'vue'
-import { ShoppingBag, Clock, TrendingUp, RefreshCw, Loader, Check, Zap, Wallet, AlertTriangle } from 'lucide-vue-next'
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
+import { ShoppingBag, Clock, TrendingUp, RefreshCw, Loader, Check, Zap, Wallet, AlertTriangle, MessageCircle } from 'lucide-vue-next'
 import PINModal from '../components/PINModal.vue'
 import api from '../services/api'
 import { useAuth } from '../composables/useAuth'
@@ -414,7 +503,8 @@ let autoRefreshTimer = null
 
 const tabs = [
   { value: 'products', label: 'Produk' },
-  { value: 'orders', label: 'Pesanan' }
+  { value: 'orders', label: 'Pesanan' },
+  { value: 'whatsapp', label: '📱 WhatsApp' }
 ]
 
 const groupedProducts = computed(() => {
@@ -435,6 +525,47 @@ const groupedProducts = computed(() => {
 })
 
 const formatPrice = (p) => new Intl.NumberFormat('id-ID').format(p)
+
+// ─── WA Gateway State ──────────────────────────────────────────────────────────
+const waStatus = ref('disconnected') // 'connected' | 'connecting' | 'disconnected' | 'offline'
+const waPhone = ref(null)
+const waQR = ref(null)
+const waLoading = ref(false)
+const waDisconnecting = ref(false)
+let waPollTimer = null
+
+const fetchWAStatus = async (silent = false) => {
+  if (!silent) waLoading.value = true
+  try {
+    const res = await api.wa.status()
+    waStatus.value = res.status || 'disconnected'
+    waPhone.value = res.phone || null
+    waQR.value = res.qr || null
+  } catch {
+    waStatus.value = 'offline'
+    waPhone.value = null
+    waQR.value = null
+  } finally {
+    waLoading.value = false
+  }
+}
+
+const handleWADisconnect = async () => {
+  if (!confirm('Yakin ingin logout WhatsApp? QR baru akan muncul untuk scan ulang.')) return
+  waDisconnecting.value = true
+  try {
+    await api.wa.disconnect()
+    showToastNotification('Logout berhasil. Tunggu QR code baru muncul...')
+    waStatus.value = 'connecting'
+    waQR.value = null
+    // Mulai polling cepat setelah disconnect
+    setTimeout(() => fetchWAStatus(true), 3000)
+  } catch {
+    showToastNotification('Gagal disconnect. Cek apakah gateway sudah berjalan.')
+  } finally {
+    waDisconnecting.value = false
+  }
+}
 
 const showToastNotification = (m) => {
   toastMessage.value = m
@@ -600,6 +731,16 @@ const closePinModal = () => {
   pendingAction.value = null
 }
 
+// Watch tab change: start/stop WA polling
+watch(activeTab, (tab) => {
+  if (tab === 'whatsapp') {
+    fetchWAStatus()
+    waPollTimer = setInterval(() => fetchWAStatus(true), 5000)
+  } else {
+    if (waPollTimer) clearInterval(waPollTimer)
+  }
+})
+
 onMounted(() => {
   fetchAllData()
   fetchBalance()
@@ -612,6 +753,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   if (autoRefreshTimer) clearInterval(autoRefreshTimer)
+  if (waPollTimer) clearInterval(waPollTimer)
 })
 </script>
 

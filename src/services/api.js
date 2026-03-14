@@ -64,10 +64,15 @@ api.interceptors.response.use(
           return Promise.reject({ type: 'pin_error', message: 'PIN Admin Salah Boss!' })
         }
 
-        localStorage.clear()
-        sessionStorage.clear()
-        if (!router.currentRoute.value.path.includes('login')) {
-          router.push('/admin/login')
+        // Hanya hapus auth storage jika endpoint atau route saat ini terindikasi /admin
+        if (error.config.url?.includes('/admin') || router.currentRoute.value.path.includes('/admin')) {
+          localStorage.removeItem('feepay_token')
+          localStorage.removeItem('feepay_token_expiry')
+          sessionStorage.removeItem('feepay_admin_pin')
+          
+          if (!router.currentRoute.value.path.includes('login')) {
+            router.push('/admin/login')
+          }
         }
         break
 
@@ -93,6 +98,16 @@ api.interceptors.response.use(
 
 // 3. API SERVICES
 export default {
+  customerAuth: {
+    register: (data) => api.post('/auth/register', data),
+    login: (credentials) => api.post('/auth/login', credentials),
+    google: (data) => api.post('/auth/google', data),
+    otpRequest: (data) => api.post('/auth/otp/request', data),
+    otpVerify: (data) => api.post('/auth/otp/verify', data),
+    me: () => api.get('/auth/me'),
+    logout: () => api.post('/auth/logout')
+  },
+
   auth: {
     login: (cred) => api.post('/admin/login', cred),
     logout: () => api.post('/admin/logout'),
@@ -129,5 +144,10 @@ export default {
   support: {
     send: (data) => api.post('/support/send', data),
     getContacts: () => api.get('/support/contacts')
+  },
+
+  wa: {
+    status: () => api.get(`/admin/${ADMIN_PATH}/wa/status`),
+    disconnect: () => api.post(`/admin/${ADMIN_PATH}/wa/disconnect`),
   }
 }
