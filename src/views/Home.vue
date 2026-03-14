@@ -91,16 +91,15 @@
             </div>
           </div>
         </div>
-        <div class="service-grid">
           <router-link v-for="(s, idx) in services" :key="s.to" :to="s.to" 
             class="service-card reveal" :class="'stagger-' + ((idx % 5) + 1)">
             <div class="service-icon-wrap" :style="{ background: s.bg }">
-              <img :src="s.img" :alt="s.label" class="service-icon" />
+              <img :src="s.img" :alt="s.label" class="service-icon" 
+                loading="lazy" decoding="async" />
             </div>
             <span class="service-label">{{ s.label }}</span>
             <span v-if="s.badge" class="service-badge">{{ s.badge }}</span>
           </router-link>
-        </div>
       </div>
 
       <!-- TOP GAME SECTION -->
@@ -145,11 +144,15 @@
                 :src="getGameBanner(game.brand)"
                 :alt="game.label"
                 class="game-card-img"
+                :loading="idx < 4 ? 'eager' : 'lazy'"
+                decoding="async"
+                :fetchpriority="idx < 4 ? 'high' : 'low'"
                 @error="(e) => e.target.src='/images/games/banner-default.jpg'"
               />
               <div class="game-card-overlay" />
               <div class="game-card-logo-wrap">
                 <img :src="getGameLogo(game.brand)" :alt="game.label" class="game-card-logo"
+                  loading="lazy" decoding="async"
                   @error="(e) => e.target.style.display='none'" />
               </div>
             </div>

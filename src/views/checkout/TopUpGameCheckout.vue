@@ -43,6 +43,9 @@
             class="game-card reveal" :class="'stagger-' + ((idx % 5) + 1)">
             <div class="game-card-bg">
               <img :src="getGameBanner(game.brand)" :alt="game.label" class="game-card-img"
+                :loading="idx < 4 ? 'eager' : 'lazy'"
+                decoding="async"
+                :fetchpriority="idx < 4 ? 'high' : 'low'"
                 @error="(e) => e.target.src='/images/games/banner-default.webp'" />
               <div class="game-card-overlay" />
             </div>
@@ -50,6 +53,7 @@
             <div class="game-card-footer">
               <div class="game-logo-wrap">
                 <img :src="getGameLogo(game.brand)" :alt="game.label" class="game-logo-img"
+                  loading="lazy" decoding="async"
                   @error="(e) => e.target.style.display='none'" />
               </div>
               <div>
