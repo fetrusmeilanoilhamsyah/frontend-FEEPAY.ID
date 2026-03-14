@@ -117,15 +117,14 @@ onUnmounted(() => clearInterval(autoplayInterval))
   border: 1px solid rgba(22, 163, 74, 0.1);
 }
 
-@media (min-width: 768px)  { .banner-slider { height: 300px; } }
-@media (min-width: 1024px) { .banner-slider { height: 300px; } }
-@media (min-width: 1280px) { .banner-slider { height: 340px; } }
+@media (min-width: 480px)  { .banner-slider { height: 300px; } }
+@media (min-width: 1024px) { .banner-slider { height: 320px; } }
 
 .banner-slider::before {
   content: '';
   position: absolute; inset: 0;
-  background-image: radial-gradient(circle, rgba(22,163,74,0.1) 1px, transparent 1px);
-  background-size: 20px 20px;
+  background-image: radial-gradient(circle, rgba(22,163,74,0.05) 1px, transparent 1px);
+  background-size: 24px 24px;
   z-index: 0; pointer-events: none;
   border-radius: 18px;
 }
@@ -133,9 +132,9 @@ onUnmounted(() => clearInterval(autoplayInterval))
 .banner-slider::after {
   content: '';
   position: absolute;
-  top: -30px; left: -30px;
-  width: 180px; height: 180px;
-  background: radial-gradient(circle, rgba(74, 222, 128, 0.2) 0%, transparent 70%);
+  top: -40px; left: -40px;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(74, 222, 128, 0.15) 0%, transparent 70%);
   z-index: 0; pointer-events: none;
 }
 
@@ -143,29 +142,27 @@ onUnmounted(() => clearInterval(autoplayInterval))
   position: relative;
   z-index: 1;
   width: 100%; height: 100%;
+  perspective: 1000px;
 }
 
 .card {
   position: absolute;
-  width: 84%;
+  width: 82%;
   top: 50%;
   transform-origin: center center;
-  border-radius: 14px;
+  border-radius: 20px;
   overflow: hidden;
   cursor: pointer;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.15);
   transition:
-    transform 0.42s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    opacity   0.42s ease;
+    transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1),
+    opacity   0.4s ease;
   will-change: transform, opacity;
   aspect-ratio: 16 / 9;
-  /* SUDAH DIPERBAIKI: Gradien hijau lebih terang dan fresh, tidak pekat */
   background: linear-gradient(135deg, #4ade80 0%, #16a34a 100%);
 }
 
-@media (min-width: 768px)  { .card { width: 55%; top: 14px; bottom: 14px; } }
-@media (min-width: 1024px) { .card { width: 50%; } }
-@media (min-width: 1280px) { .card { width: 45%; } }
+@media (min-width: 480px) { .card { width: 75%; } }
 
 .card-img {
   width: 100%; height: 100%;

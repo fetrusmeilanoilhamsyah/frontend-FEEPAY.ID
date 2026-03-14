@@ -454,18 +454,12 @@ onMounted(async () => {
 
 @media (min-width: 768px) {
   .home-content {
-    max-width: 900px;
+    max-width: 100%;
     margin: 0 auto;
-    padding: 24px 24px 60px;
+    padding: 20px 16px 80px;
   }
   .home-header {
-    display: none !important;
-  }
-  .game-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-  .game-card-img-wrap {
-    aspect-ratio: 3/2;
+    display: flex !important; /* Always show in 480px frame */
   }
 }
 
@@ -481,11 +475,10 @@ onMounted(async () => {
 .banner-wrap::before {
   content: '';
   position: absolute;
-  inset: -20px -24px;
-  background: radial-gradient(ellipse 80% 60% at 50% 50%,
-    rgba(22, 163, 74, 0.08) 0%,
-    rgba(22, 163, 74, 0.03) 50%,
-    transparent 75%
+  inset: -10px -12px;
+  background: radial-gradient(circle at 50% 50%,
+    rgba(22, 163, 74, 0.05) 0%,
+    transparent 80%
   );
   border-radius: 24px;
   z-index: 0;
@@ -509,14 +502,12 @@ onMounted(async () => {
 }
 
 /* Ukuran & posisi tiap partikel */
-.p1 { width:5px;  height:5px;  left:8%;   top:20%; opacity:0.35; animation-duration:6s;  animation-delay:0s;   }
-.p2 { width:3px;  height:3px;  left:18%;  top:70%; opacity:0.25; animation-duration:8s;  animation-delay:-2s;  }
-.p3 { width:6px;  height:6px;  left:85%;  top:15%; opacity:0.3;  animation-duration:7s;  animation-delay:-1s;  }
-.p4 { width:4px;  height:4px;  left:90%;  top:65%; opacity:0.2;  animation-duration:9s;  animation-delay:-3s;  }
-.p5 { width:3px;  height:3px;  left:50%;  top:10%; opacity:0.3;  animation-duration:5s;  animation-delay:-4s;  }
-.p6 { width:5px;  height:5px;  left:5%;   top:50%; opacity:0.2;  animation-duration:10s; animation-delay:-1.5s;}
-.p7 { width:4px;  height:4px;  left:75%;  top:80%; opacity:0.25; animation-duration:7s;  animation-delay:-2.5s;}
-.p8 { width:3px;  height:3px;  left:35%;  top:85%; opacity:0.2;  animation-duration:8s;  animation-delay:-5s;  }
+/* Simplifikasi Partikel - Cukup 4 agar ringan */
+.p1 { width:4px;  height:4px;  left:10%;  top:20%; opacity:0.2;  animation-duration:8s;  }
+.p2 { width:3px;  height:3px;  left:85%;  top:60%; opacity:0.15; animation-duration:12s; }
+.p3 { width:5px;  height:5px;  left:20%;  top:80%; opacity:0.1;  animation-duration:10s; }
+.p4 { width:3px;  height:3px;  left:70%;  top:15%; opacity:0.15; animation-duration:9s;  }
+/* p5-p8 dihilangkan demi performa */
 
 @keyframes float {
   0%   { transform: translateY(0px)   scale(1);   }

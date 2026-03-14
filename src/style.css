@@ -158,9 +158,9 @@
     --input-focus: #3b82f6;
     --ring: rgba(59, 130, 246, 0.3);
 
-    /* Glassmorphism Tokens */
-    --glass-bg: rgba(21, 25, 33, 0.8);
-    --glass-border: rgba(255, 255, 255, 0.08);
+    /* Glassmorphism Tokens - Optimized for performance */
+    --glass-bg: rgba(21, 25, 33, 0.75);
+    --glass-border: rgba(255, 255, 255, 0.06);
   }
 
   * {
