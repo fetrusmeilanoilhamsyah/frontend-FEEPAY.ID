@@ -335,7 +335,9 @@
     will-change: transform, opacity;
   }
 
-  .reveal.active {
+  /* Reveal itself when active, OR reveal when parent is active */
+  .reveal.active,
+  .active .reveal {
     opacity: 1;
     transform: translateY(0) scale(1);
   }

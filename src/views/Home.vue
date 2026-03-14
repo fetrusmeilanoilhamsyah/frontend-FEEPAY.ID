@@ -85,11 +85,9 @@
           <div class="section-title-wrap">
             <img src="/icons/section/layanan.webp" class="section-icon" alt=""
               @error="(e) => e.target.style.display='none'" />
-            <div>
-              <h2 class="section-title">Layanan Kami</h2>
-              <p class="section-sub">Semua kebutuhan digital kamu</p>
             </div>
           </div>
+        </div>
         <div class="service-grid">
           <router-link v-for="(s, idx) in services" :key="s.to" :to="s.to" 
             class="service-card reveal" :class="'stagger-' + ((idx % 5) + 1)">
@@ -104,7 +102,7 @@
       </div>
 
       <!-- TOP GAME SECTION -->
-      <div class="section section--brand">
+      <div class="section section--brand" v-reveal>
         <div class="section-header">
           <div class="section-title-wrap">
             <img src="/icons/section/game.webp" class="section-icon" alt=""
