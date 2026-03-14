@@ -138,7 +138,7 @@
       <div class="card danger-card">
         <div class="card-header-row">
           <div class="card-icon-wrap" style="background: #FEE2E2;">
-            <TriangleAlert :size="18" style="color: #dc2626;" />
+            <AlertTriangle :size="18" style="color: #dc2626;" />
           </div>
           <div>
             <h2 class="card-title" style="color: #dc2626;">Zona Berbahaya</h2>
@@ -190,7 +190,7 @@
 <script setup>
 import { ref, reactive, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { ArrowLeft, Lock, Eye, EyeOff, ShieldCheck, MonitorSmartphone, Monitor, LogOut, TriangleAlert, Trash2, X, KeyRound, Loader } from 'lucide-vue-next'
+import { ArrowLeft, Lock, Eye, EyeOff, ShieldCheck, MonitorSmartphone, Monitor, LogOut, AlertTriangle, Trash2, X, KeyRound, Loader } from 'lucide-vue-next'
 import { useCustomerAuth } from '../composables/useCustomerAuth'
 import api from '../services/api'
 
