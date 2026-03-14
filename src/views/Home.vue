@@ -41,9 +41,14 @@
 
       <!-- BANNER -->
       <div class="banner-wrap">
-        <span class="p p1"/><span class="p p2"/><span class="p p3"/>
-        <span class="p p4"/><span class="p p5"/><span class="p p6"/>
-        <span class="p p7"/><span class="p p8"/>
+        <span class="p p1"></span>
+<span class="p p2"></span>
+<span class="p p3"></span>
+<span class="p p4"></span>
+<span class="p p5"></span>
+<span class="p p6"></span>
+<span class="p p7"></span>
+<span class="p p8"></span>
         <SkeletonBanner v-if="productStore.loading" />
         <BannerSlider v-else @action="handleBannerAction" />
       </div>
@@ -85,6 +90,9 @@
           <div class="section-title-wrap">
             <img src="/icons/section/layanan.webp" class="section-icon" alt=""
               @error="(e) => e.target.style.display='none'" />
+            <div>
+              <h2 class="section-title">Layanan Kami</h2>
+              <p class="section-sub">Semua kebutuhan digital kamu</p>
             </div>
           </div>
         </div>
