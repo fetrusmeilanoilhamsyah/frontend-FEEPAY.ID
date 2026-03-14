@@ -349,9 +349,119 @@
       </div>
 
       <!-- WhatsApp Gateway Tab -->
-      <div v-if="activeTab === 'whatsapp'">
-        <!-- ... existing wa content ... -->
+      <!-- WhatsApp Gateway Tab -->
+<div v-if="activeTab === 'whatsapp'">
+  <div class="max-w-lg mx-auto">
+
+    <!-- Status Card -->
+    <div class="rounded-2xl border border-border bg-white dark:bg-dark-900 p-5 mb-4">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-bold text-dark-900 dark:text-white">Status WhatsApp Gateway</h3>
+        <span
+          class="px-3 py-1 rounded-full text-xs font-bold uppercase"
+          :class="{
+            'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400': waStatus === 'connected',
+            'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400': waStatus === 'connecting',
+            'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400': waStatus === 'disconnected',
+            'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400': waStatus === 'offline',
+          }"
+        >
+          {{ waStatus === 'connected' ? '● Terhubung' : waStatus === 'connecting' ? '◌ Menghubungkan...' : waStatus === 'offline' ? '✕ Gateway Offline' : '○ Terputus' }}
+        </span>
       </div>
+
+      <!-- Connected State -->
+      <div v-if="waStatus === 'connected'" class="space-y-3">
+        <div class="flex items-center gap-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-xl">
+          <div class="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/40 flex items-center justify-center">
+            <Smartphone :size="20" class="text-green-600 dark:text-green-400" />
+          </div>
+          <div>
+            <div class="text-xs text-dark-500 dark:text-dark-400">Nomor Terhubung</div>
+            <div class="font-bold text-dark-900 dark:text-white">+{{ waPhone }}</div>
+          </div>
+        </div>
+        <p class="text-xs text-dark-500 dark:text-dark-400">
+          WhatsApp aktif dan siap mengirim OTP ke pelanggan.
+        </p>
+        <button
+          @click="handleWADisconnect"
+          :disabled="waDisconnecting"
+          class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100 transition-all disabled:opacity-50"
+        >
+          <Loader v-if="waDisconnecting" class="animate-spin" :size="14" />
+          <span>{{ waDisconnecting ? 'Memutus...' : 'Ganti Nomor / Logout' }}</span>
+        </button>
+      </div>
+
+      <!-- Connecting / QR State -->
+      <div v-else-if="waStatus === 'connecting'" class="space-y-3">
+        <p class="text-sm text-dark-600 dark:text-dark-400">
+          Scan QR code berikut menggunakan WhatsApp di HP kamu.
+        </p>
+        <div v-if="waQR" class="flex justify-center p-4 bg-white rounded-xl border border-border">
+          <img :src="waQR" alt="QR Code WhatsApp" class="w-48 h-48 object-contain" />
+        </div>
+        <div v-else class="flex flex-col items-center justify-center py-8 gap-3">
+          <Loader class="animate-spin text-primary-500" :size="32" />
+          <p class="text-sm text-dark-500 dark:text-dark-400">Menunggu QR code...</p>
+        </div>
+        <p class="text-xs text-center text-dark-400 dark:text-dark-500">
+          Buka WhatsApp → Perangkat Tertaut → Tautkan Perangkat
+        </p>
+      </div>
+
+      <!-- Disconnected State -->
+      <div v-else-if="waStatus === 'disconnected'" class="space-y-3">
+        <p class="text-sm text-dark-600 dark:text-dark-400">
+          WhatsApp Gateway terputus. Klik refresh untuk mencoba reconnect.
+        </p>
+        <button
+          @click="fetchWAStatus()"
+          :disabled="waLoading"
+          class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 hover:bg-primary-100 transition-all disabled:opacity-50"
+        >
+          <Loader v-if="waLoading" class="animate-spin" :size="14" />
+          <RefreshCw v-else :size="14" />
+          <span>{{ waLoading ? 'Mengecek...' : 'Refresh Status' }}</span>
+        </button>
+      </div>
+
+      <!-- Offline State -->
+      <div v-else class="space-y-3">
+        <div class="p-3 bg-red-50 dark:bg-red-900/20 rounded-xl">
+          <p class="text-sm font-semibold text-red-600 dark:text-red-400 mb-1">
+            Gateway Node.js tidak bisa dijangkau
+          </p>
+          <p class="text-xs text-red-500 dark:text-red-400">
+            Pastikan service WA Gateway sudah berjalan di VPS dengan: pm2 status
+          </p>
+        </div>
+        <button
+          @click="fetchWAStatus()"
+          :disabled="waLoading"
+          class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 transition-all disabled:opacity-50"
+        >
+          <Loader v-if="waLoading" class="animate-spin" :size="14" />
+          <RefreshCw v-else :size="14" />
+          <span>Coba Lagi</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Info Card -->
+    <div class="rounded-2xl border border-border bg-white dark:bg-dark-900 p-5">
+      <h4 class="font-bold text-sm text-dark-900 dark:text-white mb-3">Cara Kerja</h4>
+      <div class="space-y-2 text-xs text-dark-500 dark:text-dark-400">
+        <p>1. Pelanggan request OTP via nomor HP</p>
+        <p>2. Backend Laravel kirim OTP ke Gateway ini</p>
+        <p>3. Gateway kirim pesan WhatsApp ke pelanggan</p>
+        <p>4. Pelanggan masukkan OTP untuk login</p>
+      </div>
+    </div>
+
+  </div>
+</div>
 
       <!-- Users Tab -->
       <div v-if="activeTab === 'users'">
@@ -610,7 +720,7 @@ const fetchUsers = async () => {
   loadingUsers.value = true
   try {
     const res = await api.users.getAll()
-    usersList.value = res.data.data || []
+    usersList.value = res.data || res || []
   } catch (e) {
     showToastNotification('Gagal mengambil daftar pengguna')
   } finally {
