@@ -39,7 +39,8 @@
         </div>
 
         <div v-else-if="filteredGames.length > 0" class="game-grid">
-          <button v-for="game in filteredGames" :key="game.brand" @click="selectGame(game)" class="game-card">
+          <button v-for="(game, idx) in filteredGames" :key="game.brand" @click="selectGame(game)" 
+            class="game-card reveal" :class="'stagger-' + ((idx % 5) + 1)">
             <div class="game-card-bg">
               <img :src="getGameBanner(game.brand)" :alt="game.label" class="game-card-img"
                 @error="(e) => e.target.src='/images/games/banner-default.webp'" />
@@ -69,7 +70,7 @@
 
       <!-- Product List -->
       <div v-else>
-        <div class="selected-game-header">
+        <div class="selected-game-header" v-reveal>
           <button @click="backToGames" class="back-game-btn">
             <ChevronLeft :size="20" /><span>Ganti Game</span>
           </button>
@@ -83,7 +84,7 @@
           </div>
         </div>
 
-        <div class="input-section">
+        <div class="input-section" v-reveal="100">
           <label class="input-label">{{ userIdLabel }} <span class="input-required">*</span></label>
           <div class="input-wrap">
             <User :size="18" class="input-icon" />
@@ -134,11 +135,11 @@
         </div>
 
         <div v-else-if="gameProducts.length > 0">
-          <h2 class="section-title">Pilih Nominal</h2>
+          <h2 class="section-title" v-reveal="200">Pilih Nominal</h2>
           <div class="product-grid">
-            <button v-for="product in gameProducts" :key="product.id"
-              @click="handleProductSelect(product)" class="product-card"
-              :class="{ 'product-inactive': product.status !== 'active' }"
+            <button v-for="(product, idx) in gameProducts" :key="product.id"
+              @click="handleProductSelect(product)" class="product-card reveal"
+              :class="[{ 'product-inactive': product.status !== 'active' }, 'stagger-' + ((idx % 5) + 1)]"
               :disabled="product.status !== 'active'">
               <div class="product-icon">
                 <Diamond :size="20" class="diamond-icon" />

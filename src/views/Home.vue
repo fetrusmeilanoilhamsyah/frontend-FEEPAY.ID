@@ -49,11 +49,12 @@
       </div>
 
       <!-- TRUST PILLS -->
-      <div class="trust-pills">
+      <div class="trust-pills" v-reveal>
         <button
-          v-for="pill in trustPills"
+          v-for="(pill, idx) in trustPills"
           :key="pill.label"
           class="pill pbtn"
+          :class="'stagger-' + ((idx % 5) + 1)"
           @click="onPillTap($event)"
         >
           <span class="ripple-ring pr1"></span>
@@ -79,7 +80,7 @@
       </div>
 
       <!-- LAYANAN SECTION -->
-      <div class="section section--brand">
+      <div class="section section--brand" v-reveal>
         <div class="section-header">
           <div class="section-title-wrap">
             <img src="/icons/section/layanan.webp" class="section-icon" alt=""
@@ -91,7 +92,8 @@
           </div>
         </div>
         <div class="service-grid">
-          <router-link v-for="s in services" :key="s.to" :to="s.to" class="service-card">
+          <router-link v-for="(s, idx) in services" :key="s.to" :to="s.to" 
+            class="service-card reveal" :class="'stagger-' + ((idx % 5) + 1)">
             <div class="service-icon-wrap" :style="{ background: s.bg }">
               <img :src="s.img" :alt="s.label" class="service-icon" />
             </div>
@@ -132,10 +134,11 @@
 
         <div v-else-if="filteredGames.length > 0" class="game-grid">
           <router-link
-            v-for="game in filteredGames"
+            v-for="(game, idx) in filteredGames"
             :key="game.brand"
             to="/checkout/top-up-game"
-            class="game-card"
+            class="game-card reveal"
+            :class="'stagger-' + ((idx % 5) + 1)"
           >
             <div class="game-card-img-wrap">
               <img
