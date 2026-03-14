@@ -90,7 +90,7 @@
               <p class="section-sub">Semua kebutuhan digital kamu</p>
             </div>
           </div>
-        </div>
+        <div class="service-grid">
           <router-link v-for="(s, idx) in services" :key="s.to" :to="s.to" 
             class="service-card reveal" :class="'stagger-' + ((idx % 5) + 1)">
             <div class="service-icon-wrap" :style="{ background: s.bg }">
@@ -100,6 +100,7 @@
             <span class="service-label">{{ s.label }}</span>
             <span v-if="s.badge" class="service-badge">{{ s.badge }}</span>
           </router-link>
+        </div>
       </div>
 
       <!-- TOP GAME SECTION -->
