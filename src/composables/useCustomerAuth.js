@@ -13,6 +13,9 @@ export function useCustomerAuth() {
     localStorage.setItem(USER_DATA_KEY, JSON.stringify(userData))
     user.value = userData
     isAuthenticated.value = true
+    
+    // Trigger Sync/Claim (will be handled by orderStore)
+    window.dispatchEvent(new CustomEvent('feepay-login-success'))
   }
 
   const clearAuth = () => {
@@ -20,6 +23,9 @@ export function useCustomerAuth() {
     localStorage.removeItem(USER_DATA_KEY)
     user.value = null
     isAuthenticated.value = false
+    
+    // Trigger clear (will be handled by orderStore)
+    window.dispatchEvent(new CustomEvent('feepay-logout'))
   }
 
   const loginWithEmail = async (email, password) => {

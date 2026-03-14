@@ -23,7 +23,8 @@ api.interceptors.request.use(
   (config) => {
     isApiProcessing.value = true
 
-    const token = localStorage.getItem('feepay_token')
+    // Gunakan feepay_user_token untuk Customer, feepay_token untuk Admin
+    const token = localStorage.getItem('feepay_user_token') || localStorage.getItem('feepay_token')
     if (token) config.headers.Authorization = `Bearer ${token}`
 
     const adminPin = sessionStorage.getItem('feepay_admin_pin')
@@ -105,7 +106,15 @@ export default {
     otpRequest: (data) => api.post('/auth/otp/request', data),
     otpVerify: (data) => api.post('/auth/otp/verify', data),
     me: () => api.get('/auth/me'),
-    logout: () => api.post('/auth/logout')
+    logout: () => api.post('/auth/logout'),
+    updateProfile: (data) => api.put('/auth/profile', data),
+    changePassword: (data) => api.put('/auth/change-password', data),
+    deleteAccount: () => api.delete('/auth/account')
+  },
+
+  customer: {
+    getOrders: () => api.get('/customer/orders'),
+    claimOrders: (orderIds) => api.post('/customer/orders/claim', { order_ids: orderIds }),
   },
 
   auth: {

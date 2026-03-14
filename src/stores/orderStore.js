@@ -138,6 +138,51 @@ export const useOrderStore = defineStore('order', () => {
     }
   }
 
+  /**
+   * Ambil semua order dari backend jika login
+   */
+  async function syncWithBackend() {
+    if (!localStorage.getItem('feepay_user_token')) return
+    
+    loading.value = true
+    try {
+      const response = await api.customer.getOrders()
+      if (response && Array.isArray(response)) {
+        // Merge: utamakan data backend
+        const backendIds = response.map(o => o.order_id)
+        const localOnly = orderHistory.value.filter(o => !backendIds.includes(o.order_id))
+        
+        orderHistory.value = [...response, ...localOnly]
+        saveHistory()
+      }
+    } catch (err) {
+      console.error('Failed to sync orders with backend:', err)
+    } finally {
+      loading.value = false
+    }
+  }
+
+  /**
+   * Kirim order guest ke backend untuk dikaitkan ke akun
+   */
+  async function claimGuestOrders() {
+    if (!localStorage.getItem('feepay_user_token')) return
+    
+    const guestOrderIds = orderHistory.value
+      .filter(o => !o.user_id) // Order yang belum punya user_id (local)
+      .map(o => o.order_id)
+      
+    if (guestOrderIds.length === 0) return
+
+    try {
+      await api.customer.claimOrders(guestOrderIds)
+      // Setelah claim, refresh lagi dari backend
+      await syncWithBackend()
+    } catch (err) {
+      console.error('Failed to claim guest orders:', err)
+    }
+  }
+
   function clearCurrentOrder() {
     currentOrder.value = null
     localStorage.removeItem('feepay_current_order')
@@ -189,6 +234,20 @@ export const useOrderStore = defineStore('order', () => {
   restoreCurrentOrder()
   restoreHistory()
 
+  // Sync jika sudah login saat pertama kali load
+  if (localStorage.getItem('feepay_user_token')) {
+    syncWithBackend()
+  }
+
+  // Listen events dari useCustomerAuth
+  window.addEventListener('feepay-login-success', () => {
+    claimGuestOrders()
+  })
+  
+  window.addEventListener('feepay-logout', () => {
+    clearHistory()
+  })
+
   return {
     currentOrder,
     orderHistory,
@@ -207,6 +266,8 @@ export const useOrderStore = defineStore('order', () => {
     addToHistory,
     removeFromHistory, // FIX: export fungsi baru
     restoreHistory,
-    clearHistory
+    clearHistory,
+    syncWithBackend,
+    claimGuestOrders
   }
 })
