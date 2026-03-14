@@ -220,11 +220,21 @@ const getGameLabel  = (brand) => GAME_ASSETS[brand?.toUpperCase()]?.label  || (b
 const allGames = computed(() => {
   const map = {}
   productStore.products.filter(p => isGameCategory(p.category)).forEach(p => {
-    if (!p.brand) return
-    if (!map[p.brand]) map[p.brand] = { brand: p.brand, label: getGameLabel(p.brand), count: 0, minPrice: Infinity }
-    map[p.brand].count++
+    const brandRaw = p.brand || ''
+    const brandKey = brandRaw.toUpperCase().trim()
+    if (!brandKey) return
+    
+    if (!map[brandKey]) {
+      map[brandKey] = { 
+        brand: brandKey, // Simpan sebagai uppercase untuk konsistensi
+        label: getGameLabel(brandRaw), 
+        count: 0, 
+        minPrice: Infinity 
+      }
+    }
+    map[brandKey].count++
     const price = parseFloat(p.selling_price || 0)
-    if (price > 0 && price < map[p.brand].minPrice) map[p.brand].minPrice = price
+    if (price > 0 && price < map[brandKey].minPrice) map[brandKey].minPrice = price
   })
   return Object.values(map).sort((a, b) => a.label.localeCompare(b.label))
 })
@@ -234,7 +244,7 @@ const filteredGames = computed(() => {
   if (activeCategory.value === 'mobile') games = games.filter(g => MOBILE_GAMES.includes(g.brand))
   if (activeCategory.value === 'pc')     games = games.filter(g => PC_GAMES.includes(g.brand))
   if (searchQuery.value) {
-    const q = searchQuery.value.toLowerCase()
+    const q = searchQuery.value.toLowerCase().trim()
     games = games.filter(g => g.label.toLowerCase().includes(q) || g.brand.toLowerCase().includes(q))
   }
   return games
@@ -242,10 +252,19 @@ const filteredGames = computed(() => {
 
 const gameProducts = computed(() => {
   if (!selectedGame.value) return []
+  const selectedBrand = selectedGame.value.brand.toUpperCase().trim()
   return productStore.products
-    .filter(p => isGameCategory(p.category) && p.brand === selectedGame.value.brand)
+    .filter(p => isGameCategory(p.category) && (p.brand || '').toUpperCase().trim() === selectedBrand)
     .sort((a, b) => parseFloat(a.selling_price) - parseFloat(b.selling_price))
 })
+
+const selectGame = (game) => {
+  selectedGame.value = game
+  userId.value = ''
+  zoneId.value = ''
+  verifiedName.value = ''
+  verifyError.value = ''
+}
 
 const needsZoneId = computed(() => selectedGame.value && ZONE_ID_BRANDS.includes(selectedGame.value.brand))
 
