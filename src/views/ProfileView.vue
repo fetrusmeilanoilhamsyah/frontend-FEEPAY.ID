@@ -87,6 +87,7 @@
           <div v-for="(item, i) in menuItems" :key="i"
             class="menu-item"
             :class="{ 'menu-item--last': i === menuItems.length - 1 }"
+            @click="navigateTo(item)"
           >
             <div class="menu-icon-wrap" :style="{ background: item.bg }">
               <img :src="item.icon" :alt="item.label" class="menu-icon"
@@ -139,20 +140,28 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import LoginModal from '../components/LoginModal.vue'
 import { useCustomerAuth } from '../composables/useCustomerAuth'
 
+const router = useRouter()
 const { user, isAuthenticated, logout } = useCustomerAuth()
 const loading = ref(true)
 const isLoginOpen = ref(false)
 
 const menuItems = [
-  { icon: '/icons/profile/account.webp',     label: 'Informasi Akun',    bg: '#DBEAFE', badge: 'Segera'  },
-  { icon: '/icons/profile/history.webp',     label: 'Riwayat Transaksi', bg: '#D1FAE5', badge: null      },
-  { icon: '/icons/profile/notification.webp',label: 'Notifikasi',        bg: '#FEF3C7', badge: 'Segera'  },
-  { icon: '/icons/profile/security.webp',    label: 'Keamanan',          bg: '#FEE2E2', badge: 'Segera'  },
-  { icon: '/icons/profile/help.webp',        label: 'Bantuan',           bg: '#EDE9FE', badge: null      },
+  { icon: '/icons/profile/account.webp',      label: 'Informasi Akun',    bg: '#DBEAFE', route: 'account-info',  badge: null },
+  { icon: '/icons/profile/history.webp',      label: 'Riwayat Transaksi', bg: '#D1FAE5', route: 'transactions',   badge: null },
+  { icon: '/icons/profile/notification.webp', label: 'Notifikasi',        bg: '#FEF3C7', route: 'notifications',  badge: null },
+  { icon: '/icons/profile/security.webp',     label: 'Keamanan',          bg: '#FEE2E2', route: 'security',       badge: null },
+  { icon: '/icons/profile/help.webp',         label: 'Bantuan',           bg: '#EDE9FE', route: 'help',           badge: null },
 ]
+
+const navigateTo = (item) => {
+  if (item.route) {
+    router.push({ name: item.route })
+  }
+}
 
 onMounted(() => {
   setTimeout(() => { loading.value = false }, 400)

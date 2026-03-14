@@ -98,6 +98,26 @@ const routes = [
     name: 'profile',
     component: () => import('../views/ProfileView.vue'),
   },
+  {
+    path: '/profile/account',
+    name: 'account-info',
+    component: () => import('../views/AccountInfoView.vue'),
+  },
+  {
+    path: '/profile/security',
+    name: 'security',
+    component: () => import('../views/SecurityView.vue'),
+  },
+  {
+    path: '/profile/notifications',
+    name: 'notifications',
+    component: () => import('../views/NotificationsView.vue'),
+  },
+  {
+    path: '/profile/help',
+    name: 'help',
+    component: () => import('../views/HelpView.vue'),
+  },
 
   // =====================================
   // ADMIN ROUTES
