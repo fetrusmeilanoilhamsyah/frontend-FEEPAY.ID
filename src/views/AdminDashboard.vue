@@ -140,6 +140,9 @@
       <!-- Tabs -->
       <div class="mb-6 overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0">
         <div class="inline-flex min-w-full sm:w-auto bg-white dark:bg-dark-900 p-1 rounded-xl border border-border shadow-sm">
+          <button
+            v-for="tab in tabs"
+            :key="tab.value"
             @click="activeTab = tab.value"
             class="flex-1 sm:flex-initial px-4 sm:px-8 py-2.5 sm:py-3 font-semibold text-xs sm:text-sm rounded-lg transition-all whitespace-nowrap"
             :class="activeTab === tab.value
