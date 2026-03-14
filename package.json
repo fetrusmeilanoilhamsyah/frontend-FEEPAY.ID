@@ -13,7 +13,8 @@
     "lucide-vue-next": "^0.309.0",
     "pinia": "^3.0.4",
     "vue": "^3.4.15",
-    "vue-router": "^4.2.5"
+    "vue-router": "^4.2.5",
+    "vue3-google-login": "^2.0.37"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.3",

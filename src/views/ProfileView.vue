@@ -32,16 +32,20 @@
         <div class="avatar-wrap">
           <div class="avatar-ring">
             <div class="avatar-inner">
-              <img src="/icons/profile/user.webp" class="avatar-img" alt="user"
+              <img v-if="user?.avatar" :src="user.avatar" class="w-full h-full object-cover" alt="user" />
+              <img v-else src="/icons/profile/user.webp" class="avatar-img" alt="user"
                 @error="(e) => e.target.style.display='none'" />
-              <span class="avatar-fallback">👤</span>
+              <span v-if="!user?.avatar" class="avatar-fallback">👤</span>
             </div>
           </div>
           <!-- Status dot -->
           <span class="online-dot" />
         </div>
-        <h1 class="profile-name">Pengguna FeePay</h1>
-        <p class="profile-email">Belum login</p>
+        <h1 class="profile-name">{{ user?.name || 'Pengguna FeePay' }}</h1>
+        <p class="profile-email">{{ user?.email || user?.phone || 'Belum login' }}</p>
+        <button v-if="!isAuthenticated" @click="isLoginOpen = true" class="mt-2 px-6 py-2 bg-green-600 hover:bg-green-700 text-white text-xs font-bold rounded-full transition-colors">
+          Login / Daftar
+        </button>
       </div>
 
       <!-- Stats card — selaras HowItWorks -->
@@ -97,35 +101,50 @@
         </div>
       </div>
 
-      <!-- Coming soon banner — selaras cs-card -->
-      <div class="coming-card">
+      <!-- Coming soon banner / Logout Button -->
+      <div v-if="!isAuthenticated" class="coming-card cursor-pointer hover:border-green-400 transition-colors" @click="isLoginOpen = true">
         <div class="coming-title-wrap">
           <img src="/icons/profile/google.webp" class="section-icon" alt=""
             @error="(e) => e.target.style.display='none'" />
           <div>
-            <h2 class="section-title">Login Google</h2>
-            <p class="section-sub">Masuk lebih cepat dengan akun Google</p>
+            <h2 class="section-title">Login Sekarang</h2>
+            <p class="section-sub">Masuk lebih cepat dengan Google atau No WhatsApp</p>
           </div>
         </div>
-        <div class="coming-body">
-          <span class="coming-text">Fitur login & profil lengkap segera hadir</span>
-          <span class="coming-tag">Segera Hadir</span>
+      </div>
+
+      <div v-else class="coming-card cursor-pointer hover:border-red-400 border-l-red-500 transition-colors" @click="doLogout">
+        <div class="coming-title-wrap">
+          <div class="w-9 h-9 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+          </div>
+          <div>
+            <h2 class="section-title text-red-600" style="background: none; -webkit-text-fill-color: inherit;">Keluar Akun</h2>
+            <p class="section-sub">Akhiri sesi Anda saat ini</p>
+          </div>
         </div>
       </div>
 
       <!-- Back button -->
-      <button class="back-btn" @click="$router.push('/')">
+      <button class="back-btn mt-4" @click="$router.push('/')">
         ← Kembali ke Beranda
       </button>
 
     </div>
+
+    <!-- Modal Login -->
+    <LoginModal :isOpen="isLoginOpen" @close="isLoginOpen = false" @loginSuccess="handleLoginSuccess" />
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import LoginModal from '../components/LoginModal.vue'
+import { useCustomerAuth } from '../composables/useCustomerAuth'
 
+const { user, isAuthenticated, logout } = useCustomerAuth()
 const loading = ref(true)
+const isLoginOpen = ref(false)
 
 const menuItems = [
   { icon: '/icons/profile/account.webp',     label: 'Informasi Akun',    bg: '#DBEAFE', badge: 'Segera'  },
@@ -138,6 +157,14 @@ const menuItems = [
 onMounted(() => {
   setTimeout(() => { loading.value = false }, 400)
 })
+
+const handleLoginSuccess = (userData) => {
+  console.log('Login success:', userData)
+}
+
+const doLogout = async () => {
+  await logout()
+}
 </script>
 
 <style scoped>

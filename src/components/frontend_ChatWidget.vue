@@ -150,8 +150,8 @@ const props = defineProps({
   newMessageCount: { type: Number, default: 0 }
 })
 
-// ⬇️ GANTI NOMOR WA KAMU DI SINI
-const waUrl = 'https://wa.me/62895328700079?text=Halo%20FEEPAY%2C%20saya%20butuh%20bantuan'
+// ⬇️ Nomor WA dinamis dari environment
+const waUrl = import.meta.env.VITE_CS_WHATSAPP || 'https://wa.me/6281234567890?text=Halo%20FEEPAY'
 
 const isOpen = ref(false)
 const isVisible = ref(true)

@@ -33,17 +33,13 @@ export const useOrderStore = defineStore('order', () => {
   )
 
   // ============================================
-  // AUTO-SAVE KE LOCALSTORAGE
-  // Simpan max 50 order terakhir
+  // EXPLICIT SAVE KE LOCALSTORAGE
+  // Simpan max 50 order terakhir secara manual 
   // ============================================
-  watch(
-    orderHistory, // FIX: tanpa .value agar deep watch bekerja benar
-    (newHistory) => {
-      const historyToSave = newHistory.slice(0, 50)
-      localStorage.setItem('feepay_order_history', JSON.stringify(historyToSave))
-    },
-    { deep: true }
-  )
+  function saveHistory() {
+    const historyToSave = orderHistory.value.slice(0, 50)
+    localStorage.setItem('feepay_order_history', JSON.stringify(historyToSave))
+  }
 
   // ============================================
   // ACTIONS
@@ -65,6 +61,7 @@ export const useOrderStore = defineStore('order', () => {
       const exists = orderHistory.value.find(o => o.order_id === order.order_id)
       if (!exists) {
         orderHistory.value.unshift(order)
+        saveHistory()
       }
       
       return order
@@ -95,6 +92,7 @@ export const useOrderStore = defineStore('order', () => {
       } else {
         orderHistory.value.unshift(order)
       }
+      saveHistory()
       
       if (currentOrder.value?.order_id === orderId) {
         currentOrder.value = order
@@ -131,6 +129,7 @@ export const useOrderStore = defineStore('order', () => {
     const index = orderHistory.value.findIndex(o => o.order_id === orderId)
     if (index !== -1) {
       orderHistory.value[index].status = status
+      saveHistory()
     }
     
     if (currentOrder.value?.order_id === orderId) {
@@ -167,6 +166,7 @@ export const useOrderStore = defineStore('order', () => {
   // FIX: Hapus order dari localStorage kalau 404 di backend
   function removeFromHistory(orderId) {
     orderHistory.value = orderHistory.value.filter(o => o.order_id !== orderId)
+    saveHistory()
   }
 
   function restoreHistory() {

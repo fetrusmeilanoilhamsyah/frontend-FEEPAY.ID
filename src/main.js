@@ -5,8 +5,12 @@ import router from './router'
 
 // TAMBAHKAN BARIS INI (Sesuaikan dengan nama file CSS kamu)
 import './style.css' 
+import vue3GoogleLogin from 'vue3-google-login'
 
 const app = createApp(App)
 app.use(createPinia())
 app.use(router)
+app.use(vue3GoogleLogin, {
+  clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID || 'dummy-client-id'
+})
 app.mount('#app')

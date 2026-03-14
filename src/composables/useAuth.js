@@ -199,5 +199,6 @@ export function useAuth() {
     isTokenExpired,
     isTokenExpiringSoon,
     getTimeUntilExpiry,
+    stopRefreshTimer,
   }
 }
