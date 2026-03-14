@@ -129,6 +129,7 @@ export default {
     sync: () => api.post(`/admin/${ADMIN_PATH}/products/sync`),
     update: (id, d) => api.put(`/admin/${ADMIN_PATH}/products/${id}`, d),
     bulkMargin: (margin) => api.post(`/admin/${ADMIN_PATH}/products/bulk-margin`, { margin }),
+    verifyGameId: (data) => api.post('/products/verify-game-id', data),
   },
 
   orders: {
@@ -158,5 +159,8 @@ export default {
   wa: {
     status: () => api.get(`/admin/${ADMIN_PATH}/wa/status`),
     disconnect: () => api.post(`/admin/${ADMIN_PATH}/wa/disconnect`),
+  },
+  users: {
+    getAll: () => api.get(`/admin/${ADMIN_PATH}/users`),
   }
 }

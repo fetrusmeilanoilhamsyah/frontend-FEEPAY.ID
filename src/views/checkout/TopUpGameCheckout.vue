@@ -90,15 +90,34 @@
             <input v-model="userId" type="text" :placeholder="userIdPlaceholder" class="game-input" />
           </div>
           <p class="input-hint">{{ userIdHint }}</p>
+
+          <!-- Recent Game IDs -->
+          <div v-if="getRecentIds(selectedGame?.brand).length > 0" class="recent-ids">
+            <button v-for="recentId in getRecentIds(selectedGame?.brand)" :key="recentId"
+              @click="userId = recentId" class="recent-id-chip">
+              <User :size="12" />
+              <span>{{ recentId }}</span>
+            </button>
+          </div>
         </div>
 
-        <div v-if="needsZoneId" class="input-section">
-          <label class="input-label">Zone ID / Server ID <span class="input-required">*</span></label>
-          <div class="input-wrap">
-            <Hash :size="18" class="input-icon" />
-            <input v-model="zoneId" type="text" placeholder="Contoh: 1234" class="game-input" />
+          <p class="input-hint"><span class="hint-tip">Tips:</span> Buka game &rarr; Profile &rarr; angka di bawah username</p>
+        </div>
+
+        <!-- Verification Button & Result -->
+        <div class="verify-section" v-if="userId && (!needsZoneId || zoneId)">
+          <button @click="verifyId" :disabled="verifying" class="verify-btn">
+            <Loader v-if="verifying" class="animate-spin" :size="16" />
+            <Search v-else :size="16" />
+            <span>{{ verifying ? 'Mengecek...' : 'Verifikasi ID' }}</span>
+          </button>
+          
+          <div v-if="verifiedName" class="verified-box">
+             <CheckCircle2 :size="14" class="text-emerald-500" />
+             <span class="verified-label">Nama Akun:</span>
+             <span class="verified-value">{{ verifiedName }}</span>
           </div>
-          <p class="input-hint"><span class="hint-tip">Tips:</span> Buka game → Profile → angka di bawah username</p>
+          <p v-if="verifyError" class="verify-error">{{ verifyError }}</p>
         </div>
 
         <div v-if="productStore.loading" class="product-grid">
@@ -137,11 +156,17 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { ArrowLeft, ChevronLeft, Gamepad2, Package, User, Hash, Search, X, Diamond } from 'lucide-vue-next'
+import { ArrowLeft, ChevronLeft, Gamepad2, Package, User, Hash, Search, X, Diamond, Loader, CheckCircle2 } from 'lucide-vue-next'
 import PaymentModal from '@/components/checkout/PaymentModal.vue'
 import { useProductStore } from '@/stores/productStore'
+import { formatPrice as utilsFormatPrice } from '@/utils/format'
+import { ZONE_ID_BRANDS, GAME_CATEGORIES } from '@/constants/operators'
+import { useRecentGameIds } from '@/composables/useRecentGameIds'
+import api from '@/services/api'
 
 const productStore = useProductStore()
+const { saveRecentId, getRecentIds } = useRecentGameIds()
+
 const selectedGame = ref(null)
 const selectedProduct = ref(null)
 const userId = ref('')
@@ -157,12 +182,12 @@ const categories = [
 
 const isGameCategory = (cat) => {
   const c = (cat || '').toLowerCase()
-  return c === 'games' || c === 'game'
+  return GAME_CATEGORIES.includes(c)
 }
 
 const MOBILE_GAMES = ['MOBILE LEGENDS', 'FREE FIRE', 'PUBG MOBILE', 'CALL OF DUTY MOBILE', 'HOK', 'GENSHIN IMPACT']
 const PC_GAMES = ['STEAM', 'LEAGUE OF LEGENDS', 'VALORANT', 'ROBLOX', 'HONKAI STAR RAIL']
-const ZONE_ID_BRANDS = ['MOBILE LEGENDS', 'GENSHIN IMPACT', 'HOK']
+// ZONE_ID_BRANDS imported from constants
 
 const GAME_ASSETS = {
   'MOBILE LEGENDS':      { banner: '/images/games/ml.webp',     logo: '/logos/games/ml.webp',              label: 'Mobile Legends' },
@@ -219,22 +244,60 @@ const userIdLabel = computed(() => ({ 'MOBILE LEGENDS': 'User ID', 'FREE FIRE': 
 const userIdPlaceholder = computed(() => ({ 'MOBILE LEGENDS': 'Contoh: 12345678', 'FREE FIRE': 'Contoh: 123456789', 'PUBG MOBILE': 'Contoh: 5123456789', 'GENSHIN IMPACT': 'Contoh: 600123456' }[selectedGame.value?.brand] || 'Masukkan ID kamu'))
 const userIdHint = computed(() => 'Cek di: ' + ({ 'MOBILE LEGENDS': 'Profile → Account → User ID', 'FREE FIRE': 'Profile → User ID', 'GENSHIN IMPACT': 'Settings → Account → UID', 'PUBG MOBILE': 'Settings → Basic → Character ID' }[selectedGame.value?.brand] || 'Profile game kamu'))
 
-const formatPrice = (price) => {
-  const n = parseFloat(price || 0)
-  if (n >= 1000000) return (n/1000000).toFixed(n%1000000===0?0:1)+'jt'
-  if (n >= 1000) return Math.round(n/1000)+'rb'
-  return new Intl.NumberFormat('id-ID').format(n)
+const formatPrice = (price) => utilsFormatPrice(price, { useShorthand: true, withPrefix: false })
+
+const backToGames = () => { 
+  selectedGame.value = null; 
+  selectedProduct.value = null; 
+  verifiedName.value = '';
+  verifyError.value = '';
 }
 
-const selectGame = (game) => { selectedGame.value = game; userId.value = ''; zoneId.value = ''; window.scrollTo({top:0,behavior:'smooth'}) }
-const backToGames = () => { selectedGame.value = null; selectedProduct.value = null }
+const verifying = ref(false)
+const verifiedName = ref('')
+const verifyError = ref('')
+
+const verifyId = async () => {
+  if (!userId.value) return
+  verifying.value = true
+  verifyError.value = ''
+  verifiedName.value = ''
+  
+  try {
+    const res = await api.products.verifyGameId({
+      game: selectedGame.value.brand,
+      user_id: userId.value,
+      zone_id: needsZoneId.value ? zoneId.value : undefined
+    })
+    if (res.success) {
+      verifiedName.value = res.data.username
+    } else {
+      verifyError.value = res.message || 'ID tidak ditemukan'
+    }
+  } catch (e) {
+    verifyError.value = e.message || 'Gagal verifikasi ID'
+  } finally {
+    verifying.value = false
+  }
+}
+
 const handleProductSelect = (product) => {
   if (!userId.value || userId.value.trim().length < 3) { alert(`Masukkan ${userIdLabel.value} yang valid`); return }
   if (needsZoneId.value && !zoneId.value.trim()) { alert('Masukkan Zone ID / Server ID'); return }
   selectedProduct.value = product
 }
-const handleSuccess = () => { selectedProduct.value = null }
-const handlePending = () => { selectedProduct.value = null }
+const handleSuccess = () => { 
+  if (selectedGame.value && userId.value) {
+    saveRecentId(selectedGame.value.brand, userId.value)
+  }
+  selectedProduct.value = null 
+}
+const handlePending = () => { 
+  if (selectedGame.value && userId.value) {
+    saveRecentId(selectedGame.value.brand, userId.value)
+  }
+  selectedProduct.value = null 
+}
 
 onMounted(async () => { await productStore.fetchProducts() })
 </script>
@@ -699,6 +762,107 @@ onMounted(async () => { await productStore.fetchProducts() })
 .hint-tip {
   color: #16a34a;
   font-weight: 600;
+}
+
+/* ══════════════════════════════
+   RECENT IDS
+   ══════════════════════════════ */
+.recent-ids {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.recent-id-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--card, #ffffff);
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--foreground, #374151);
+  cursor: pointer;
+  transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.recent-id-chip:hover {
+  border-color: #16a34a;
+  background: rgba(22, 163, 74, 0.05);
+  color: #16a34a;
+}
+
+.recent-id-chip:active {
+  transform: scale(0.95);
+}
+
+/* ══════════════════════════════
+   VERIFY SECTION
+   ══════════════════════════════ */
+.verify-section {
+  margin-top: 16px;
+  margin-bottom: 24px;
+}
+
+.verify-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px;
+  background: white;
+  border: 1.5px solid #16a34a;
+  color: #16a34a;
+  border-radius: 12px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.verify-btn:hover:not(:disabled) {
+  background: rgba(22, 163, 74, 0.05);
+}
+
+.verify-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.verified-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: #f0fdf4;
+  border: 1px solid #bdf1d0;
+  border-radius: 10px;
+}
+
+.verified-label {
+  font-size: 0.75rem;
+  color: #374151;
+  font-weight: 500;
+}
+
+.verified-value {
+  font-size: 0.75rem;
+  color: #15803d;
+  font-weight: 700;
+}
+
+.verify-error {
+  margin-top: 8px;
+  font-size: 0.75rem;
+  color: #ef4444;
+  font-weight: 500;
+  padding-left: 4px;
 }
 
 /* ══════════════════════════════

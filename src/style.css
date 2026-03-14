@@ -106,44 +106,44 @@
   }
 
   .dark {
-    /* Semantic Colors - Dark Mode */
+    /* Semantic Colors - Dark Mode Refined */
     --success: #10b981;
     --success-foreground: #ffffff;
-    --success-light: #064e3b;
+    --success-light: rgba(16, 185, 129, 0.15);
     
     --warning: #f59e0b;
-    --warning-foreground: #0f172a;
-    --warning-light: #78350f;
+    --warning-foreground: #ffffff;
+    --warning-light: rgba(245, 158, 11, 0.15);
     
     --error: #ef4444;
     --error-foreground: #ffffff;
-    --error-light: #7f1d1d;
+    --error-light: rgba(239, 68, 68, 0.15);
     
     --info: #3b82f6;
     --info-foreground: #ffffff;
-    --info-light: #1e3a8a;
+    --info-light: rgba(59, 130, 246, 0.15);
     
-    /* Component Tokens - Dark Mode - LEBIH TERANG & GAK PEKAT */
-    --background: #1a1d24;      /* Dari #0f172a → lebih terang */
-    --foreground: #e8eaed;       /* Dari #f8fafc → sedikit redup biar gak terlalu kontras */
+    /* Component Tokens - Premium Night Mode */
+    --background: #0a0c10;      
+    --foreground: #f8fafc;       
     
-    --card: #242831;             /* Dari #1e293b → lebih terang */
-    --card-foreground: #e8eaed;
-    --card-hover: #2d3139;       /* Dari #334155 → lebih terang */
+    --card: #151921;             
+    --card-foreground: #f1f5f9;
+    --card-hover: #1c222d;       
     
-    --popover: #242831;
-    --popover-foreground: #e8eaed;
+    --popover: #151921;
+    --popover-foreground: #f1f5f9;
     
     --primary: #3b82f6;
     --primary-foreground: #ffffff;
     --primary-hover: #60a5fa;
     
-    --secondary: #2d3139;        /* Dari #334155 → lebih terang */
-    --secondary-foreground: #e8eaed;
-    --secondary-hover: #3a3f4b;  /* Dari #475569 → lebih terang */
+    --secondary: #1e293b;        
+    --secondary-foreground: #f1f5f9;
+    --secondary-hover: #2d3139;  
     
-    --muted: #2d3139;
-    --muted-foreground: #9ca3af;
+    --muted: #1e293b;
+    --muted-foreground: #94a3b8;
     
     --accent: #10b981;
     --accent-foreground: #ffffff;
@@ -152,11 +152,15 @@
     --destructive: #ef4444;
     --destructive-foreground: #ffffff;
     
-    --border: #3a3f4b;           /* Dari #334155 → lebih terang */
-    --input: #3a3f4b;
-    --input-background: #242831; /* Dari #1e293b → lebih terang */
+    --border: #262c3a;           
+    --input: #262c3a;
+    --input-background: #0f172a; 
     --input-focus: #3b82f6;
-    --ring: #3b82f6;
+    --ring: rgba(59, 130, 246, 0.3);
+
+    /* Glassmorphism Tokens */
+    --glass-bg: rgba(21, 25, 33, 0.8);
+    --glass-border: rgba(255, 255, 255, 0.08);
   }
 
   * {
@@ -173,11 +177,42 @@
   }
 
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply text-foreground antialiased;
+    background: var(--background);
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
     font-weight: 400;
     line-height: 1.6;
     letter-spacing: -0.01em;
+  }
+
+  /* Desktop Background Look */
+  @media (min-width: 768px) {
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background: radial-gradient(circle at top right, rgba(37, 99, 235, 0.05), transparent 400px),
+                  radial-gradient(circle at bottom left, rgba(16, 185, 129, 0.05), transparent 400px);
+      background-color: var(--card);
+      z-index: -1;
+    }
+  }
+
+  .app-frame {
+    width: 100%;
+    min-height: 100vh;
+    margin: 0 auto;
+    position: relative;
+    background: var(--background);
+    overflow-x: hidden;
+  }
+
+  @media (min-width: 768px) {
+    .app-frame {
+      max-width: 480px;
+      box-shadow: 0 0 50px rgba(0,0,0,0.1);
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+    }
   }
 
   h1, h2, h3, h4, h5, h6 {

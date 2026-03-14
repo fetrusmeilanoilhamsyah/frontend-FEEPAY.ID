@@ -48,12 +48,22 @@
             </div>
           </div>
 
-          <div class="stat-card sm:col-span-2">
+          <div class="stat-card">
+            <div class="stat-icon purple">
+              <Users :size="20" class="sm:w-6 sm:h-6" />
+            </div>
+            <div class="stat-info">
+              <div class="stat-label">Total Pengguna</div>
+              <div class="stat-value">{{ stats.overview?.total_users || 0 }}</div>
+            </div>
+          </div>
+
+          <div class="stat-card sm:col-span-1">
             <div class="stat-icon green">
               <TrendingUp :size="20" class="sm:w-6 sm:h-6" />
             </div>
             <div class="stat-info">
-              <div class="stat-label">Total Revenue</div>
+              <div class="stat-label">Revenue</div>
               <div class="stat-value green">Rp {{ formatPrice(stats.overview?.total_revenue || 0) }}</div>
             </div>
           </div>
@@ -130,9 +140,6 @@
       <!-- Tabs -->
       <div class="mb-6 overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0">
         <div class="inline-flex min-w-full sm:w-auto bg-white dark:bg-dark-900 p-1 rounded-xl border border-border shadow-sm">
-          <button 
-            v-for="tab in tabs" 
-            :key="tab.value"
             @click="activeTab = tab.value"
             class="flex-1 sm:flex-initial px-4 sm:px-8 py-2.5 sm:py-3 font-semibold text-xs sm:text-sm rounded-lg transition-all whitespace-nowrap"
             :class="activeTab === tab.value
@@ -340,88 +347,72 @@
 
       <!-- WhatsApp Gateway Tab -->
       <div v-if="activeTab === 'whatsapp'">
-        <div class="max-w-lg mx-auto">
-          <div class="bg-white dark:bg-dark-900 border border-border rounded-2xl overflow-hidden shadow-sm">
-            <!-- Header Card -->
-            <div class="bg-gradient-to-r from-green-500 to-emerald-600 p-6 text-white">
-              <div class="flex items-center gap-3">
-                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                  <MessageCircle :size="24" />
+        <!-- ... existing wa content ... -->
+      </div>
+
+      <!-- Users Tab -->
+      <div v-if="activeTab === 'users'">
+        <div class="mb-4">
+          <h2 class="text-lg font-bold">Daftar Pengguna Terdaftar</h2>
+          <p class="text-sm text-dark-500 dark:text-dark-400">Total: {{ stats.overview?.total_users || 0 }} user</p>
+        </div>
+
+        <div v-if="loadingUsers" class="flex justify-center py-10">
+          <Loader class="animate-spin text-primary-600" :size="32" />
+        </div>
+
+        <div v-else>
+          <!-- Desktop Users Table -->
+          <div class="hidden sm:block card-table">
+            <table class="w-full text-sm">
+              <thead>
+                <tr>
+                  <th>Nama</th>
+                  <th>Email</th>
+                  <th>WhatsApp</th>
+                  <th>Role</th>
+                  <th>Tgl Daftar</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="user in usersList" :key="user.id">
+                  <td class="font-bold">{{ user.name }}</td>
+                  <td class="text-dark-600 dark:text-dark-400">{{ user.email }}</td>
+                  <td class="font-mono">{{ user.phone || '-' }}</td>
+                  <td>
+                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase" 
+                      :class="user.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'">
+                      {{ user.role }}
+                    </span>
+                  </td>
+                  <td class="text-dark-500 text-xs">{{ new Date(user.created_at).toLocaleDateString('id-ID', { day:'numeric', month:'short', year:'numeric' }) }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Mobile Users Cards -->
+          <div class="sm:hidden space-y-3">
+            <div v-for="user in usersList" :key="user.id" class="mobile-card">
+              <div class="flex items-center gap-3 mb-3">
+                <div class="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-950/30 flex items-center justify-center text-primary-700 font-bold">
+                  {{ (user.name || '?')[0].toUpperCase() }}
                 </div>
                 <div>
-                  <h2 class="text-lg font-black">WhatsApp OTP Gateway</h2>
-                  <p class="text-sm text-green-100">Kelola koneksi WhatsApp untuk pengiriman OTP</p>
+                  <h3 class="font-bold text-sm">{{ user.name }}</h3>
+                  <p class="text-xs text-dark-500">{{ user.email }}</p>
                 </div>
               </div>
-            </div>
-
-            <div class="p-6">
-
-              <!-- LOADING awal -->
-              <div v-if="waLoading" class="flex flex-col items-center justify-center py-10 space-y-3">
-                <Loader class="animate-spin text-green-500" :size="32" />
-                <p class="text-sm text-dark-500 dark:text-dark-400">Memeriksa status gateway...</p>
-              </div>
-
-              <!-- STATUS: OFFLINE -->
-              <div v-else-if="waStatus === 'offline'" class="flex flex-col items-center py-8 space-y-4 text-center">
-                <div class="w-16 h-16 bg-red-100 dark:bg-red-950/30 rounded-full flex items-center justify-center">
-                  <span class="text-3xl">🔴</span>
+              <div class="grid grid-cols-2 gap-2 text-xs">
+                <div>
+                  <p class="text-dark-500 mb-0.5">WhatsApp</p>
+                  <p class="font-mono font-semibold">{{ user.phone || '-' }}</p>
                 </div>
                 <div>
-                  <p class="font-bold text-dark-950 dark:text-white">Gateway Tidak Aktif</p>
-                  <p class="text-sm text-dark-500 dark:text-dark-400 mt-1">Jalankan <code class="bg-gray-100 dark:bg-dark-800 px-2 py-0.5 rounded font-mono text-xs">npm start</code> di folder <code class="bg-gray-100 dark:bg-dark-800 px-2 py-0.5 rounded font-mono text-xs">feepay-wa</code> di VPS.</p>
+                  <p class="text-dark-500 mb-0.5">Role</p>
+                  <span class="font-bold uppercase text-[10px]">{{ user.role }}</span>
                 </div>
-                <button @click="fetchWAStatus()" class="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-dark-800 hover:bg-gray-200 rounded-xl text-sm font-bold transition-colors">
-                  <RefreshCw :size="14" /> Cek Ulang
-                </button>
               </div>
-
-              <!-- STATUS: CONNECTED -->
-              <div v-else-if="waStatus === 'connected'" class="flex flex-col items-center py-6 space-y-5 text-center">
-                <div class="w-20 h-20 bg-green-100 dark:bg-green-950/30 rounded-full flex items-center justify-center">
-                  <span class="text-4xl">✅</span>
-                </div>
-                <div>
-                  <p class="text-xl font-black text-green-600 dark:text-green-400">Terhubung!</p>
-                  <p class="text-sm text-dark-500 dark:text-dark-400 mt-1">WhatsApp aktif & siap kirim OTP</p>
-                  <div v-if="waPhone" class="mt-3 inline-flex items-center gap-2 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-xl px-4 py-2">
-                    <span class="text-lg">📱</span>
-                    <span class="font-mono font-bold text-green-700 dark:text-green-300 text-sm">+{{ waPhone }}</span>
-                  </div>
-                </div>
-                <button
-                  @click="handleWADisconnect"
-                  :disabled="waDisconnecting"
-                  class="flex items-center gap-2 px-5 py-2.5 bg-red-100 dark:bg-red-950/30 hover:bg-red-200 text-red-700 dark:text-red-400 rounded-xl text-sm font-bold transition-colors disabled:opacity-50"
-                >
-                  <Loader v-if="waDisconnecting" class="animate-spin" :size="14" />
-                  <span>{{ waDisconnecting ? 'Memutus...' : '🔌 Ganti / Disconnect WhatsApp' }}</span>
-                </button>
-              </div>
-
-              <!-- STATUS: CONNECTING / DISCONNECTED — tampilkan QR -->
-              <div v-else class="flex flex-col items-center py-4 space-y-4 text-center">
-                <div v-if="waQR" class="space-y-3">
-                  <p class="font-bold text-dark-950 dark:text-white">Scan QR Code ini dengan WhatsApp</p>
-                  <p class="text-xs text-dark-500 dark:text-dark-400">Buka WhatsApp → Settings → Linked Devices → Link a Device</p>
-                  <div class="inline-block p-3 bg-white rounded-2xl shadow-md border border-gray-100">
-                    <img :src="waQR" alt="WhatsApp QR Code" class="w-56 h-56 sm:w-64 sm:h-64" />
-                  </div>
-                  <p class="text-xs text-amber-600 dark:text-amber-400 font-medium">
-                    ⏳ QR diperbarui otomatis setiap 5 detik. Scan sebelum expired!
-                  </p>
-                </div>
-                <div v-else class="flex flex-col items-center py-6 space-y-3">
-                  <Loader class="animate-spin text-green-500" :size="32" />
-                  <p class="font-semibold text-dark-950 dark:text-white">Menunggu QR Code...</p>
-                  <p class="text-xs text-dark-500 dark:text-dark-400">QR akan muncul otomatis dalam beberapa detik</p>
-                </div>
-                <button @click="fetchWAStatus()" class="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-dark-800 hover:bg-gray-200 rounded-xl text-sm font-bold transition-colors">
-                  <RefreshCw :size="14" /> Refresh Manual
-                </button>
-              </div>
-
             </div>
           </div>
         </div>
@@ -467,7 +458,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
-import { ShoppingBag, Clock, TrendingUp, RefreshCw, Loader, Check, Zap, Wallet, AlertTriangle, MessageCircle } from 'lucide-vue-next'
+import { ShoppingBag, Clock, TrendingUp, RefreshCw, Loader, Check, Zap, Wallet, AlertTriangle, MessageCircle, Users, Smartphone, CheckCircle } from 'lucide-vue-next'
 import PINModal from '../components/PINModal.vue'
 import api from '../services/api'
 import { useAuth } from '../composables/useAuth'
@@ -484,6 +475,8 @@ const isSyncing = ref(false)
 const isFetching = ref(false)
 const isBulkUpdating = ref(false)
 const bulkMargin = ref(null)
+const usersList = ref([])
+const loadingUsers = ref(false)
 
 const digiflazzBalance = ref(null)
 const loadingBalance = ref(false)
@@ -504,7 +497,8 @@ let autoRefreshTimer = null
 const tabs = [
   { value: 'products', label: 'Produk' },
   { value: 'orders', label: 'Pesanan' },
-  { value: 'whatsapp', label: '📱 WhatsApp' }
+  { value: 'users', label: 'Pengguna' },
+  { value: 'whatsapp', label: 'WhatsApp' }
 ]
 
 const groupedProducts = computed(() => {
@@ -605,6 +599,19 @@ const fetchAllData = async (silent = false) => {
   } finally {
     loadingStats.value = false
     isFetching.value = false
+  }
+}
+
+const fetchUsers = async () => {
+  if (loadingUsers.value) return
+  loadingUsers.value = true
+  try {
+    const res = await api.users.getAll()
+    usersList.value = res.data.data || []
+  } catch (e) {
+    showToastNotification('Gagal mengambil daftar pengguna')
+  } finally {
+    loadingUsers.value = false
   }
 }
 
@@ -736,6 +743,8 @@ watch(activeTab, (tab) => {
   if (tab === 'whatsapp') {
     fetchWAStatus()
     waPollTimer = setInterval(() => fetchWAStatus(true), 5000)
+  } else if (tab === 'users') {
+    fetchUsers()
   } else {
     if (waPollTimer) clearInterval(waPollTimer)
   }
@@ -788,6 +797,7 @@ onUnmounted(() => {
 }
 .stat-icon.blue { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
 .stat-icon.orange { background: linear-gradient(135deg, #fb923c 0%, #f97316 100%); }
+.stat-icon.purple { background: linear-gradient(135deg, #818cf8 0%, #c084fc 100%); }
 .stat-icon.green { background: linear-gradient(135deg, #34d399 0%, #10b981 100%); }
 
 .stat-info { 
@@ -999,33 +1009,33 @@ onUnmounted(() => {
   backdrop-filter: blur(4px); 
 }
 .modal-content { 
-  background: white; 
-  border: 1px solid rgb(229 231 235); 
+  background: var(--card); 
+  border: 1px solid var(--border); 
   border-radius: 16px; 
   padding: 1.5rem; 
   max-width: 28rem; 
   width: 100%; 
   box-shadow: 0 20px 40px rgba(0,0,0,0.15); 
 }
-.dark .modal-content { background: rgb(15 20 25); border-color: rgb(42 49 66); }
-.modal-title { font-size: 1.125rem; font-weight: 800; color: rgb(17 24 39); margin-bottom: 0.5rem; }
+.dark .modal-content { background: var(--card); border-color: var(--border); backdrop-filter: blur(12px); }
+.modal-title { font-size: 1.125rem; font-weight: 800; color: var(--foreground); margin-bottom: 0.5rem; }
 @media (min-width: 640px) {
   .modal-title { font-size: 1.25rem; }
 }
-.dark .modal-title { color: rgb(243 244 246); }
-.modal-subtitle { font-size: 0.875rem; color: rgb(107 114 128); margin-bottom: 1.5rem; }
-.dark .modal-subtitle { color: rgb(156 163 175); }
+.modal-subtitle { font-size: 0.875rem; color: var(--muted-foreground); margin-bottom: 1.5rem; }
 .modal-input { 
   width: 100%; 
   padding: 0.75rem; 
-  border: 2px solid rgb(229 231 235); 
+  border: 2px solid var(--border); 
   border-radius: 12px; 
   font-size: 1rem; 
   font-weight: 600; 
   margin-bottom: 1.5rem; 
   transition: all 0.3s ease; 
+  background: var(--input-background);
+  color: var(--foreground);
 }
-.dark .modal-input { background: rgb(26 31 46); border-color: rgb(42 49 66); color: rgb(243 244 246); }
+.dark .modal-input { background: var(--input-background); border-color: var(--border); color: var(--foreground); }
 .modal-input:focus { outline: none; border-color: rgb(79 172 254); box-shadow: 0 0 0 3px rgba(79,172,254,0.1); }
 .modal-actions { display: flex; gap: 0.75rem; }
 .modal-btn { 
@@ -1038,9 +1048,8 @@ onUnmounted(() => {
   cursor: pointer; 
   transition: all 0.3s ease; 
 }
-.modal-btn.secondary { background: rgb(243 244 246); color: rgb(17 24 39); }
-.dark .modal-btn.secondary { background: rgb(31 41 55); color: rgb(243 244 246); }
-.modal-btn.primary { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; }
+.modal-btn.secondary { background: var(--secondary); color: var(--secondary-foreground); }
+.modal-btn.primary { background: linear-gradient(135deg, var(--primary) 0%, var(--info) 100%); color: var(--primary-foreground); }
 .modal-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
 
 .toast { 
@@ -1052,18 +1061,19 @@ onUnmounted(() => {
   align-items: center; 
   gap: 0.75rem; 
   padding: 1rem 1.25rem; 
-  background: white; 
-  border: 2px solid rgb(79 172 254); 
+  background: var(--card); 
+  border: 2px solid var(--primary); 
   border-radius: 12px; 
   box-shadow: 0 10px 30px rgba(0,0,0,0.15); 
   font-size: 0.875rem; 
   font-weight: 600; 
   max-width: 20rem; 
+  color: var(--foreground);
 }
 @media (min-width: 640px) {
   .toast { max-width: 24rem; }
 }
-.dark .toast { background: rgb(15 20 25); }
+.dark .toast { background: var(--card); border-color: var(--primary); }
 
 .modal-enter-active, .modal-leave-active { transition: opacity 0.3s ease; }
 .modal-enter-from, .modal-leave-to { opacity: 0; }

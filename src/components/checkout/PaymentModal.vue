@@ -129,6 +129,11 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { X, Info, Mail, CheckCircle, ShoppingBag, ShieldCheck } from 'lucide-vue-next'
+import { useMidtrans } from '@/composables/useMidtrans'
+import { useProductStore } from '@/stores/productStore'
+import { formatPrice as utilsFormatPrice } from '@/utils/format'
+import { ZONE_ID_BRANDS } from '@/constants/operators'
+import { OPERATOR_KEYS } from '@/constants/operators'
 import MidtransButton from './MidtransButton.vue'
 
 const SAVED_EMAIL_KEY = 'feepay_last_email'
@@ -162,26 +167,23 @@ watch(() => props.product, (val) => {
 })
 
 const isEmailValid = computed(() => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(localEmail.value))
-const formatPrice  = (price) => new Intl.NumberFormat('id-ID').format(Math.round(Number(price) || 0))
+const formatPrice = (price) => utilsFormatPrice(price, { useShorthand: true, withPrefix: false })
 
 const costPrice    = computed(() => Number(props.product?.cost_price || 0))
 const sellingPrice = computed(() => Number(props.product?.selling_price || props.product?.price || 0))
 const serviceFee   = computed(() => sellingPrice.value - costPrice.value)
 
-const OPERATORS = [
-  { keys: ['telkomsel', 'simpati', 'kartu as', 'loop'], label: 'Telkomsel', file: 'telkomsel' },
-  { keys: ['by.u', 'byu'],                              label: 'by.U',      file: 'byu'       },
-  { keys: ['axis'],                                     label: 'Axis',      file: 'axis'      },
-  { keys: ['xl', 'xtra'],                               label: 'XL Axiata', file: 'xl'        },
-  { keys: ['indosat', 'im3', 'mentari', 'ooredoo'],     label: 'Indosat',   file: 'indosat'   },
-  { keys: ['tri', 'three', 'hutchison'],                label: 'Tri',       file: 'three'     },
-  { keys: ['smartfren'],                                label: 'Smartfren', file: 'smartfren' },
-]
-
 const detectedOperator = computed(() => {
   if (!props.product?.name) return null
   const name = props.product.name.toLowerCase()
-  return OPERATORS.find(op => op.keys.some(k => name.includes(k))) ?? null
+  
+  // Use keys from centralized constants
+  for (const [key, prefixes] of Object.entries(OPERATOR_KEYS)) {
+    if (prefixes.some(p => name.includes(p))) {
+      return { file: key === 'tri' ? 'three' : key, label: key.toUpperCase() }
+    }
+  }
+  return null
 })
 
 const operatorLogo = computed(() =>
@@ -194,13 +196,19 @@ const operatorName = computed(() => detectedOperator.value?.label ?? '')
 .modal-content {
   width: 100%;
   max-width: 26rem;
-  background: var(--card, #fff);
+  background: var(--card);
   border-radius: 24px 24px 0 0;
   padding: 24px;
   display: flex;
   flex-direction: column;
   gap: 16px;
   box-shadow: 0 -8px 40px rgba(0,0,0,0.15);
+  border: 1px solid var(--border);
+}
+.dark .modal-content {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  border-color: var(--glass-border);
 }
 @media (min-width: 640px) {
   .modal-content {
@@ -223,42 +231,42 @@ const operatorName = computed(() => detectedOperator.value?.label ?? '')
 }
 .modal-icon {
   width: 38px; height: 38px;
-  background: linear-gradient(135deg, #16a34a, #15803d);
+  background: linear-gradient(135deg, var(--accent), var(--accent-hover));
   border-radius: 12px;
   display: flex; align-items: center; justify-content: center;
-  color: #fff;
+  color: var(--accent-foreground);
   flex-shrink: 0;
 }
 .modal-title {
   font-size: 1rem;
   font-weight: 800;
-  color: var(--foreground, #111827);
+  color: var(--foreground);
   letter-spacing: -0.02em;
 }
 .modal-subtitle {
   font-size: 0.6875rem;
-  color: var(--muted-foreground, #9ca3af);
+  color: var(--muted-foreground);
   margin-top: 1px;
 }
 .modal-close {
   width: 34px; height: 34px;
   display: flex; align-items: center; justify-content: center;
   border-radius: 10px;
-  border: 1px solid var(--border, #e5e7eb);
+  border: 1px solid var(--border);
   background: transparent;
-  color: var(--muted-foreground, #9ca3af);
+  color: var(--muted-foreground);
   cursor: pointer;
   transition: all 0.15s;
 }
 .modal-close:hover {
-  background: var(--muted, #f3f4f6);
-  color: var(--foreground, #111827);
+  background: var(--muted);
+  color: var(--foreground);
 }
 
 /* PRODUCT CARD */
 .product-card {
-  background: var(--muted, #f8fafc);
-  border: 1px solid var(--border, #e5e7eb);
+  background: var(--muted);
+  border: 1px solid var(--border);
   border-radius: 16px;
   padding: 16px;
   display: flex;
@@ -285,14 +293,8 @@ const operatorName = computed(() => detectedOperator.value?.label ?? '')
 .info-label {
   font-size: 0.8125rem;
   font-weight: 500;
-  color: var(--muted-foreground, #6b7280);
+  color: var(--muted-foreground);
   flex-shrink: 0;
-}
-.info-value-wrap {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  justify-content: flex-end;
 }
 .operator-logo {
   height: 16px; width: auto;
@@ -302,17 +304,17 @@ const operatorName = computed(() => detectedOperator.value?.label ?? '')
 .info-value {
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--foreground, #111827);
+  color: var(--foreground);
   text-align: right;
 }
 .fee-value {
-  color: var(--muted-foreground, #9ca3af);
+  color: var(--muted-foreground);
   font-weight: 500;
   font-size: 0.8125rem;
 }
 .card-divider {
   height: 1px;
-  background: var(--border, #e5e7eb);
+  background: var(--border);
   margin: 2px 0;
 }
 
@@ -322,10 +324,11 @@ const operatorName = computed(() => detectedOperator.value?.label ?? '')
   justify-content: space-between;
   align-items: center;
   padding: 12px 14px;
-  background: linear-gradient(135deg, rgba(22,163,74,0.08) 0%, rgba(22,163,74,0.04) 100%);
-  border: 1.5px solid rgba(22,163,74,0.2);
+  background: var(--accent-light);
+  border: 1.5px solid var(--accent);
   border-radius: 12px;
   margin-top: 2px;
+  opacity: 0.95;
 }
 .total-left {
   display: flex;
@@ -335,17 +338,17 @@ const operatorName = computed(() => detectedOperator.value?.label ?? '')
 .total-label {
   font-size: 0.8125rem;
   font-weight: 700;
-  color: var(--foreground, #111827);
+  color: var(--foreground);
 }
 .total-badge {
   font-size: 0.625rem;
-  color: #16a34a;
+  color: var(--accent);
   font-weight: 600;
 }
 .total-value {
   font-size: 1.375rem;
   font-weight: 900;
-  color: #16a34a;
+  color: var(--accent);
   letter-spacing: -0.03em;
 }
 
@@ -354,7 +357,7 @@ const operatorName = computed(() => detectedOperator.value?.label ?? '')
 .email-label {
   font-size: 0.8125rem;
   font-weight: 700;
-  color: var(--foreground, #111827);
+  color: var(--foreground);
 }
 .required { color: #ef4444; margin-left: 2px; }
 
@@ -364,8 +367,8 @@ const operatorName = computed(() => detectedOperator.value?.label ?? '')
   gap: 10px;
   padding: 0 14px;
   height: 46px;
-  background: var(--background, #f8fafc);
-  border: 1.5px solid var(--border, #e5e7eb);
+  background: var(--input-background);
+  border: 1.5px solid var(--border);
   border-radius: 12px;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
@@ -385,10 +388,10 @@ const operatorName = computed(() => detectedOperator.value?.label ?? '')
   background: transparent;
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--foreground, #111827);
+  color: var(--foreground);
   outline: none;
 }
-.email-input::placeholder { color: var(--muted-foreground, #9ca3af); }
+.email-input::placeholder { color: var(--muted-foreground); }
 
 .email-hint {
   display: flex;
@@ -407,13 +410,13 @@ const operatorName = computed(() => detectedOperator.value?.label ?? '')
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  background: rgba(37,99,235,0.05);
-  border: 1px solid rgba(37,99,235,0.2);
+  background: var(--info-light);
+  border: 1px solid var(--info);
   border-radius: 12px;
   padding: 12px;
 }
-.info-box-icon { color: #3b82f6; flex-shrink: 0; margin-top: 1px; }
-.info-box-text { font-size: 0.75rem; color: #1d4ed8; }
+.info-box-icon { color: var(--info); flex-shrink: 0; margin-top: 1px; }
+.info-box-text { font-size: 0.75rem; color: var(--info); opacity: 0.9; }
 
 /* SECURITY NOTE */
 .security-note {

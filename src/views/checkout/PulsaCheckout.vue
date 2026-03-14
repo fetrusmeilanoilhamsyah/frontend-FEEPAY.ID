@@ -93,7 +93,7 @@
               </div>
               <div class="price-footer">
                 <span class="card-price" v-if="!item.isDummy">
-                  {{ formatPrice(item.selling_price) }}
+                  {{ formatPriceLocal(item.selling_price) }}
                 </span>
                 <span class="card-unavailable" v-else>
                   {{ !detectedOperator ? 'Masukkan nomor HP' : 'Tidak tersedia' }}
@@ -126,6 +126,8 @@ import PaymentModal from '@/components/checkout/PaymentModal.vue'
 import { useProductStore } from '@/stores/productStore'
 import { useRecentNumbers } from '@/composables/useRecentNumbers'
 import { useOperatorDetector } from '@/composables/useOperatorDetector'
+import { OPERATOR_KEYS } from '@/constants/operators'
+import { formatPrice } from '@/utils/format'
 
 const productStore = useProductStore()
 const { recentNumbers, addNumber } = useRecentNumbers()
@@ -133,16 +135,6 @@ const { detectedOperator, detectOperator } = useOperatorDetector()
 
 const phoneNumber = ref('')
 const selectedProduct = ref(null)
-
-const OPERATOR_KEYS = {
-  telkomsel: ['telkomsel', 'simpati', 'kartu as', 'loop'],
-  indosat:   ['indosat', 'im3', 'mentari'],
-  xl:        ['xl', 'xtra', 'axiata'],
-  tri:       ['tri', 'three', 'hutchison'],
-  smartfren: ['smartfren'],
-  axis:      ['axis'],
-  byu:       ['by.u', 'byu'],
-}
 
 const DUMMY_LIST = [5, 10, 15, 20, 25, 30, 50, 100].map(n => ({
   displayLabel: `${n}rb`, isDummy: true
@@ -174,7 +166,7 @@ const displayedProducts = computed(() => {
   return processed.length > 0 ? processed : DUMMY_LIST
 })
 
-const formatPrice = (price) => price ? 'Rp' + Number(price).toLocaleString('id') : '-'
+const formatPriceLocal = (price) => formatPrice(price)
 
 const handleSelect = (product) => {
   if (product.isDummy) return

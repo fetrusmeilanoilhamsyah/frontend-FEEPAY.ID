@@ -42,7 +42,7 @@
           <button v-for="game in filteredGames" :key="game.brand" @click="selectGame(game)" class="game-card">
             <div class="game-card-bg">
               <img :src="getGameBanner(game.brand)" :alt="game.label" class="game-card-img"
-                @error="(e) => e.target.src='/logos/games/'+game.brand.toLowerCase().replace(/ /g,'')+'.webp'" />
+                @error="(e) => e.target.src='/images/games/banner-default.webp'" />
               <div class="game-card-overlay" />
             </div>
             <div class="game-badge">{{ game.count }} Voucher</div>
@@ -128,6 +128,8 @@ import { ref, computed, onMounted } from 'vue'
 import { ArrowLeft, ChevronLeft, Gamepad2, Package, Search, X, Ticket, Info } from 'lucide-vue-next'
 import PaymentModal from '@/components/checkout/PaymentModal.vue'
 import { useProductStore } from '@/stores/productStore'
+import { formatPrice as utilsFormatPrice } from '@/utils/format'
+import { GAME_CATEGORIES } from '@/constants/operators'
 
 const productStore = useProductStore()
 const selectedGame    = ref(null)
@@ -147,7 +149,7 @@ const PC_GAMES     = ['STEAM', 'LEAGUE OF LEGENDS', 'VALORANT', 'ROBLOX', 'HONKA
 // Voucher game: category = 'Games' juga, sama dengan top up
 const isVoucherCategory = (cat) => {
   const c = (cat || '').toLowerCase()
-  return c === 'games' || c === 'game' || c === 'aktivasi voucher'
+  return GAME_CATEGORIES.includes(c)
 }
 
 const GAME_ASSETS = {
@@ -200,12 +202,7 @@ const gameProducts = computed(() => {
     .sort((a, b) => parseFloat(a.selling_price) - parseFloat(b.selling_price))
 })
 
-const formatPrice = (price) => {
-  const n = parseFloat(price || 0)
-  if (n >= 1000000) return (n/1000000).toFixed(1)+'jt'
-  if (n >= 1000) return Math.round(n/1000)+'rb'
-  return new Intl.NumberFormat('id-ID').format(n)
-}
+const formatPrice = (price) => utilsFormatPrice(price, { useShorthand: true, withPrefix: false })
 
 const selectGame  = (game) => { selectedGame.value = game; window.scrollTo({top:0,behavior:'smooth'}) }
 const backToGames = () => { selectedGame.value = null; selectedProduct.value = null }

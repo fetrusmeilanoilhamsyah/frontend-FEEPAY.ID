@@ -140,13 +140,13 @@ onUnmounted(() => {
 
 <style scoped>
 .bottom-nav {
-  position: fixed; bottom: 0; left: 0; right: 0;
-  background: #ffffff;
-  border-top: 1px solid #e5e7eb;
+  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 100%; max-width: 480px;
+  background: var(--card);
+  border-top: 1px solid var(--border);
   z-index: 50;
   padding-bottom: env(safe-area-inset-bottom);
   box-shadow: 0 -2px 16px rgba(0,0,0,0.06);
-  transform: translateY(0);
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -154,7 +154,12 @@ onUnmounted(() => {
   transform: translateY(100%);
 }
 
-@media(min-width: 768px) { .bottom-nav { display: none; } }
+@media(min-width: 768px) { 
+  .bottom-nav { 
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+  } 
+}
 
 .nav-inner {
   max-width: 480px; margin: 0 auto;
@@ -299,11 +304,11 @@ onUnmounted(() => {
   font-size: 0.6rem;
   font-weight: 600;
   letter-spacing: 0.01em;
-  color: #9ca3af;
+  color: var(--muted-foreground);
   transition: color 0.2s ease, font-weight 0.2s ease;
 }
 .nav-item.active .nav-label {
-  color: #111827;
+  color: var(--foreground);
   font-weight: 800;
 }
 </style>

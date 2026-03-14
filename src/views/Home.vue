@@ -221,6 +221,7 @@ import ChatWidget from '@/components/frontend_ChatWidget.vue'
 import { useProductStore } from '@/stores/productStore'
 import { useOrderStore } from '@/stores/orderStore'
 import { useTheme } from '@/composables/useTheme'
+import { formatPrice as utilsFormatPrice } from '@/utils/format'
 
 const router = useRouter()
 const productStore = useProductStore()
@@ -314,12 +315,7 @@ const filteredGames = computed(() => {
   return allGames.value
 })
 
-const formatPrice = (price) => {
-  const n = parseFloat(price || 0)
-  if (n >= 1000000) return (n/1000000).toFixed(1)+'jt'
-  if (n >= 1000)    return Math.round(n/1000)+'rb'
-  return new Intl.NumberFormat('id-ID').format(n)
-}
+const formatPrice = (price) => utilsFormatPrice(price, { useShorthand: true, withPrefix: false })
 
 const handleBannerAction = () => {}
 
@@ -601,22 +597,22 @@ onMounted(async () => {
 .notif-bar {
   display: flex; align-items: center; gap: 10px;
   padding: 12px 14px;
-  background: #eff6ff;
-  border: 1px solid #bfdbfe;
-  border-left: 3px solid #3b82f6;
+  background: var(--info-light);
+  border: 1px solid var(--info);
+  border-left: 3px solid var(--primary);
   border-radius: 12px;
   cursor: pointer; transition: all 0.2s;
 }
-.notif-bar:hover { background: #dbeafe; }
-.notif-dot { width: 8px; height: 8px; border-radius: 50%; background: #3b82f6; flex-shrink: 0; animation: pulse-blue 2s infinite; }
+.notif-bar:hover { background: var(--info-light); opacity: 0.9; }
+.notif-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--primary); flex-shrink: 0; animation: pulse-blue 2s infinite; }
 @keyframes pulse-blue {
   0%,100% { box-shadow: 0 0 0 0 rgba(59,130,246,0.4); }
   50%     { box-shadow: 0 0 0 4px rgba(59,130,246,0); }
 }
 .notif-text { flex: 1; display: flex; flex-direction: column; gap: 1px; }
-.notif-title { font-size: 0.8125rem; font-weight: 700; color: #1e40af; }
-.notif-sub   { font-size: 0.6875rem; color: #3b82f6; }
-.notif-arrow { color: #93c5fd; flex-shrink: 0; }
+.notif-title { font-size: 0.8125rem; font-weight: 700; color: var(--foreground); }
+.notif-sub   { font-size: 0.6875rem; color: var(--info); }
+.notif-arrow { color: var(--info); flex-shrink: 0; opacity: 0.5; }
 
 /* SECTION */
 .section { display: flex; flex-direction: column; gap: 12px; }
@@ -736,23 +732,23 @@ onMounted(async () => {
 .cat-pill {
   padding: 8px 16px; border-radius: 999px;
   font-size: 0.875rem; font-weight: 600;
-  color: #6b7280; background: #fff;
-  border: 1.5px solid #e5e7eb;
+  color: var(--muted-foreground); background: var(--card);
+  border: 1.5px solid var(--border);
   cursor: pointer; white-space: nowrap;
   transition: all 0.2s;
   display: flex; align-items: center; gap: 6px;
 }
-.cat-pill:hover  { border-color: #16a34a; background: #f0fdf4; }
-.cat-pill.active { background: #16a34a; color: #fff; border-color: #16a34a; }
+.cat-pill:hover  { border-color: var(--accent); background: var(--accent-light); }
+.cat-pill.active { background: var(--accent); color: var(--accent-foreground); border-color: var(--accent); }
 
 /* GAME GRID */
 .game-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
 .game-card {
   text-decoration: none; border-radius: 16px; overflow: hidden;
-  background: var(--card, #ffffff); border: 1px solid var(--border, #e5e7eb);
+  background: var(--card); border: 1px solid var(--border);
   transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); position: relative;
 }
-.game-card:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 16px 32px rgba(0,0,0,0.12); border-color: #16a34a; }
+.game-card:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 16px 32px rgba(0,0,0,0.12); border-color: var(--accent); }
 .game-card-img-wrap { position: relative; aspect-ratio: 3/4; overflow: hidden; }
 .game-card-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
 .game-card:hover .game-card-img { transform: scale(1.07); }
