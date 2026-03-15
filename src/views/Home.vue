@@ -74,24 +74,16 @@
         </button>
       </div>
 
-      <!-- PENDING ORDER NOTIF (Antigravity Pulse Card) -->
-      <transition name="fade">
-        <div v-if="pendingOrders.length > 0" class="notif-card reveal" @click="router.push('/transactions')">
-          <div class="notif-card-glow"></div>
-          <div class="notif-card-content">
-            <div class="notif-icon-wrap">
-              <div class="pulse-ring"></div>
-              <Clock :size="20" class="text-primary-500" />
-            </div>
-            <div class="notif-text">
-              <div class="notif-badge">SEDANG DIPROSES</div>
-              <span class="notif-title">{{ pendingOrders.length }} Transaksi Aktif</span>
-              <span class="notif-sub">{{ pendingOrders[0].product_name }} · Klik untuk detail</span>
-            </div>
-            <ChevronRight :size="20" class="notif-card-arrow" />
-          </div>
+      <!-- PENDING ORDER NOTIF (Original Style) -->
+      <div v-if="pendingOrders.length > 0" class="notif-bar" @click="router.push('/transactions')">
+        <div class="pulse-ring-small"></div>
+        <div class="notif-dot"></div>
+        <div class="notif-text">
+          <span class="notif-title">{{ pendingOrders.length }} Transaksi Sedang Diproses</span>
+          <span class="notif-sub">{{ pendingOrders[0].product_name }} · Lihat detail</span>
         </div>
-      </transition>
+        <ChevronRight :size="16" class="notif-arrow" />
+      </div>
 
       <!-- LAYANAN SECTION -->
       <div class="section section--premium reveal" v-reveal>
@@ -638,70 +630,33 @@ onMounted(async () => {
   100%{ transform: scale(1); }
 }
 
-/* NOTIF CARD (Premium Antigravity Style) */
-.notif-card {
-  position: relative;
-  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
-  border-radius: 20px;
-  padding: 16px 20px;
-  margin-bottom: 24px;
-  cursor: pointer;
-  overflow: hidden;
-  box-shadow: 0 12px 30px rgba(37, 99, 235, 0.25);
-  transition: all 0.4s var(--ease-out-expo);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+/* NOTIF BAR (Restore Original) */
+.notif-bar {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px;
+  background: var(--info-light, #eff6ff);
+  border: 1px solid var(--info-light, #dbeafe);
+  border-left: 4px solid var(--primary, #3b82f6);
+  border-radius: 16px;
+  cursor: pointer; transition: all 0.3s;
+  margin-bottom: 20px;
+  position: relative; overflow: hidden;
 }
+.notif-bar:hover { background: #f0f7ff; transform: translateX(4px); }
+.notif-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--primary); flex-shrink: 0; position: relative; z-index: 10; }
 
-.notif-card:hover {
-  transform: translateY(-4px) scale(1.01);
-  box-shadow: 0 20px 40px rgba(37, 99, 235, 0.35);
-}
-
-.notif-card-glow {
-  position: absolute;
-  top: -50%; left: -50%;
-  width: 200%; height: 200%;
-  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 50%);
-  animation: rotate-slow 15s linear infinite;
+.pulse-ring-small {
+  position: absolute; left: 16px; top: 18px;
+  width: 10px; height: 10px; border-radius: 50%;
+  border: 3px solid var(--primary);
+  animation: pulse-ring 2s infinite;
   pointer-events: none;
 }
 
-.notif-card-content {
-  display: flex; align-items: center; gap: 16px; position: relative; z-index: 2;
-}
-
-.notif-icon-wrap {
-  width: 52px; height: 52px;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 16px;
-  display: flex; align-items: center; justify-content: center;
-  position: relative;
-}
-
-.pulse-ring {
-  position: absolute;
-  width: 100%; height: 100%;
-  border-radius: inherit;
-  border: 4px solid rgba(255,255,255,0.5);
-  animation: pulse-ring 2s infinite;
-}
-
-@keyframes pulse-ring {
-  0% { transform: scale(0.9); opacity: 1; }
-  100% { transform: scale(1.5); opacity: 0; }
-}
-
-.notif-badge {
-  font-size: 0.625rem; font-weight: 900;
-  color: #fff; background: rgba(255,255,255,0.15);
-  padding: 2px 8px; border-radius: 6px;
-  display: inline-block; margin-bottom: 4px;
-  letter-spacing: 0.05em;
-}
-
-.notif-title { font-size: 1rem; font-weight: 800; color: #fff; display: block; }
-.notif-sub { font-size: 0.8125rem; color: rgba(255, 255, 255, 0.7); display: block; margin-top: 2px; }
-.notif-card-arrow { color: #fff; opacity: 0.6; }
+.notif-text { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.notif-title { font-size: 0.875rem; font-weight: 800; color: var(--foreground); }
+.notif-sub   { font-size: 0.75rem; color: var(--muted-foreground); }
+.notif-arrow { color: var(--muted-foreground); flex-shrink: 0; opacity: 0.5; }
 
 /* SECTION PREMIUM (Dominant Section) */
 .section--premium {
