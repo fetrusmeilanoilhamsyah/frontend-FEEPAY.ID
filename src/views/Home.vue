@@ -675,21 +675,21 @@ onMounted(async () => {
 .notif-bar {
   display: flex; align-items: center; gap: 12px;
   padding: 12px 16px;
-  background: var(--info-light, #eff6ff);
-  border: 1px solid var(--info-light, #dbeafe);
-  border-left: 4px solid var(--primary, #3b82f6);
+  background: rgba(22, 163, 74, 0.08);
+  border: 1px solid rgba(22, 163, 74, 0.15);
+  border-left: 4px solid var(--primary, #16a34a);
   border-radius: 16px;
   cursor: pointer; transition: all 0.3s;
   margin-bottom: 20px;
   position: relative; overflow: hidden;
 }
-.notif-bar:hover { background: #f0f7ff; transform: translateX(4px); }
-.notif-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--primary); flex-shrink: 0; position: relative; z-index: 10; }
+.notif-bar:hover { background: rgba(22, 163, 74, 0.12); transform: translateX(4px); }
+.notif-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--primary, #16a34a); flex-shrink: 0; position: relative; z-index: 10; }
 
 .pulse-ring-small {
   position: absolute; left: 16px; top: 18px;
   width: 10px; height: 10px; border-radius: 50%;
-  border: 3px solid var(--primary);
+  border: 3px solid var(--primary, #16a34a);
   animation: pulse-ring 2s infinite;
   pointer-events: none;
 }
