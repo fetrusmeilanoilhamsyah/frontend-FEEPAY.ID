@@ -118,11 +118,9 @@
             class="service-card-premium reveal" :class="'stagger-' + ((idx % 4) + 1)">
             <div class="service-icon-glass" :style="{ '--service-bg': s.bg }">
               <img :src="s.img" :alt="s.label" class="service-img-premium" />
+              <div v-if="s.badge" class="service-badge-premium">{{ s.badge }}</div>
             </div>
-            <div class="service-info-premium">
-              <span class="service-label-premium">{{ s.label }}</span>
-              <span v-if="s.badge" class="service-badge-premium">{{ s.badge }}</span>
-            </div>
+            <span class="service-label-premium">{{ s.label }}</span>
           </router-link>
         </div>
       </div>
@@ -243,7 +241,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { Check, ChevronRight, Gamepad2 } from 'lucide-vue-next'
+import { Action, Activity, Check, ChevronRight, Gamepad2 } from 'lucide-vue-next'
 import BannerSlider from '@/components/BannerSlider.vue'
 import SkeletonBanner from '@/components/SkeletonBanner.vue'
 import HowItWorks from '@/components/home/HowItWorks.vue'
@@ -712,56 +710,80 @@ onMounted(async () => {
   display: flex; align-items: center; justify-content: center;
 }
 
-/* SERVICE GRID PREMIUM (3-4 Columns for dominance) */
+/* SERVICE GRID PREMIUM (4 Columns like GoPay) */
 .service-grid-premium {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  margin-top: 16px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px 8px;
+  margin-top: 20px;
 }
 
 .service-card-premium {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 12px;
-  padding: 14px;
-  background: var(--muted, #f9fafb);
-  border: 1px solid var(--border, #f3f4f6);
-  border-radius: 18px;
+  gap: 10px;
   text-decoration: none;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.4s var(--ease-out-expo);
+  position: relative;
 }
 
 .service-card-premium:hover {
-  background: var(--card, #fff);
-  transform: translateY(-4px);
-  border-color: var(--primary, #16a34a);
-  box-shadow: 0 12px 24px rgba(22, 163, 74, 0.1);
+  transform: translateY(-5px);
 }
 
 .service-icon-glass {
-  width: 44px; height: 44px;
+  width: 64px; height: 64px;
   background: var(--service-bg, #f3f4f6);
-  border-radius: 12px;
+  border-radius: 20px;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
-  box-shadow: inset 0 0 10px rgba(255,255,255,0.5);
+  position: relative;
+  transition: all 0.4s var(--ease-spring);
+  box-shadow: 
+    0 4px 12px rgba(0,0,0,0.05),
+    inset 0 0 12px rgba(255,255,255,0.6);
+  border: 1px solid rgba(255,255,255,0.2);
 }
 
-.service-img-premium { width: 28px; height: 28px; object-fit: contain; }
+.service-card-premium:hover .service-icon-glass {
+  transform: scale(1.1) rotate(3deg);
+  box-shadow: 
+    0 10px 25px rgba(22, 163, 74, 0.2),
+    inset 0 0 15px rgba(255,255,255,0.8);
+  border-color: var(--primary, #16a34a);
+}
 
-.service-info-premium { flex: 1; }
+.service-img-premium { 
+  width: 36px; height: 36px; 
+  object-fit: contain; 
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+}
+
 .service-label-premium { 
-  font-size: 0.875rem; font-weight: 800; 
+  font-size: 0.75rem; 
+  font-weight: 800; 
   color: var(--foreground, #111827); 
-  display: block;
+  text-align: center;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  transition: color 0.3s;
+}
+
+.service-card-premium:hover .service-label-premium {
+  color: var(--primary, #16a34a);
 }
 
 .service-badge-premium {
-  font-size: 0.625rem; font-weight: 700;
+  position: absolute;
+  top: -6px; right: -6px;
+  font-size: 0.625rem; font-weight: 900;
   background: #ef4444; color: #fff;
-  padding: 0 6px; border-radius: 4px;
-  margin-top: 2px; display: inline-block;
+  padding: 2px 8px; border-radius: 8px;
+  border: 2.5px solid #fff;
+  box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
+  z-index: 5;
+  white-space: nowrap;
 }
 
 /* SECTION */
