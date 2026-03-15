@@ -152,28 +152,46 @@
             :key="game.brand"
             to="/checkout/top-up-game"
             class="game-card reveal"
-            :class="'stagger-' + ((idx % 5) + 1)"
+            :class="'stagger-' + ((idx % 4) + 1)"
           >
-            <div class="game-card-img-wrap">
-              <img
-                :src="getGameBanner(game.brand)"
-                :alt="game.label"
-                class="game-card-img"
-                :loading="idx < 4 ? 'eager' : 'lazy'"
-                decoding="async"
-                :fetchpriority="idx < 4 ? 'high' : 'low'"
-                @error="(e) => e.target.src='/images/games/banner-default.jpg'"
-              />
-              <div class="game-card-overlay"></div>
-              <div class="game-card-logo-wrap">
-                <img :src="getGameLogo(game.brand)" :alt="game.label" class="game-card-logo"
-                  loading="lazy" decoding="async"
-                  @error="(e) => e.target.style.display='none'" />
+            <!-- 3D Holographic Container -->
+            <div class="game-card-perspective">
+              <!-- Background Holographic Ring -->
+              <div class="game-hologram-ring"></div>
+              
+              <div class="game-card-img-wrap">
+                <img
+                  :src="getGameBanner(game.brand)"
+                  :alt="game.label"
+                  class="game-card-img"
+                  :loading="idx < 4 ? 'eager' : 'lazy'"
+                  decoding="async"
+                  :fetchpriority="idx < 4 ? 'high' : 'low'"
+                  @error="(e) => e.target.src='/images/games/banner-default.jpg'"
+                />
+                <div class="game-card-overlay-glass"></div>
+                
+                <!-- Floating Price Tag -->
+                <div class="game-price-tag">
+                  <span class="price-prefix">Mulai</span>
+                  <span class="price-value">Rp{{ formatPrice(game.minPrice) }}</span>
+                </div>
+
+                <!-- Game Logo Glass -->
+                <div class="game-card-logo-glass">
+                  <img :src="getGameLogo(game.brand)" :alt="game.label" class="game-card-logo"
+                    loading="lazy" decoding="async"
+                    @error="(e) => e.target.style.display='none'" />
+                </div>
               </div>
-            </div>
-            <div class="game-card-body">
-              <p class="game-card-name">{{ game.label }}</p>
-              <p class="game-card-price">Mulai Rp{{ formatPrice(game.minPrice) }}</p>
+
+              <div class="game-card-footer">
+                <h3 class="game-card-name">{{ game.label }}</h3>
+                <div class="game-card-stats">
+                  <Activity :size="10" /> 
+                  <span>Instan 24 Jam</span>
+                </div>
+              </div>
             </div>
           </router-link>
         </div>
@@ -882,31 +900,194 @@ onMounted(async () => {
 .cat-pill:hover  { border-color: var(--accent); background: var(--accent-light); }
 .cat-pill.active { background: var(--accent); color: var(--accent-foreground); border-color: var(--accent); }
 
-/* GAME GRID */
-.game-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-.game-card {
-  text-decoration: none; border-radius: 16px; overflow: hidden;
-  background: var(--card); border: 1px solid var(--border);
-  transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); position: relative;
+/* HOLOGRAPHIC FLOATING GRID (Top Up Game) */
+.game-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 16px;
+  perspective: 1000px;
 }
-.game-card:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 16px 32px rgba(0,0,0,0.12); border-color: var(--accent); }
-.game-card-img-wrap { position: relative; aspect-ratio: 3/4; overflow: hidden; }
-.game-card-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
-.game-card:hover .game-card-img { transform: scale(1.07); }
-.game-card-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 30%, rgba(0,0,0,0.8) 100%); }
-.game-card-logo-wrap {
-  position: absolute; bottom: 46px; left: 10px;
-  width: 30px; height: 30px;
-  background: rgba(255,255,255,0.95); backdrop-filter: blur(4px);
-  border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 4px;
-}
-.game-card-logo { width: 100%; height: 100%; object-fit: contain; }
-.game-card-body { position: absolute; bottom: 0; left: 0; right: 0; padding: 10px 12px 12px; }
-.game-card-name  { font-size: 0.8125rem; font-weight: 700; color: #fff; margin-bottom: 2px; text-shadow: 0 1px 4px rgba(0,0,0,0.6); }
-.game-card-price { font-size: 0.6875rem; font-weight: 600; color: #4ade80; }
 
+.game-card {
+  text-decoration: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  border-radius: 20px;
+  position: relative;
+  transition: transform 0.1s ease-out;
+}
+
+.game-card-perspective {
+  position: relative;
+  width: 100%;
+  border-radius: 20px;
+  background: var(--card, #fff);
+  border: 1px solid var(--border, #e5e7eb);
+  overflow: hidden;
+  transition: all 0.5s var(--ease-spring);
+  transform-style: preserve-3d;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+.game-card:hover .game-card-perspective {
+  transform: translateY(-8px) rotateX(4deg) rotateY(4deg);
+  border-color: var(--primary, #16a34a);
+  box-shadow: 
+    0 15px 35px rgba(0, 0, 0, 0.12),
+    0 0 0 1px rgba(22, 163, 74, 0.2);
+}
+
+/* Holographic Rotating Ring Decoration */
+.game-hologram-ring {
+  position: absolute;
+  top: -20px; right: -20px;
+  width: 120px; height: 120px;
+  border: 2px dashed rgba(22, 163, 74, 0.15);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0;
+  transition: all 0.6s var(--ease-spring);
+  transform: scale(0.5) rotate(0deg);
+}
+
+.game-card:hover .game-hologram-ring {
+  opacity: 1;
+  transform: scale(1) rotate(180deg);
+}
+
+.game-card-img-wrap {
+  position: relative;
+  aspect-ratio: 4/5;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.game-card-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s var(--ease-out-expo);
+}
+
+.game-card:hover .game-card-img {
+  transform: scale(1.1);
+}
+
+/* Glassmorphic Overlay */
+.game-card-overlay-glass {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, 
+    transparent 40%, 
+    rgba(0, 0, 0, 0.3) 70%,
+    rgba(0, 0, 0, 0.9) 100%
+  );
+  z-index: 2;
+  transition: opacity 0.4s;
+}
+
+/* Floating Price Tag (Premium Glass) */
+.game-price-tag {
+  position: absolute;
+  top: 12px; right: 12px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 4px 10px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  z-index: 10;
+  transition: all 0.4s var(--ease-spring);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.game-card:hover .game-price-tag {
+  transform: scale(1.1) translateX(-4px);
+  background: var(--primary, #16a34a);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.price-prefix {
+  font-size: 0.5rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  line-height: 1;
+}
+
+.price-value {
+  font-size: 0.75rem;
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.2;
+}
+
+/* Game Logo with Glass container */
+.game-card-logo-glass {
+  position: absolute;
+  bottom: 12px; left: 12px;
+  width: 32px; height: 32px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(4px);
+  border-radius: 10px;
+  padding: 5px;
+  z-index: 10;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  transition: all 0.4s var(--ease-spring);
+}
+
+.game-card:hover .game-card-logo-glass {
+  transform: translateY(-4px) scale(1.1) rotate(-5deg);
+}
+
+.game-card-logo {
+  width: 100%; height: 100%;
+  object-fit: contain;
+}
+
+/* Footer Section */
+.game-card-footer {
+  padding: 12px;
+  background: var(--card, #fff);
+  position: relative;
+  z-index: 1;
+}
+
+.game-card-name {
+  font-size: 0.875rem;
+  font-weight: 800;
+  color: var(--foreground, #111827);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 4px;
+  letter-spacing: -0.01em;
+}
+
+.game-card-stats {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.625rem;
+  font-weight: 600;
+  color: var(--muted-foreground, #6b7280);
+}
+
+.game-card-stats svg {
+  color: var(--primary, #16a34a);
+  opacity: 0.8;
+}
+
+/* Skeleton update */
 .game-skeleton {
-  border-radius: 14px; aspect-ratio: 4/3;
+  border-radius: 20px; aspect-ratio: 4/5;
   background: linear-gradient(90deg, var(--muted,#f3f4f6) 25%, #e9ebee 50%, var(--muted,#f3f4f6) 75%);
   background-size: 200% 100%; animation: shimmer 1.5s infinite;
 }
