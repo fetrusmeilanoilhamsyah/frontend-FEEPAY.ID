@@ -38,7 +38,7 @@
           <div v-for="i in 8" :key="i" class="game-card-skeleton" />
         </div>
 
-        <div v-else-if="filteredGames.length > 0" class="game-grid">
+        <div v-else-if="filteredGames.length > 0" class="game-grid" v-reveal>
           <button v-for="(game, idx) in filteredGames" :key="game.brand" @click="selectGame(game)" 
             class="game-card reveal" :class="'stagger-' + ((idx % 5) + 1)">
             <div class="game-card-bg">
@@ -140,7 +140,7 @@
 
         <div v-else-if="gameProducts.length > 0">
           <h2 class="section-title" v-reveal="200">Pilih Nominal</h2>
-          <div class="product-grid">
+          <div class="product-grid" v-reveal>
             <button v-for="(product, idx) in gameProducts" :key="product.id"
               @click="handleProductSelect(product)" class="product-card reveal"
               :class="[{ 'product-inactive': product.status !== 'active' }, 'stagger-' + ((idx % 5) + 1)]"

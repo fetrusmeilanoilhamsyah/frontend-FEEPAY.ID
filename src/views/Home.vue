@@ -156,7 +156,7 @@
                 :fetchpriority="idx < 4 ? 'high' : 'low'"
                 @error="(e) => e.target.src='/images/games/banner-default.jpg'"
               />
-              <div class="game-card-overlay" />
+              <div class="game-card-overlay"></div>
               <div class="game-card-logo-wrap">
                 <img :src="getGameLogo(game.brand)" :alt="game.label" class="game-card-logo"
                   loading="lazy" decoding="async"
@@ -212,12 +212,12 @@
     <ChatWidget ref="chatWidgetRef" />
 
     <!-- TOAST -->
-    <transition name="toast">
+    <Transition name="toast">
       <div v-if="showToast" class="toast">
         <Check :size="14" />
         <span>{{ toastMessage }}</span>
       </div>
-    </transition>
+    </Transition>
 
   </div>
 </template>
