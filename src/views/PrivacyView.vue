@@ -13,125 +13,104 @@
     <!-- Content -->
     <div class="page-content">
       
-      <div class="update-date">Terakhir diperbarui: 1 Januari 2025</div>
+      <div class="update-date">Versi 1.1 — Terakhir diperbarui: 15 Maret 2026</div>
 
       <section class="content-section">
         <p class="intro-text">
-          FeePay menghargai privasi Anda dan berkomitmen untuk melindungi data pribadi Anda. 
-          Kebijakan Privasi ini menjelaskan bagaimana kami mengumpulkan, menggunakan, dan melindungi informasi Anda.
+          Privasi Anda adalah prioritas bagi kami. Kebijakan Privasi ini menguraikan komitmen FeePay dalam melindungi dan mengelola data pribadi Anda secara transparan sesuai dengan regulasi perlindungan data yang berlaku di Indonesia.
         </p>
       </section>
 
       <section class="content-section">
-        <h2 class="section-title">1. Informasi yang Kami Kumpulkan</h2>
-        <p class="section-text">Kami mengumpulkan informasi berikut ketika Anda menggunakan layanan kami:</p>
+        <h2 class="section-title">1. Pengumpulan Data Pribadi</h2>
+        <p class="section-text">Kami mengumpulkan informasi yang diperlukan untuk menunjang kelancaran transaksi dan keamanan akun Anda, antara lain:</p>
         <ul class="bullet-list">
-          <li><strong>Informasi Akun:</strong> Nama, email, nomor telepon yang Anda berikan saat registrasi</li>
-          <li><strong>Informasi Transaksi:</strong> Detail pembelian, metode pembayaran, riwayat transaksi</li>
-          <li><strong>Informasi Perangkat:</strong> IP address, jenis browser, sistem operasi</li>
-          <li><strong>Data Penggunaan:</strong> Halaman yang dikunjungi, waktu akses, interaksi dengan platform</li>
+          <li><strong>Identitas Dasar:</strong> Nama lengkap, alamat email, dan nomor telepon aktif.</li>
+          <li><strong>Data Transaksi:</strong> Rincian pesanan, riwayat pembelian, dan metode pembayaran yang digunakan.</li>
+          <li><strong>Informasi Teknis:</strong> Alamat Protokol Internet (IP Address), jenis perangkat, serta data log aktivitas pada platform.</li>
+          <li><strong>Data Komunikasi:</strong> Rekaman interaksi antara Pengguna dengan tim layanan bantuan (Helpdesk).</li>
         </ul>
       </section>
 
       <section class="content-section">
-        <h2 class="section-title">2. Penggunaan Informasi</h2>
-        <p class="section-text">Informasi yang kami kumpulkan digunakan untuk:</p>
+        <h2 class="section-title">2. Pemanfaatan Informasi</h2>
+        <p class="section-text">Data yang terkumpul akan digunakan untuk tujuan profesional sebagai berikut:</p>
         <ul class="bullet-list">
-          <li>Memproses transaksi dan mengirimkan produk digital yang Anda beli</li>
-          <li>Memberikan layanan customer support</li>
-          <li>Mengirimkan notifikasi terkait transaksi dan pembaruan layanan</li>
-          <li>Mencegah fraud dan menjaga keamanan platform</li>
-          <li>Meningkatkan pengalaman pengguna dan mengembangkan fitur baru</li>
-          <li>Mematuhi kewajiban hukum dan regulasi yang berlaku</li>
+          <li>Memvalidasi dan memproses pesanan produk digital secara otomatis.</li>
+          <li>Menyediakan layanan bantuan teknis dan menanggapi pertanyaan pengguna.</li>
+          <li>Mengirimkan informasi penting terkait status transaksi atau pemeliharaan sistem.</li>
+          <li>Melakukan pemantauan guna mencegah tindakan penipuan (fraud) dan aktivitas ilegal.</li>
+          <li>Menganalisis performa platform untuk meningkatkan kualitas layanan di masa mendatang.</li>
         </ul>
       </section>
 
       <section class="content-section">
-        <h2 class="section-title">3. Keamanan Data</h2>
+        <h2 class="section-title">3. Standar Keamanan Data</h2>
         <p class="section-text">
-          Kami menerapkan langkah-langkah keamanan teknis dan organisasi yang sesuai untuk melindungi data pribadi Anda:
+          Kami mengimplementasikan protokol keamanan berlapis untuk menjaga integritas data pribadi Anda:
         </p>
         <ul class="bullet-list">
-          <li>Enkripsi SSL/TLS untuk semua transmisi data</li>
-          <li>Server aman dengan firewall dan sistem monitoring 24/7</li>
-          <li>Akses terbatas ke data pribadi hanya untuk staf yang berwenang</li>
-          <li>Audit keamanan berkala dan pembaruan sistem</li>
+          <li>Enkripsi data end-to-end menggunakan sertifikat SSL/TLS terkini.</li>
+          <li>Penyimpanan data pada infrastruktur server yang terlindungi oleh firewall dan monitoring 24 jam.</li>
+          <li>Pembatasan akses data hanya bagi personel yang memiliki otorisasi fungsional.</li>
         </ul>
       </section>
 
       <section class="content-section">
-        <h2 class="section-title">4. Berbagi Informasi dengan Pihak Ketiga</h2>
-        <p class="section-text">Kami tidak menjual data pribadi Anda. Kami hanya membagikan informasi kepada:</p>
+        <h2 class="section-title">4. Pengungkapan kepada Pihak Ketiga</h2>
+        <p class="section-text">FeePay hanya akan membagikan data Anda kepada mitra strategis demi kebutuhan operasional transaksi:</p>
         <ul class="bullet-list">
-          <li><strong>Payment Gateway:</strong> Untuk memproses pembayaran (Midtrans, Xendit, dll)</li>
-          <li><strong>Provider Game:</strong> Untuk mengirimkan top up sesuai pesanan</li>
-          <li><strong>Pihak Berwenang:</strong> Jika diwajibkan oleh hukum atau untuk mencegah tindak kejahatan</li>
+          <li><strong>Penyedia Gerbang Pembayaran:</strong> Untuk memverifikasi dan memproses transaksi keuangan Anda secara aman.</li>
+          <li><strong>Penyedia Infrastruktur Digital:</strong> Untuk memastikan pengiriman produk digital sampai ke tujuan yang benar.</li>
+          <li><strong>Instansi Penegak Hukum:</strong> Apabila diwajibkan oleh peraturan perundang-undangan yang berlaku di Indonesia.</li>
         </ul>
+      </section>
+
+      <section class="content-section">
+        <h2 class="section-title">5. Kebijakan Cookies</h2>
         <p class="section-text">
-          Semua pihak ketiga yang kami gunakan wajib mematuhi standar keamanan dan privasi yang ketat.
+          Platform kami menggunakan teknologi cookies untuk mengoptimalkan pengalaman navigasi Anda, seperti mempersonalisasi konten dan menyimpan preferensi sesi. Anda dapat memilih untuk menonaktifkan cookies melalui pengaturan browser, namun hal ini dapat memengaruhi fungsionalitas tertentu pada platform.
         </p>
       </section>
 
       <section class="content-section">
-        <h2 class="section-title">5. Cookies</h2>
-        <p class="section-text">
-          Kami menggunakan cookies untuk meningkatkan pengalaman Anda. Cookies membantu kami:
-        </p>
+        <h2 class="section-title">6. Hak dan Kendali Pengguna</h2>
+        <p class="section-text">Sebagai pemilik data, Anda memiliki hak penuh untuk:</p>
         <ul class="bullet-list">
-          <li>Mengingat preferensi dan pengaturan Anda</li>
-          <li>Menganalisis traffic dan penggunaan platform</li>
-          <li>Menyediakan iklan yang relevan (jika ada)</li>
+          <li>Mengakses dan meninjau informasi pribadi yang tersimpan dalam sistem kami.</li>
+          <li>Melakukan pembaruan terhadap data yang tidak akurat atau memerlukan perubahan.</li>
+          <li>Mengajukan permohonan penghapusan akun serta data terkait sesuai dengan prosedur yang berlaku.</li>
         </ul>
+      </section>
+
+      <section class="content-section">
+        <h2 class="section-title">7. Retensi dan Periode Penyimpanan</h2>
         <p class="section-text">
-          Anda dapat mengatur browser untuk menolak cookies, namun beberapa fitur mungkin tidak berfungsi optimal.
+          Kami akan menyimpan data pribadi Anda selama periode pendaftaran akun masih aktif atau selama diperlukan untuk memenuhi kewajiban pelaporan administrasi dan perpajakan sesuai dengan ketentuan hukum yang berlaku.
         </p>
       </section>
 
       <section class="content-section">
-        <h2 class="section-title">6. Hak Pengguna</h2>
-        <p class="section-text">Anda memiliki hak untuk:</p>
-        <ul class="bullet-list">
-          <li><strong>Akses:</strong> Meminta salinan data pribadi yang kami simpan</li>
-          <li><strong>Perbaikan:</strong> Memperbarui atau memperbaiki data yang tidak akurat</li>
-          <li><strong>Penghapusan:</strong> Meminta penghapusan data pribadi Anda</li>
-          <li><strong>Pembatasan:</strong> Membatasi penggunaan data dalam kondisi tertentu</li>
-          <li><strong>Portabilitas:</strong> Meminta data dalam format yang dapat dipindahkan</li>
-        </ul>
+        <h2 class="section-title">8. Perubahan Kebijakan Privasi</h2>
         <p class="section-text">
-          Untuk menggunakan hak-hak ini, hubungi kami di <strong>privacy@feepay.com</strong>
-        </p>
-      </section>
-
-      <section class="content-section">
-        <h2 class="section-title">7. Retensi Data</h2>
-        <p class="section-text">
-          Kami menyimpan data pribadi Anda selama diperlukan untuk memberikan layanan dan mematuhi kewajiban hukum. 
-          Data transaksi disimpan minimal 5 tahun sesuai regulasi perpajakan Indonesia.
-        </p>
-      </section>
-
-      <section class="content-section">
-        <h2 class="section-title">8. Perubahan Kebijakan</h2>
-        <p class="section-text">
-          Kami dapat memperbarui Kebijakan Privasi ini dari waktu ke waktu. Perubahan signifikan akan kami informasikan 
-          melalui email atau notifikasi di platform. Tanggal "Terakhir diperbarui" di atas menunjukkan versi terkini.
+          FeePay berhak melakukan pembaruan pada Kebijakan Privasi ini sewaktu-waktu. Setiap perubahan akan kami umumkan melalui platform atau kanal komunikasi resmi lainnya. Penggunaan layanan secara berkelanjutan setelah pembaruan dianggap sebagai bentuk persetujuan atas perubahan tersebut.
         </p>
       </section>
 
       <section class="content-section contact-section">
-        <h2 class="section-title">9. Hubungi Kami</h2>
+        <h2 class="section-title">9. Informasi Kontak</h2>
         <p class="section-text">
-          Jika Anda memiliki pertanyaan tentang Kebijakan Privasi ini atau ingin menggunakan hak Anda, hubungi kami:
+          Apabila Anda memiliki pertanyaan lebih lanjut mengenai kebijakan ini, silakan hubungi kami melalui korespondensi resmi berikut:
         </p>
         <div class="contact-box">
           <div class="contact-item">
-            <strong>Email:</strong> fetrusmeilanoilham@gmail.com
+            <strong>Surat Elektronik:</strong> fetrusmeilanoilham@gmail.com
           </div>
           <div class="contact-item">
-            <strong>WhatsApp:</strong> +62 895-3287-00079
+            <strong>Layanan WhatsApp:</strong> +62 895-3287-00079
           </div>
           <div class="contact-item">
-            <strong>Alamat:</strong> Jl. desa sugih waras 
+            <strong>Lokasi Kantor:</strong> Jl. Desa Sugih Waras, Indonesia
           </div>
         </div>
       </section>

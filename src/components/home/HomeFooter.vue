@@ -5,7 +5,7 @@
         <router-link to="/" class="brand-logo">
           <span class="fee">FEE</span><span class="pay">PAY</span>
         </router-link>
-        <p class="brand-desc">Platform top up game & pulsa terpercaya. Proses instan, harga terjangkau, layanan 24/7.</p>
+        <p class="brand-desc">Layanan transaksi digital terintegrasi dengan pemrosesan otomatisasi 24 jam. Standar keamanan tinggi dengan jaminan layanan terpercaya.</p>
       </div>
 
       <div class="footer-divider" />

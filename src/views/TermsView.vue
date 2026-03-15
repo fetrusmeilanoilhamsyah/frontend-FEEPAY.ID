@@ -13,181 +13,117 @@
     <!-- Content -->
     <div class="page-content">
       
-      <div class="update-date">Berlaku sejak: 1 Januari 2025</div>
+      <div class="update-date">Versi 1.1 — Berlaku efektif sejak: 15 Maret 2026</div>
 
       <section class="content-section">
         <p class="intro-text">
-          Dengan menggunakan layanan FeePay, Anda setuju untuk terikat dengan Syarat dan Ketentuan berikut. 
-          Mohon baca dengan seksama sebelum melakukan transaksi.
+          Dengan mengakses dan menggunakan layanan pada platform FeePay, Anda menyatakan telah membaca, memahami, dan menyetujui untuk terikat secara hukum dengan Syarat dan Ketentuan di bawah ini.
         </p>
       </section>
 
       <section class="content-section">
-        <h2 class="section-title">1. Definisi</h2>
+        <h2 class="section-title">1. Ketentuan Umum dan Definisi</h2>
         <ul class="bullet-list">
-          <li><strong>"Platform"</strong> adalah website dan aplikasi mobile FeePay</li>
-          <li><strong>"Pengguna"</strong> adalah setiap orang yang mengakses dan menggunakan layanan kami</li>
-          <li><strong>"Produk"</strong> adalah layanan digital yang tersedia di platform (top up game, pulsa, token PLN, dll)</li>
-          <li><strong>"Transaksi"</strong> adalah proses pembelian produk melalui platform</li>
+          <li><strong>Platform:</strong> Merujuk pada situs web resmi (feepay.com) dan seluruh ekosistem layanan digital milik FeePay.</li>
+          <li><strong>Pengguna:</strong> Pihak yang menggunakan layanan Platform untuk melakukan transaksi produk digital.</li>
+          <li><strong>Produk Digital:</strong> Seluruh item virtual yang tersedia, termasuk namun tidak terbatas pada top up game, pulsa, dan layanan berlangganan.</li>
+          <li><strong>Transaksi:</strong> Keseluruhan proses pemesanan, pembayaran, hingga pengiriman konten digital kepada Pengguna.</li>
         </ul>
       </section>
 
       <section class="content-section">
-        <h2 class="section-title">2. Registrasi dan Akun</h2>
-        <p class="section-text">2.1. Untuk menggunakan beberapa layanan, Anda mungkin perlu membuat akun dengan informasi yang akurat dan lengkap.</p>
-        <p class="section-text">2.2. Anda bertanggung jawab menjaga kerahasiaan password dan semua aktivitas yang terjadi di akun Anda.</p>
-        <p class="section-text">2.3. Anda harus berusia minimal 17 tahun atau memiliki izin dari orang tua/wali untuk menggunakan layanan kami.</p>
-        <p class="section-text">2.4. Satu nomor telepon hanya dapat digunakan untuk satu akun.</p>
+        <h2 class="section-title">2. Pendaftaran dan Keamanan Akun</h2>
+        <p class="section-text">2.1. Pengguna wajib memberikan informasi yang akurat, terkini, dan lengkap selama proses pendaftaran atau penggunaan layanan.</p>
+        <p class="section-text">2.2. Keamanan kredensial akun, termasuk kata sandi (password), sepenuhnya menjadi tanggung jawab Pengguna. FeePay tidak bertanggung jawab atas kerugian akibat kelalaian Pengguna dalam menjaga kerahasiaan akun.</p>
+        <p class="section-text">2.3. Pengguna menyatakan telah berusia cakap menurut hukum atau menggunakan Platform di bawah pengawasan orang tua/wali yang sah.</p>
       </section>
 
       <section class="content-section">
-        <h2 class="section-title">3. Transaksi dan Pembayaran</h2>
+        <h2 class="section-title">3. Tata Cara Transaksi dan Pembayaran</h2>
         
-        <h3 class="sub-title">3.1. Proses Pemesanan</h3>
+        <h3 class="sub-title">3.1. Mekanisme Pemesanan</h3>
         <ul class="bullet-list">
-          <li>Pilih produk yang diinginkan dan masukkan data yang diperlukan dengan benar</li>
-          <li>Pilih metode pembayaran dan selesaikan pembayaran sesuai instruksi</li>
-          <li>Transaksi akan diproses otomatis setelah pembayaran dikonfirmasi</li>
+          <li>Pengguna wajib memastikan data tujuan (seperti User ID Game atau Nomor Pelanggan) telah diinput dengan benar sebelum melanjutkan ke tahap pembayaran.</li>
+          <li>Pesanan akan diproses secara otomatis oleh sistem setelah verifikasi pembayaran berhasil diterima.</li>
         </ul>
 
-        <h3 class="sub-title">3.2. Metode Pembayaran</h3>
-        <p class="section-text">Kami menerima pembayaran melalui:</p>
+        <h3 class="sub-title">3.2. Kanal Pembayaran Resmi</h3>
+        <p class="section-text">FeePay menyediakan berbagai metode pembayaran yang sah meliputi transfer bank, dompet digital (e-wallet), serta sistem QRIS. Pengguna diimbau untuk hanya melakukan pembayaran melalui instruksi resmi yang tertera pada Platform.</p>
+
+        <h3 class="sub-title">3.3. Kebijakan Harga</h3>
         <ul class="bullet-list">
-          <li>Transfer Bank (BCA, Mandiri, BNI, BRI, Permata, CIMB)</li>
-          <li>E-Wallet (GoPay, OVO, Dana, ShopeePay, LinkAja)</li>
-          <li>QRIS (scan dengan aplikasi mobile banking atau e-wallet)</li>
-          <li>Virtual Account</li>
-          <li>Minimarket (Alfamart, Indomaret)</li>
+          <li>Seluruh denominasi harga menggunakan mata uang Rupiah (IDR).</li>
+          <li>Harga produk bersifat dinamis dan dapat berubah sesuai dengan kebijakan operasional serta fluktuasi biaya dari penyedia layanan asal (provider).</li>
         </ul>
 
-        <h3 class="sub-title">3.3. Harga</h3>
+        <h3 class="sub-title">3.4. Estimasi Waktu Layanan</h3>
         <ul class="bullet-list">
-          <li>Semua harga dalam Rupiah (IDR) dan sudah termasuk pajak jika ada</li>
-          <li>Harga dapat berubah sewaktu-waktu tanpa pemberitahuan sebelumnya</li>
-          <li>Harga yang berlaku adalah harga pada saat transaksi diselesaikan</li>
-        </ul>
-
-        <h3 class="sub-title">3.4. Waktu Pemrosesan</h3>
-        <ul class="bullet-list">
-          <li>Transaksi otomatis: 1-5 menit setelah pembayaran dikonfirmasi</li>
-          <li>Transaksi manual: maksimal 1x24 jam (jam kerja)</li>
-          <li>Delay dapat terjadi pada peak hours atau gangguan sistem provider</li>
+          <li>Proses automasi umumnya memerlukan waktu 1-5 menit di bawah kondisi sistem normal.</li>
+          <li>Keterlambatan dapat terjadi apabila terdapat kendala teknis dari pihak ketiga atau periode pemeliharaan sistem.</li>
         </ul>
       </section>
 
       <section class="content-section">
-        <h2 class="section-title">4. Kebijakan Refund dan Pembatalan</h2>
+        <h2 class="section-title">4. Kebijakan Pengembalian Dana (Refund)</h2>
         
-        <h3 class="sub-title">4.1. Tidak Dapat Di-refund</h3>
-        <p class="section-text">Produk digital tidak dapat di-refund atau dibatalkan setelah:</p>
-        <ul class="bullet-list">
-          <li>Pembayaran telah dikonfirmasi dan sedang diproses</li>
-          <li>Produk telah berhasil dikirim ke akun/nomor tujuan</li>
-        </ul>
+        <h3 class="sub-title">4.1. Transaksi Final</h3>
+        <p class="section-text">Seluruh transaksi Produk Digital pada Platform bersifat final. Pengembalian dana atau pembatalan transaksi tidak dapat dilakukan apabila produk telah berhasil dikirimkan ke data tujuan yang diberikan Pengguna.</p>
 
-        <h3 class="sub-title">4.2. Refund Dapat Diproses Jika:</h3>
-        <ul class="bullet-list">
-          <li>Kesalahan sistem yang menyebabkan double payment</li>
-          <li>Produk tidak diterima dalam 1x24 jam dan bukan kesalahan input data</li>
-          <li>Server provider down dalam jangka waktu lama</li>
-        </ul>
+        <h3 class="sub-title">4.2. Ketentuan Khusus Refund</h3>
+        <p class="section-text">Permohonan pengembalian dana hanya akan dipertimbangkan apabila terjadi kegagalan sistematis pada Platform yang menyebabkan transaksi tidak terkirim dalam waktu 1x24 jam, atau jika terdapat kesalahan teknis ganda pada proses pendebitan biaya.</p>
 
-        <h3 class="sub-title">4.3. Proses Refund</h3>
-        <ul class="bullet-list">
-          <li>Hubungi customer service dengan menyertakan bukti transaksi</li>
-          <li>Refund akan diproses dalam 3-7 hari kerja setelah disetujui</li>
-          <li>Dana akan dikembalikan ke metode pembayaran yang sama</li>
-        </ul>
+        <h3 class="sub-title">4.3. Prosedur Klaim</h3>
+        <p class="section-text">Pengguna wajib melampirkan bukti transaksi yang sah kepada tim layanan bantuan untuk keperluan investigasi sebelum refund disetujui dan diproses ke metode pembayaran asal.</p>
       </section>
 
       <section class="content-section">
-        <h2 class="section-title">5. Tanggung Jawab Pengguna</h2>
-        <p class="section-text">Pengguna bertanggung jawab untuk:</p>
+        <h2 class="section-title">5. Batasan Tanggung Jawab</h2>
+        <p class="section-text">FeePay berperan sebagai platform perantara. Kami tidak bertanggung jawab atas:</p>
         <ul class="bullet-list">
-          <li>Memastikan data yang diinput (ID game, nomor HP, nomor meter PLN) <strong>100% benar</strong></li>
-          <li>Tidak melakukan transaksi ilegal atau melanggar hukum</li>
-          <li>Tidak menggunakan platform untuk fraud, spam, atau aktivitas yang merugikan</li>
-          <li>Tidak melakukan chargeback atau dispute tanpa alasan yang jelas</li>
-          <li>Menyimpan bukti transaksi hingga produk diterima</li>
+          <li>Kesalahan pengiriman akibat ketidaktelitian Pengguna dalam memasukkan data tujuan.</li>
+          <li>Perubahan kebijakan atau penangguhan akun oleh pengembang game atau penyedia layanan asal pihak ketiga.</li>
+          <li>Kerugian yang timbul akibat gangguan jaringan telekomunikasi atau force majeure lainnya.</li>
         </ul>
         <p class="section-text important-note">
-          ⚠️ <strong>PENTING:</strong> Kami tidak bertanggung jawab atas kesalahan input data oleh pengguna. 
-          Periksa kembali data sebelum melakukan pembayaran.
+          <strong>Peringatan Penting:</strong> Mohon verifikasi kembali seluruh rincian pesanan Anda. Kami tidak memiliki kewajiban untuk memberikan ganti rugi atas transaksi yang gagal akibat kesalahan input data oleh Pengguna.
         </p>
       </section>
 
       <section class="content-section">
-        <h2 class="section-title">6. Larangan Penggunaan</h2>
-        <p class="section-text">Pengguna dilarang:</p>
-        <ul class="bullet-list">
-          <li>Menggunakan platform untuk tujuan ilegal atau melanggar hukum</li>
-          <li>Melakukan transaksi fraud atau menggunakan metode pembayaran curian</li>
-          <li>Menyalahgunakan promo atau voucher dengan cara yang tidak sah</li>
-          <li>Melakukan scraping, hacking, atau mengakses sistem tanpa izin</li>
-          <li>Menggunakan bot atau automated tools untuk transaksi</li>
-          <li>Menjual kembali produk kami tanpa izin resmi sebagai reseller</li>
-        </ul>
-        <p class="section-text">
-          Pelanggaran akan mengakibatkan <strong>penutupan akun permanen</strong> tanpa refund.
-        </p>
+        <h2 class="section-title">6. Standar Prilaku Pengguna</h2>
+        <p class="section-text">Pengguna dilarang keras untuk melakukan aktivitas manipulasi sistem, penggunaan akses ilegal, penyalahgunaan instrumen pembayaran milik pihak lain, serta tindakan lain yang dapat merugikan ekosistem FeePay. Pelanggaran berat akan ditindak melalui penangguhan akses permanen tanpa kewajiban pengembalian sisa saldo atau dana.</p>
       </section>
 
       <section class="content-section">
-        <h2 class="section-title">7. Batasan Tanggung Jawab</h2>
-        <ul class="bullet-list">
-          <li>FeePay adalah platform perantara antara pengguna dan provider produk digital</li>
-          <li>Kami tidak bertanggung jawab atas kebijakan, perubahan, atau penghentian layanan dari provider</li>
-          <li>Kami tidak bertanggung jawab atas kerugian akibat kelalaian pengguna (salah input data, dll)</li>
-          <li>Kami tidak bertanggung jawab atas force majeure (bencana alam, perang, gangguan internet, dll)</li>
-          <li>Liability kami terbatas pada nilai transaksi yang gagal</li>
-        </ul>
-      </section>
-
-      <section class="content-section">
-        <h2 class="section-title">8. Perubahan Layanan</h2>
+        <h2 class="section-title">7. Perubahan Syarat dan Ketentuan</h2>
         <p class="section-text">
-          Kami berhak untuk mengubah, menangguhkan, atau menghentikan layanan (sebagian atau seluruh) kapan saja 
-          dengan atau tanpa pemberitahuan sebelumnya. Perubahan signifikan akan diinformasikan melalui platform atau email.
-        </p>
-      </section>
-
-      <section class="content-section">
-        <h2 class="section-title">9. Hukum yang Berlaku</h2>
-        <p class="section-text">
-          Syarat dan Ketentuan ini diatur dan ditafsirkan sesuai dengan hukum Republik Indonesia. 
-          Setiap perselisihan yang timbul akan diselesaikan melalui musyawarah atau jalur hukum di Pengadilan Jakarta Selatan.
-        </p>
-      </section>
-
-      <section class="content-section">
-        <h2 class="section-title">10. Perubahan Syarat & Ketentuan</h2>
-        <p class="section-text">
-          Kami dapat memperbarui Syarat dan Ketentuan ini kapan saja. Perubahan akan efektif setelah dipublikasikan di platform. 
-          Dengan terus menggunakan layanan setelah perubahan, Anda dianggap menyetujui Syarat dan Ketentuan yang baru.
+          FeePay berhak memperbarui dokumen Syarat dan Ketentuan ini guna menyesuaikan dengan dinamika operasional dan peraturan hukum. Pengguna disarankan untuk meninjau halaman ini secara berkala.
         </p>
       </section>
 
       <section class="content-section contact-section">
-        <h2 class="section-title">11. Kontak</h2>
+        <h2 class="section-title">8. Informasi Bantuan</h2>
         <p class="section-text">
-          Jika Anda memiliki pertanyaan tentang Syarat dan Ketentuan ini, hubungi kami:
+          Untuk pertanyaan lebih lanjut mengenai ketentuan ini, silakan hubungi layanan pelanggan kami:
         </p>
         <div class="contact-box">
           <div class="contact-item">
-            <strong>Customer Service:</strong> +62 812-3456-7890 (WhatsApp)
+            <strong>Layanan WhatsApp:</strong> +62 895-3287-00079
           </div>
           <div class="contact-item">
-            <strong>Email:</strong> support@feepay.com
+            <strong>Surat Elektronik:</strong> fetrusmeilanoilham@gmail.com
           </div>
           <div class="contact-item">
-            <strong>Jam Operasional:</strong> 24/7 (Respon maksimal 1x24 jam)
+            <strong>Waktu Operasional:</strong> 24 Jam (Setiap Hari)
           </div>
         </div>
       </section>
 
       <div class="agreement-box">
-        <p>Dengan menggunakan layanan FeePay, Anda menyatakan telah membaca, memahami, dan menyetujui seluruh Syarat dan Ketentuan di atas.</p>
+        <p>Dengan melanjutkan penggunaan layanan, Anda menyetujui seluruh butir Syarat dan Ketentuan yang berlaku pada ekosistem FeePay.</p>
       </div>
+
+
 
     </div>
   </div>
