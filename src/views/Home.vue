@@ -53,26 +53,45 @@
         <BannerSlider v-else @action="handleBannerAction" />
       </div>
 
-      <!-- ANTIGRAVITY FLOATING HUB -->
+      <!-- ANTIGRAVITY FLOATING HUB (Infinite Flow) -->
       <div class="antigravity-hub reveal" v-reveal>
-        <button
-          v-for="(pill, idx) in trustPills"
-          :key="pill.label"
-          class="anti-pill"
-          :class="'wave-' + ((idx % 4) + 1)"
-          :style="{ '--delay': (idx * 0.4) + 's' }"
-          @click="onPillTap($event, pill)"
-        >
-          <!-- Burst Dots (Preserved) -->
-          <span class="pdot pd1"></span><span class="pdot pd2"></span>
-          <span class="pdot pd3"></span><span class="pdot pd4"></span>
+        <div class="anti-flow-track">
+          <!-- First Set -->
+          <button
+            v-for="(pill, idx) in trustPills"
+            :key="'p1-' + idx"
+            class="anti-pill"
+            :class="'wave-' + ((idx % 4) + 1)"
+            :style="{ '--delay': (idx * 0.4) + 's' }"
+            @click="onPillTap($event, pill)"
+          >
+            <!-- Enhanced Apple-Style Burst (12 Dots) -->
+            <span v-for="n in 12" :key="n" :class="'pdot pd' + n"></span>
+            
+            <div class="anti-pill-glass">
+              <img :src="pill.icon" :alt="pill.label" class="anti-pill-img"
+                @error="(e) => e.target.style.display='none'" />
+            </div>
+            <span class="anti-pill-label">{{ pill.label }}</span>
+          </button>
           
-          <div class="anti-pill-glass">
-            <img :src="pill.icon" :alt="pill.label" class="anti-pill-img"
-              @error="(e) => e.target.style.display='none'" />
-          </div>
-          <span class="anti-pill-label">{{ pill.label }}</span>
-        </button>
+          <!-- Duplicated Set for Seamless Loop -->
+          <button
+            v-for="(pill, idx) in trustPills"
+            :key="'p2-' + idx"
+            class="anti-pill"
+            :class="'wave-' + ((idx % 4) + 1)"
+            :style="{ '--delay': (idx * 0.4) + 's' }"
+            @click="onPillTap($event, pill)"
+          >
+            <span v-for="n in 12" :key="n" :class="'pdot pd' + n"></span>
+            <div class="anti-pill-glass">
+              <img :src="pill.icon" :alt="pill.label" class="anti-pill-img"
+                @error="(e) => e.target.style.display='none'" />
+            </div>
+            <span class="anti-pill-label">{{ pill.label }}</span>
+          </button>
+        </div>
       </div>
 
       <!-- PENDING ORDER NOTIF (Original Style) -->
@@ -596,13 +615,30 @@ onMounted(async () => {
 
 /* ANTIGRAVITY FLOATING HUB */
 .antigravity-hub {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 12px;
-  padding: 30px 10px;
+  position: relative;
+  overflow: hidden;
+  padding: 30px 0;
   margin-bottom: 20px;
   min-height: 120px;
+  mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+}
+
+.anti-flow-track {
+  display: flex;
+  width: fit-content;
+  gap: 24px;
+  animation: anti-drift 25s linear infinite;
+  padding-left: 20px;
+}
+
+.antigravity-hub:hover .anti-flow-track {
+  animation-play-state: paused;
+}
+
+@keyframes anti-drift {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
 .anti-pill {
@@ -617,22 +653,23 @@ onMounted(async () => {
   animation: anti-float 4s ease-in-out infinite;
   animation-delay: var(--delay);
   transition: transform 0.3s var(--ease-spring);
+  flex-shrink: 0;
 }
 
 .anti-pill-glass {
-  width: 56px;
-  height: 56px;
-  background: rgba(255, 255, 255, 0.9);
+  width: 58px;
+  height: 58px;
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(22, 163, 74, 0.1);
+  border: 1.5px solid rgba(22, 163, 74, 0.12);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: 
-    0 8px 20px rgba(0, 0, 0, 0.04),
-    inset 0 1px 1px rgba(255, 255, 255, 0.8);
+    0 10px 25px rgba(0, 0, 0, 0.04),
+    inset 0 1px 1px rgba(255, 255, 255, 0.9);
   transition: all 0.4s var(--ease-spring);
 }
 
@@ -640,12 +677,12 @@ onMounted(async () => {
   background: #fff;
   transform: scale(1.15) translateY(-5px);
   border-color: var(--primary, #16a34a);
-  box-shadow: 0 15px 30px rgba(22, 163, 74, 0.12);
+  box-shadow: 0 15px 35px rgba(22, 163, 74, 0.15);
 }
 
 .anti-pill-img {
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   object-fit: contain;
 }
 
@@ -654,7 +691,7 @@ onMounted(async () => {
   font-weight: 800;
   color: var(--foreground, #111827);
   white-space: nowrap;
-  opacity: 0.7;
+  opacity: 0.6;
   transition: opacity 0.3s;
 }
 
@@ -677,25 +714,34 @@ onMounted(async () => {
   50% { transform: translateY(calc(var(--y) - 12px)); }
 }
 
-/* BURST EFFECT — PRESERVED */
+/* APPLE-STYLE BLACK BURST (12 DOTS) */
 .pdot {
   position: absolute;
-  width: 4px; height: 4px;
+  width: 3.5px; height: 3.5px;
   border-radius: 50%;
-  background: var(--primary, #16a34a);
+  background: #111827; /* Apple Style Black */
   top: 40%; left: 50%;
   opacity: 0;
   pointer-events: none;
   z-index: 10;
 }
-.anti-pill.burst .pd1 { animation: pill-dot 0.45s ease-out forwards 0.00s; --a: 0deg;   }
-.anti-pill.burst .pd2 { animation: pill-dot 0.45s ease-out forwards 0.02s; --a: 90deg;  }
-.anti-pill.burst .pd3 { animation: pill-dot 0.45s ease-out forwards 0.04s; --a: 180deg; }
-.anti-pill.burst .pd4 { animation: pill-dot 0.45s ease-out forwards 0.06s; --a: 270deg; }
 
-@keyframes pill-dot {
-  0%   { transform: translate(-50%,-50%) rotate(var(--a)) translateY(0)    scale(1);  opacity: 0.7; }
-  100% { transform: translate(-50%,-50%) rotate(var(--a)) translateY(-15px) scale(0); opacity: 0;   }
+.anti-pill.burst .pd1  { animation: apple-burst 0.5s ease-out forwards 0.00s; --a: 0deg;   }
+.anti-pill.burst .pd2  { animation: apple-burst 0.5s ease-out forwards 0.02s; --a: 30deg;  }
+.anti-pill.burst .pd3  { animation: apple-burst 0.5s ease-out forwards 0.04s; --a: 60deg;  }
+.anti-pill.burst .pd4  { animation: apple-burst 0.5s ease-out forwards 0.06s; --a: 90deg;  }
+.anti-pill.burst .pd5  { animation: apple-burst 0.5s ease-out forwards 0.00s; --a: 120deg; }
+.anti-pill.burst .pd6  { animation: apple-burst 0.5s ease-out forwards 0.02s; --a: 150deg; }
+.anti-pill.burst .pd7  { animation: apple-burst 0.5s ease-out forwards 0.04s; --a: 180deg; }
+.anti-pill.burst .pd8  { animation: apple-burst 0.5s ease-out forwards 0.06s; --a: 210deg; }
+.anti-pill.burst .pd9  { animation: apple-burst 0.5s ease-out forwards 0.00s; --a: 240deg; }
+.anti-pill.burst .pd10 { animation: apple-burst 0.5s ease-out forwards 0.02s; --a: 270deg; }
+.anti-pill.burst .pd11 { animation: apple-burst 0.5s ease-out forwards 0.04s; --a: 300deg; }
+.anti-pill.burst .pd12 { animation: apple-burst 0.5s ease-out forwards 0.06s; --a: 330deg; }
+
+@keyframes apple-burst {
+  0%   { transform: translate(-50%,-50%) rotate(var(--a)) translateY(0)    scale(1);  opacity: 0.8; }
+  100% { transform: translate(-50%,-50%) rotate(var(--a)) translateY(-22px) scale(0); opacity: 0;   }
 }
 
 /* NOTIF BAR (Restore Original) */
