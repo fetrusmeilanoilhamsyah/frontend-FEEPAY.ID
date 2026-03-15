@@ -206,23 +206,46 @@
 
       <!-- CS HELP BUTTON -->
       <!-- CS SECTION -->
-      <div class="section">
+      <div class="section section--nexus">
         <div class="section-header">
           <div class="section-title-wrap">
-            <img src="/icons/section/cs.webp" class="section-icon" alt=""
-              @error="(e) => e.target.style.display='none'" />
+            <div class="section-icon-wrap nexus-ring-wrap">
+              <div class="nexus-hologram-ring"></div>
+              <img src="/icons/section/cs.webp" class="section-icon" alt=""
+                @error="(e) => e.target.style.display='none'" />
+            </div>
             <div>
               <h2 class="section-title">Pusat Bantuan</h2>
               <p class="section-sub">Dukungan teknis responsif tersedia 24 jam setiap hari</p>
             </div>
           </div>
         </div>
-        <div class="cs-card" @click="openChat">
-          <span class="cs-card-label">Chat langsung dengan CS kami</span>
-          <button class="cs-card-btn">
-            Chat CS
-            <ChevronRight :size="14" />
-          </button>
+
+        <div class="cs-card-nexus group" @click="openChat">
+          <!-- Internal Holographic Particles -->
+          <div class="cs-nexus-bg">
+            <AntigravityParticles :particle-count="15" absolute class="opacity-30" />
+          </div>
+
+          <div class="cs-nexus-content">
+            <div class="cs-nexus-info">
+              <span class="cs-nexus-label">Chat langsung dengan CS kami</span>
+              <div class="cs-status-indicator">
+                <span class="status-pulse"></span>
+                <span class="status-text">Sekarang Aktif</span>
+              </div>
+            </div>
+            
+            <button class="cs-nexus-btn">
+              <span>Chat CS</span>
+              <div class="cs-btn-icon">
+                <ChevronRight :size="16" />
+              </div>
+            </button>
+          </div>
+          
+          <!-- Bottom Glow Effect -->
+          <div class="cs-nexus-glow"></div>
         </div>
       </div>
 
@@ -1102,41 +1125,167 @@ onMounted(async () => {
 }
 .game-empty-btn:hover { background: #15803d; }
 
-/* CS CARD */
-.cs-card {
-  background: var(--card, #fff);
-  border: 1px solid var(--border, #e5e7eb);
-  border-left: 3px solid #16a34a;
-  border-radius: 18px;
-  padding: 14px 16px;
+/* SUPPORT NEXUS REDESIGN */
+.section--nexus {
+  margin-top: 24px;
+  position: relative;
+}
+
+.nexus-ring-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nexus-hologram-ring {
+  position: absolute;
+  inset: -6px;
+  border: 1.5px dashed rgba(22, 163, 74, 0.4);
+  border-radius: 50%;
+  animation: nexus-rotate 8s linear infinite;
+  opacity: 0.6;
+}
+
+@keyframes nexus-rotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.cs-card-nexus {
+  position: relative;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(240, 253, 244, 0.9));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(22, 163, 74, 0.15);
+  border-radius: 20px;
+  padding: 16px 20px;
   cursor: pointer;
-  transition: all 0.2s;
+  overflow: hidden;
+  display: flex;
+  transition: all 0.5s var(--ease-spring);
+  box-shadow: 
+    0 10px 30px rgba(0, 0, 0, 0.04),
+    inset 0 1px 1px rgba(255, 255, 255, 0.8);
+}
+
+.cs-card-nexus:hover {
+  transform: translateY(-4px) scale(1.01);
+  border-color: var(--primary, #16a34a);
+  box-shadow: 
+    0 20px 40px rgba(22, 163, 74, 0.1),
+    0 0 0 1px rgba(22, 163, 74, 0.1);
+}
+
+.cs-nexus-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.cs-nexus-content {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  width: 100%;
 }
-.cs-card:hover {
-  border-color: #16a34a;
-  box-shadow: 0 4px 16px rgba(22,163,74,0.1);
-  transform: translateY(-1px);
+
+.cs-nexus-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
-.cs-card-label {
+
+.cs-nexus-label {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--foreground, #111827);
+  letter-spacing: -0.01em;
+}
+
+.cs-status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.status-pulse {
+  width: 6px; height: 6px;
+  background: var(--primary, #16a34a);
+  border-radius: 50%;
+  position: relative;
+}
+
+.status-pulse::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  background: var(--primary, #16a34a);
+  opacity: 0.4;
+  animation: nexus-pulse 2s infinite;
+}
+
+@keyframes nexus-pulse {
+  0%   { transform: scale(1); opacity: 0.4; }
+  100% { transform: scale(3); opacity: 0;   }
+}
+
+.status-text {
+  font-size: 0.625rem;
+  font-weight: 800;
+  color: var(--primary, #16a34a);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.cs-nexus-btn {
+  background: var(--primary, #16a34a);
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 14px;
   font-size: 0.8125rem;
-  font-weight: 500;
-  color: var(--muted-foreground, #6b7280);
-  flex: 1;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 8px 20px rgba(22, 163, 74, 0.25);
+  transition: all 0.3s var(--ease-spring);
 }
-.cs-card-btn {
-  display: flex; align-items: center; gap: 4px;
-  padding: 9px 16px;
-  background: #16a34a; color: #fff;
-  border: none; border-radius: 999px;
-  font-size: 0.8125rem; font-weight: 700;
-  cursor: pointer; transition: all 0.2s;
-  white-space: nowrap; flex-shrink: 0;
+
+.cs-card-nexus:hover .cs-nexus-btn {
+  transform: translateX(4px) scale(1.05);
+  box-shadow: 0 12px 25px rgba(22, 163, 74, 0.35);
 }
-.cs-card-btn:hover { background: #15803d; }
+
+.cs-btn-icon {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px; height: 20px;
+}
+
+.cs-nexus-glow {
+  position: absolute;
+  bottom: -40px; left: 50%;
+  width: 120%; height: 60px;
+  background: radial-gradient(circle, rgba(22, 163, 74, 0.15) 0%, transparent 70%);
+  transform: translateX(-50%);
+  filter: blur(20px);
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+.cs-card-nexus:hover .cs-nexus-glow {
+  opacity: 1;
+}
 
 /* TOAST */
 .toast {
