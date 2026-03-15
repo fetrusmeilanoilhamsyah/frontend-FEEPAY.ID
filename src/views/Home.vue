@@ -128,7 +128,14 @@
         
         <div class="service-grid-premium">
           <router-link v-for="(s, idx) in services" :key="s.to" :to="s.to" 
-            class="service-card-premium reveal" :class="'stagger-' + ((idx % 4) + 1)">
+            class="service-card-premium reveal reveal--up" 
+            v-reveal
+            :style="{ 
+              '--idx': idx,
+              '--p-delay': (idx * 0.1) + 's',
+              transform: `translateY(${scrollY * (0.02 + (idx % 2) * 0.02)}px)` 
+            }"
+          >
             <div class="service-icon-glass" :style="{ '--service-bg': s.bg }">
               <img :src="s.img" :alt="s.label" class="service-img-premium" />
               <div v-if="s.badge" class="service-badge-premium">{{ s.badge }}</div>
@@ -831,8 +838,21 @@ onMounted(async () => {
   align-items: center;
   gap: 10px;
   text-decoration: none;
-  transition: all 0.4s var(--ease-out-expo);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
+              transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
+  will-change: transform, opacity;
+}
+
+.service-card-premium.reveal--up {
+  opacity: 0;
+  transform: translateY(30px) scale(0.9);
+}
+
+.service-card-premium.reveal--up.active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition-delay: var(--p-delay, 0s);
 }
 
 .service-card-premium:hover {
