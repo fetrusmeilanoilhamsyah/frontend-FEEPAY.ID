@@ -66,16 +66,29 @@ api.interceptors.response.use(
           return Promise.reject({ type: 'pin_error', message: 'PIN Admin Salah Boss!' })
         }
 
-        // Hanya hapus auth storage jika endpoint terindikasi /admin
-        if (error.config.url?.includes('/admin')) {
+        // 1. Cek jika ini request admin atau sedang di area admin
+        const isAdminRequest = error.config.url?.includes('/admin') || window.location.pathname.includes('/admin')
+        
+        if (isAdminRequest) {
           localStorage.removeItem('feepay_token')
           localStorage.removeItem('feepay_token_expiry')
           sessionStorage.removeItem('feepay_admin_pin')
           
-          // Redirect ke login jika bukan di halaman login
           if (!window.location.pathname.includes('login')) {
             window.location.href = '/admin/login'
           }
+        } else {
+          // 2. Jika customer, hapus token customer
+          localStorage.removeItem('feepay_user_token')
+          localStorage.removeItem('feepay_user_data')
+          
+          // Optional: Kirim event logout supaya store bisa reset
+          window.dispatchEvent(new CustomEvent('feepay-logout'))
+          
+          // Redirect ke login customer (opsional, tergantung UX)
+          // if (!window.location.pathname.includes('login')) {
+          //   window.location.href = '/login'
+          // }
         }
         break
 

@@ -288,7 +288,7 @@
         <div class="section-header">
           <div class="section-title-wrap">
             <div class="section-icon-bg">
-              <img src="/icons/section/faq.webp" class="section-icon" alt="FAQ"
+              <img src="/icons/section/layanan.webp" class="section-icon" alt="FAQ"
                 @error="(e) => e.target.style.display='none'" />
             </div>
             <div>
