@@ -15,24 +15,24 @@
           <span class="ripple-ring tr1"></span><span class="ripple-ring tr2"></span>
           <span class="dot td1"></span><span class="dot td2"></span>
           <span class="dot td3"></span><span class="dot td4"></span>
-          <img :src="isDark() ? '/icons/theme-light.webp' : '/icons/theme-dark.webp'"
-            class="hbtn-icon" alt="theme" @error="(e) => e.target.style.display='none'" />
+          <transition name="scale" mode="out-in">
+            <Moon v-if="isDark()" :size="20" class="hbtn-icon-lucide" />
+            <Sun v-else :size="20" class="hbtn-icon-lucide" />
+          </transition>
         </button>
         <!-- Transaksi -->
         <button class="header-btn hbtn" @click="onBtnTap($event, () => router.push('/transactions'))" aria-label="Transaksi">
           <span class="ripple-ring tr1"></span><span class="ripple-ring tr2"></span>
           <span class="dot td1"></span><span class="dot td2"></span>
           <span class="dot td3"></span><span class="dot td4"></span>
-          <img src="/icons/nav/history.webp" class="hbtn-icon" alt="transaksi"
-            @error="(e) => e.target.style.display='none'" />
+          <History :size="20" class="hbtn-icon-lucide" />
         </button>
         <!-- Profil -->
         <button class="header-btn hbtn" @click="onBtnTap($event, () => router.push('/profile'))" aria-label="Profil">
           <span class="ripple-ring tr1"></span><span class="ripple-ring tr2"></span>
           <span class="dot td1"></span><span class="dot td2"></span>
           <span class="dot td3"></span><span class="dot td4"></span>
-          <img src="/icons/nav/profile.webp" class="hbtn-icon" alt="profil"
-            @error="(e) => e.target.style.display='none'" />
+          <User :size="20" class="hbtn-icon-lucide" />
         </button>
       </div>
     </div>
@@ -81,7 +81,7 @@
           <div class="notif-card-content">
             <div class="notif-icon-wrap">
               <div class="pulse-ring"></div>
-              <Activity :size="20" class="text-primary-500" />
+              <Clock :size="20" class="text-primary-500" />
             </div>
             <div class="notif-text">
               <div class="notif-badge">SEDANG DIPROSES</div>
@@ -241,7 +241,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { Action, Activity, Check, ChevronRight, Gamepad2 } from 'lucide-vue-next'
+import { Action, Activity, Check, ChevronRight, Gamepad2, History, User, Sun, Moon, Clock } from 'lucide-vue-next'
 import BannerSlider from '@/components/BannerSlider.vue'
 import SkeletonBanner from '@/components/SkeletonBanner.vue'
 import HowItWorks from '@/components/home/HowItWorks.vue'
@@ -407,20 +407,14 @@ onMounted(async () => {
   overflow: visible;
 }
 
-.hbtn-icon {
-  width: 26px; height: 26px;
-  object-fit: contain;
+.hbtn-icon-lucide {
   position: relative; z-index: 2;
-  opacity: 0.7;
-
-  transition:
-    opacity   0.25s ease,
-    filter    0.25s ease,
-    transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  color: var(--muted-foreground, #6b7280);
+  transition: all 0.3s var(--ease-spring);
 }
-.hbtn:hover .hbtn-icon {
-  opacity: 1;
-
+.hbtn:hover .hbtn-icon-lucide {
+  color: var(--primary, #16a34a);
+  transform: scale(1.1);
 }
 
 /* Ripple rings */
