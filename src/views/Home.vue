@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="home" ref="homeRef">
 
     <!-- TOP HEADER -->
     <div class="home-header">
@@ -12,7 +12,7 @@
         <!-- Dark mode toggle — icon dari /public/icons/ -->
         <!-- Theme toggle -->
         <button class="header-btn hbtn" @click="onBtnTap($event, toggleTheme)" aria-label="Toggle theme"
-          :style="{ transform: `translateY(${scrollVelocity * 5}px)` }">
+          style="transform: translate3d(0, calc(var(--velocity) * 4px), 0)">
           <span class="ripple-ring tr1"></span><span class="ripple-ring tr2"></span>
           <span class="dot td1"></span><span class="dot td2"></span>
           <span class="dot td3"></span><span class="dot td4"></span>
@@ -56,7 +56,7 @@
 
       <!-- ANTIGRAVITY FLOATING HUB (Infinite Flow) -->
       <div class="antigravity-hub reveal reveal--up" v-reveal>
-        <div class="anti-flow-track" :style="{ transform: `translateX(calc(-50% + ${scrollY * 0.05}px))` }">
+        <div class="anti-flow-track" style="transform: translate3d(calc(-50% + (var(--scrollY) * 0.05px)), 0, 0)">
           <!-- First Set -->
           <button
             v-for="(pill, idx) in trustPills"
@@ -109,7 +109,7 @@
       <!-- LAYANAN SECTION -->
       <div class="section section--premium reveal reveal--left" v-reveal>
         <!-- Section Background Particles -->
-        <div class="section-bg-art" :style="{ transform: `translateX(${scrollY * 0.1}px)` }">
+        <div class="section-bg-art" style="transform: translate3d(calc(var(--scrollY) * 0.1px), 0, 0)">
           <AntigravityParticles absolute :particle-count="15" class="opacity-20" />
         </div>
 
@@ -133,8 +133,9 @@
             :style="{ 
               '--idx': idx,
               '--p-delay': (idx * 0.1) + 's',
-              transform: `translateY(${scrollY * (0.02 + (idx % 2) * 0.02)}px)` 
+              '--p-factor': (0.01 + (idx % 2) * 0.015)
             }"
+            style="transform: translate3d(0, calc(var(--scrollY) * var(--p-factor) * 1px), 0)"
           >
             <div class="service-icon-glass" :style="{ '--service-bg': s.bg }">
               <img :src="s.img" :alt="s.label" class="service-img-premium" />
@@ -300,7 +301,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { Activity, Check, ChevronRight, Gamepad2, Clock } from 'lucide-vue-next'
 import BannerSlider from '@/components/BannerSlider.vue'
@@ -322,23 +323,32 @@ const showToast = ref(false)
 const toastMessage = ref('')
 const activeCategory = ref('all')
 const chatWidgetRef = ref(null)
-const scrollY = ref(0)
+const homeRef = ref(null)
+const targetScrollY = ref(0)
+const smoothScrollY = ref(0)
 const scrollVelocity = ref(0)
-let lastScrollY = 0
-let lastTime = Date.now()
+let lastSmoothY = 0
+let rafId = null
 
 const handleScroll = () => {
-  const currentY = window.scrollY
-  const currentTime = Date.now()
-  const deltaTime = currentTime - lastTime
+  targetScrollY.value = window.scrollY
+}
+
+const updatePhysics = () => {
+  // Smooth LERP (Linear Interpolation)
+  smoothScrollY.value += (targetScrollY.value - smoothScrollY.value) * 0.12
   
-  if (deltaTime > 0) {
-    scrollVelocity.value = (currentY - lastScrollY) / deltaTime
+  // Detect Velocity for Inertia
+  scrollVelocity.value = smoothScrollY.value - lastSmoothY
+  lastSmoothY = smoothScrollY.value
+
+  // Update root CSS variables (Avoids JS->DOM bottleneck)
+  if (homeRef.value) {
+    homeRef.value.style.setProperty('--scrollY', smoothScrollY.value.toFixed(2))
+    homeRef.value.style.setProperty('--velocity', scrollVelocity.value.toFixed(2))
   }
   
-  scrollY.value = currentY
-  lastScrollY = currentY
-  lastTime = currentTime
+  rafId = requestAnimationFrame(updatePhysics)
 }
 
 const trustPills = [
@@ -444,7 +454,13 @@ const openChat = () => {
 
 onMounted(async () => {
   window.addEventListener('scroll', handleScroll, { passive: true })
+  updatePhysics()
   await productStore.fetchProducts()
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
+  if (rafId) cancelAnimationFrame(rafId)
 })
 </script>
 
@@ -1425,15 +1441,18 @@ onMounted(async () => {
 
 /* PARALLAX & INERTIA HELPERS */
 .parallax-layer {
-  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform;
 }
 
 .section-bg-art {
-  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
 }
 
 .anti-flow-track {
-  transition: transform 0.1s linear;
+  will-change: transform;
+}
+
+.service-card-premium {
+  will-change: transform, opacity;
 }
 </style>
