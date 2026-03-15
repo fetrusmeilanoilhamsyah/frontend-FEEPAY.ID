@@ -6,6 +6,7 @@ const routes = [
     path: '/',
     name: 'home',
     component: () => import('../views/Home.vue'),
+    meta: { title: 'Top Up Game & Pulsa Online Termurah | FEEPAY.ID' }
   },
 
   // =====================================
@@ -36,27 +37,32 @@ const routes = [
   {
     path: '/checkout/pulsa',
     name: 'pulsa-checkout',
-    component: () => import('../views/checkout/PulsaCheckout.vue')
+    component: () => import('../views/checkout/PulsaCheckout.vue'),
+    meta: { title: 'Isi Pulsa Murah All Operator 24 Jam | FEEPAY.ID' }
   },
   {
     path: '/checkout/data',
     name: 'data-checkout',
-    component: () => import('../views/checkout/DataCheckout.vue')
+    component: () => import('../views/checkout/DataCheckout.vue'),
+    meta: { title: 'Paket Data Internet Termurah & Lengkap | FEEPAY.ID' }
   },
   {
     path: '/checkout/pln',
     name: 'pln-checkout',
-    component: () => import('../views/checkout/PlnCheckout.vue')
+    component: () => import('../views/checkout/PlnCheckout.vue'),
+    meta: { title: 'Beli Token PLN Prabayar Instan | FEEPAY.ID' }
   },
   {
     path: '/checkout/top-up-game',
     name: 'top-up-game-checkout',
-    component: () => import('../views/checkout/TopUpGameCheckout.vue')
+    component: () => import('../views/checkout/TopUpGameCheckout.vue'),
+    meta: { title: 'Top Up Game Terlengkap & Proses Instan | FEEPAY.ID' }
   },
   {
     path: '/checkout/game-voucher',
     name: 'game-voucher-checkout',
-    component: () => import('../views/checkout/GameVoucherCheckout.vue')
+    component: () => import('../views/checkout/GameVoucherCheckout.vue'),
+    meta: { title: 'Beli Voucher Game Murah & Instan | FEEPAY.ID' }
   },
 
   // Route dynamic di BAWAH route spesifik
@@ -186,10 +192,11 @@ router.beforeEach(async (to, from, next) => {
       next()
     }
   } 
-  // Route publik
-  else {
-    next()
-  }
+  // Dynamic Title
+  const baseTitle = 'FEEPAY.ID'
+  document.title = to.meta.title || baseTitle
+
+  next()
 })
 
 export default router

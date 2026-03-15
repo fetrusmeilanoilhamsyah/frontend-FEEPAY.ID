@@ -10,6 +10,28 @@
         <div>
           <h1 class="header-title">Top Up Game</h1>
           <p class="header-sub">Layanan top up instan untuk kebutuhan mata uang game favorit Anda</p>
+          
+          <!-- Breadcrumb Schema -->
+          <component :is="'script'" type="application/ld+json">
+          {{ JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://feepay.web.id/"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Top Up Game",
+                "item": "https://feepay.web.id/checkout/top-up-game"
+              }
+            ]
+          }) }}
+          </component>
         </div>
       </div>
     </div>
@@ -87,6 +109,24 @@
             </div>
           </div>
         </div>
+
+        <!-- Product Schema for Selected Game -->
+        <component :is="'script'" type="application/ld+json" v-if="selectedGame">
+        {{ JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Product",
+          "name": selectedGame.label,
+          "description": "Top up " + selectedGame.label + " instan 24 jam termurah di FEEPAY.ID",
+          "image": "https://feepay.web.id" + getGameLogo(selectedGame.brand),
+          "offers": {
+            "@type": "AggregateOffer",
+            "lowPrice": selectedGame.minPrice,
+            "priceCurrency": "IDR",
+            "offerCount": gameProducts.length,
+            "availability": "https://schema.org/InStock"
+          }
+        }) }}
+        </component>
 
         <div class="input-section" v-reveal="100">
           <label class="input-label">{{ userIdLabel }} <span class="input-required">*</span></label>

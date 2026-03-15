@@ -15,6 +15,18 @@
           <div>
             <h1 class="header-title">Paket Data</h1>
             <p class="header-sub">Layanan aktivasi paket data seketika untuk koneksi internet Anda</p>
+
+            <!-- Breadcrumb Schema -->
+            <component :is="'script'" type="application/ld+json">
+            {{ JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://feepay.web.id/" },
+                { "@type": "ListItem", "position": 2, "name": "Paket Data", "item": "https://feepay.web.id/checkout/data" }
+              ]
+            }) }}
+            </component>
           </div>
         </div>
         <router-link to="/checkout/pulsa" class="switch-btn">

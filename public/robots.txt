@@ -1,6 +1,21 @@
 User-agent: *
 Allow: /
+Disallow: /api/
 Disallow: /admin/
 Disallow: /payment/
+Disallow: /checkout/
+Disallow: /cart/
+Disallow: /account/
+Disallow: /search?
+Disallow: /*?sort=
+Disallow: /*?filter=
 
+# Allow crawling of images
+Allow: /*.jpg$
+Allow: /*.jpeg$
+Allow: /*.png$
+Allow: /*.webp$
+Allow: /*.svg$
+
+# Sitemap
 Sitemap: https://feepay.web.id/sitemap.xml

@@ -10,6 +10,18 @@
         <div>
           <h1 class="header-title">Token PLN</h1>
           <p class="header-sub">Layanan pengadaan token listrik prabayar secara instan</p>
+
+          <!-- Breadcrumb Schema -->
+          <component :is="'script'" type="application/ld+json">
+          {{ JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://feepay.web.id/" },
+              { "@type": "ListItem", "position": 2, "name": "Token PLN", "item": "https://feepay.web.id/checkout/pln" }
+            ]
+          }) }}
+          </component>
         </div>
       </div>
     </div>

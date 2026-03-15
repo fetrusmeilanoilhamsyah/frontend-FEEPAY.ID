@@ -39,6 +39,8 @@
     </div>
 
     <div class="home-content">
+      <!-- SEO H1: Hidden but readable by Search Engines -->
+      <h1 class="sr-only">FEEPAY.ID: Platform Top Up Game & PPOB Termurah Proses Instan</h1>
 
       <!-- BANNER -->
       <div class="banner-wrap">
@@ -281,6 +283,45 @@
       <!-- HOW IT WORKS -->
       <HowItWorks />
 
+      <!-- SEO FAQ SECTION -->
+      <section class="section section--faq reveal reveal--up" v-reveal id="faq">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <div class="section-icon-bg">
+              <img src="/icons/section/faq.webp" class="section-icon" alt="FAQ"
+                @error="(e) => e.target.style.display='none'" />
+            </div>
+            <div>
+              <h2 class="section-title">Pertanyaan Umum (FAQ)</h2>
+              <p class="section-sub">Segala hal yang sering ditanyakan pelanggan kami</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-grid">
+          <div v-for="(f, i) in faqs" :key="i" class="faq-item">
+            <h3 class="faq-question">{{ f.q }}</h3>
+            <p class="faq-answer">{{ f.a }}</p>
+          </div>
+        </div>
+
+        <!-- FAQ Schema JSON-LD -->
+        <component :is="'script'" type="application/ld+json">
+        {{ JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": faqs.map(f => ({
+            "@type": "Question",
+            "name": f.q,
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": f.a
+            }
+          }))
+        }) }}
+        </component>
+      </section>
+
     </div>
 
     <!-- FOOTER -->
@@ -448,6 +489,14 @@ const openChat = () => {
   if (chatWidgetRef.value) chatWidgetRef.value.toggleChat()
 }
 
+const faqs = [
+  { q: 'Apa itu FEEPAY.ID?', a: 'FEEPAY.ID adalah platform penyedia layanan top up game, pulsa, dan layanan digital (PPOB) termurah dan tercepat di Indonesia.' },
+  { q: 'Apakah top up di FEEPAY aman?', a: 'Sangat aman! Kami menggunakan sistem otomatis yang terhubung langsung dengan provider resmi. Pembayaran juga menggunakan payment gateway terenkripsi.' },
+  { q: 'Berapa lama proses transaksi?', a: 'Proses transaksi di FEEPAY sangat cepat, rata-rata hanya memakan waktu 1-5 menit setelah pembayaran terverifikasi.' },
+  { q: 'Metode pembayaran apa saja yang tersedia?', a: 'Kami menyediakan berbagai metode pembayaran mulai dari QRIS, Transfer Bank (VA), hingga E-Wallet (OVO, DANA, GoPay, LinkAja).' },
+  { q: 'Bagaimana jika saya mengalami kendala?', a: 'Tim Customer Service kami siap membantu Anda 24/7 melalui fitur Live Chat di website atau WhatsApp resmi kami.' }
+]
+
 onMounted(async () => {
   window.addEventListener('scroll', handleScroll, { passive: true })
   updatePhysics()
@@ -464,6 +513,19 @@ onUnmounted(() => {
 .home {
   min-height: 100vh;
   background: var(--background, #f8fafc);
+}
+
+/* Accessibility: Visually Hidden but readable by SEO */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }
 
 /* HEADER */

@@ -15,6 +15,18 @@
           <div>
             <h1 class="header-title">Pulsa Reguler</h1>
             <p class="header-sub">Layanan pengisian pulsa instan untuk seluruh operator seluler</p>
+
+            <!-- Breadcrumb Schema -->
+            <component :is="'script'" type="application/ld+json">
+            {{ JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://feepay.web.id/" },
+                { "@type": "ListItem", "position": 2, "name": "Pulsa", "item": "https://feepay.web.id/checkout/pulsa" }
+              ]
+            }) }}
+            </component>
           </div>
         </div>
         <router-link to="/checkout/data" class="switch-btn">
