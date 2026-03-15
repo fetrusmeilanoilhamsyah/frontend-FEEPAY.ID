@@ -241,7 +241,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { Action, Activity, Check, ChevronRight, Gamepad2, History, User, Sun, Moon, Clock } from 'lucide-vue-next'
+import { Activity, Check, ChevronRight, Gamepad2, History, User, Sun, Moon, Clock } from 'lucide-vue-next'
 import BannerSlider from '@/components/BannerSlider.vue'
 import SkeletonBanner from '@/components/SkeletonBanner.vue'
 import HowItWorks from '@/components/home/HowItWorks.vue'
