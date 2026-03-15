@@ -11,7 +11,8 @@
       <div class="header-actions">
         <!-- Dark mode toggle — icon dari /public/icons/ -->
         <!-- Theme toggle -->
-        <button class="header-btn hbtn" @click="onBtnTap($event, toggleTheme)" aria-label="Toggle theme">
+        <button class="header-btn hbtn" @click="onBtnTap($event, toggleTheme)" aria-label="Toggle theme"
+          :style="{ transform: `translateY(${scrollVelocity * 5}px)` }">
           <span class="ripple-ring tr1"></span><span class="ripple-ring tr2"></span>
           <span class="dot td1"></span><span class="dot td2"></span>
           <span class="dot td3"></span><span class="dot td4"></span>
@@ -54,8 +55,8 @@
       </div>
 
       <!-- ANTIGRAVITY FLOATING HUB (Infinite Flow) -->
-      <div class="antigravity-hub reveal" v-reveal>
-        <div class="anti-flow-track">
+      <div class="antigravity-hub reveal reveal--up" v-reveal>
+        <div class="anti-flow-track" :style="{ transform: `translateX(calc(-50% + ${scrollY * 0.05}px))` }">
           <!-- First Set -->
           <button
             v-for="(pill, idx) in trustPills"
@@ -106,9 +107,9 @@
       </div>
 
       <!-- LAYANAN SECTION -->
-      <div class="section section--premium reveal" v-reveal>
+      <div class="section section--premium reveal reveal--left" v-reveal>
         <!-- Section Background Particles -->
-        <div class="section-bg-art">
+        <div class="section-bg-art" :style="{ transform: `translateX(${scrollY * 0.1}px)` }">
           <AntigravityParticles absolute :particle-count="15" class="opacity-20" />
         </div>
 
@@ -138,7 +139,7 @@
       </div>
 
       <!-- TOP GAME SECTION -->
-      <div class="section section--brand" v-reveal>
+      <div class="section section--brand reveal reveal--right" v-reveal>
         <div class="section-header">
           <div class="section-title-wrap">
             <img src="/icons/section/game.webp" class="section-icon" alt=""
@@ -226,7 +227,7 @@
 
       <!-- CS HELP BUTTON -->
       <!-- CS SECTION -->
-      <div class="section section--nexus">
+      <div class="section section--nexus reveal reveal--up" v-reveal>
         <div class="section-header">
           <div class="section-title-wrap">
             <div class="section-icon-wrap nexus-ring-wrap">
@@ -314,6 +315,24 @@ const showToast = ref(false)
 const toastMessage = ref('')
 const activeCategory = ref('all')
 const chatWidgetRef = ref(null)
+const scrollY = ref(0)
+const scrollVelocity = ref(0)
+let lastScrollY = 0
+let lastTime = Date.now()
+
+const handleScroll = () => {
+  const currentY = window.scrollY
+  const currentTime = Date.now()
+  const deltaTime = currentTime - lastTime
+  
+  if (deltaTime > 0) {
+    scrollVelocity.value = (currentY - lastScrollY) / deltaTime
+  }
+  
+  scrollY.value = currentY
+  lastScrollY = currentY
+  lastTime = currentTime
+}
 
 const trustPills = [
   { icon: '/icons/nav/history.webp',    label: 'Riwayat'        , to: '/transactions' },
@@ -417,6 +436,7 @@ const openChat = () => {
 }
 
 onMounted(async () => {
+  window.addEventListener('scroll', handleScroll, { passive: true })
   await productStore.fetchProducts()
 })
 </script>
@@ -1371,5 +1391,29 @@ onMounted(async () => {
   box-shadow: 0 8px 24px rgba(0,0,0,0.2);
 }
 .toast-enter-active, .toast-leave-active { transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
-.toast-enter-from, .toast-leave-to { opacity: 0; transform: translateX(-50%) translateY(10px); }
+.toast-enter-from, .toast-leave-to { opacity: 0; transform: translateX(-50%) translateY(10px); }/* DIRECTIONAL REVEALS */
+.reveal--left { transform: translateX(-30px); opacity: 0; }
+.reveal--right { transform: translateX(30px); opacity: 0; }
+.reveal--up { transform: translateY(40px); opacity: 0; }
+
+.reveal.active.reveal--left,
+.reveal.active.reveal--right,
+.reveal.active.reveal--up {
+  transform: translate(0, 0);
+  opacity: 1;
+}
+
+/* PARALLAX & INERTIA HELPERS */
+.parallax-layer {
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.section-bg-art {
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.anti-flow-track {
+  transition: transform 0.1s linear;
+}
 </style>
