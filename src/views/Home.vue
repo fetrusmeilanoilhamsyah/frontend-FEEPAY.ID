@@ -302,9 +302,8 @@
           <div 
             v-for="(f, i) in faqs" 
             :key="i" 
-            class="faq-card reveal reveal--up"
+            class="faq-card"
             :class="{ 'faq-card--active': activeFaqIndex === i }"
-            v-reveal
           >
             <button class="faq-trigger" @click="toggleFaq(i)">
               <span class="faq-question-text">{{ f.q }}</span>
@@ -312,7 +311,7 @@
                 <ChevronDown :size="18" class="faq-chevron" />
               </div>
             </button>
-            <div class="faq-content-wrap" :style="{ maxHeight: activeFaqIndex === i ? '200px' : '0' }">
+            <div class="faq-content-wrap" :style="{ maxHeight: activeFaqIndex === i ? '500px' : '0' }">
               <div class="faq-answer-inner">
                 <p class="faq-answer-text">{{ f.a }}</p>
               </div>
