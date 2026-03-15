@@ -128,18 +128,21 @@
         
         <div class="service-grid-premium">
           <router-link v-for="(s, idx) in services" :key="s.to" :to="s.to" 
-            class="service-card-premium reveal reveal--up" 
+            class="service-card-premium reveal reveal--up antigravity-tilt" 
             v-reveal
             :style="{ 
               '--idx': idx,
               '--p-delay': (idx * 0.1) + 's',
               '--p-factor': (0.01 + (idx % 2) * 0.015)
             }"
-            style="transform: translate3d(0, calc(var(--scrollY) * var(--p-factor) * 1px), 0)"
+            style="transform: translate3d(var(--m-pull-x, 0), calc(var(--scrollY) * var(--p-factor) * 1px + var(--m-pull-y, 0)), 0) rotateX(var(--m-tilt-y, 0deg)) rotateY(var(--m-tilt-x, 0deg))"
+            @mouseenter="onCardEnter"
+            @mousemove="onCardMove"
+            @mouseleave="onCardLeave"
           >
             <div class="service-icon-glass" :style="{ '--service-bg': s.bg }">
               <img :src="s.img" :alt="s.label" class="service-img-premium" />
-              <div v-if="s.badge" class="service-badge-premium">{{ s.badge }}</div>
+              <div v-if="s.badge" class="service-badge-premium aura-pulse">{{ s.badge }}</div>
             </div>
             <span class="service-label-premium">{{ s.label }}</span>
           </router-link>
@@ -330,8 +333,52 @@ const scrollVelocity = ref(0)
 let lastSmoothY = 0
 let rafId = null
 
+const mouseX = ref(0)
+const mouseY = ref(0)
+const tiltX = ref(0)
+const tiltY = ref(0)
+const pullX = ref(0)
+const pullY = ref(0)
+let targetTiltX = 0
+let targetTiltY = 0
+let targetPullX = 0
+let targetPullY = 0
+
 const handleScroll = () => {
   targetScrollY.value = window.scrollY
+}
+
+const onCardMove = (e) => {
+  const card = e.currentTarget
+  const rect = card.getBoundingClientRect()
+  const x = e.clientX - rect.left - rect.width / 2
+  const y = e.clientY - rect.top - rect.height / 2
+  
+  // Holographic Tilt: -15deg to 15deg
+  targetTiltX = (x / (rect.width / 2)) * 12
+  targetTiltY = (y / (rect.height / 2)) * -12
+  
+  // Magnetic Pull: -10px to 10px
+  targetPullX = (x / (rect.width / 2)) * 8
+  targetPullY = (y / (rect.height / 2)) * 8
+  
+  card.style.setProperty('--m-tilt-x', tiltX.value.toFixed(2) + 'deg')
+  card.style.setProperty('--m-tilt-y', tiltY.value.toFixed(2) + 'deg')
+  card.style.setProperty('--m-pull-x', pullX.value.toFixed(2) + 'px')
+  card.style.setProperty('--m-pull-y', pullY.value.toFixed(2) + 'px')
+}
+
+const onCardEnter = (e) => {
+  e.currentTarget.classList.add('is-hovering')
+}
+
+const onCardLeave = (e) => {
+  const card = e.currentTarget
+  card.classList.remove('is-hovering')
+  targetTiltX = 0
+  targetTiltY = 0
+  targetPullX = 0
+  targetPullY = 0
 }
 
 const updatePhysics = () => {
@@ -342,10 +389,26 @@ const updatePhysics = () => {
   scrollVelocity.value = smoothScrollY.value - lastSmoothY
   lastSmoothY = smoothScrollY.value
 
+  // LERP Mouse Physics
+  tiltX.value += (targetTiltX - tiltX.value) * 0.15
+  tiltY.value += (targetTiltY - tiltY.value) * 0.15
+  pullX.value += (targetPullX - pullX.value) * 0.15
+  pullY.value += (targetPullY - pullY.value) * 0.15
+
   // Update root CSS variables (Avoids JS->DOM bottleneck)
   if (homeRef.value) {
     homeRef.value.style.setProperty('--scrollY', smoothScrollY.value.toFixed(2))
     homeRef.value.style.setProperty('--velocity', scrollVelocity.value.toFixed(2))
+    
+    // Apply hover physics to active cards via helper class if needed, 
+    // but better to apply per-element in loop if multiple can hover (unlikely)
+    const hovering = document.querySelector('.service-card-premium.is-hovering')
+    if (hovering) {
+      hovering.style.setProperty('--m-tilt-x', tiltX.value.toFixed(2) + 'deg')
+      hovering.style.setProperty('--m-tilt-y', tiltY.value.toFixed(2) + 'deg')
+      hovering.style.setProperty('--m-pull-x', pullX.value.toFixed(2) + 'px')
+      hovering.style.setProperty('--m-pull-y', pullY.value.toFixed(2) + 'px')
+    }
   }
   
   rafId = requestAnimationFrame(updatePhysics)
@@ -1427,7 +1490,10 @@ onUnmounted(() => {
   box-shadow: 0 8px 24px rgba(0,0,0,0.2);
 }
 .toast-enter-active, .toast-leave-active { transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
-.toast-enter-from, .toast-leave-to { opacity: 0; transform: translateX(-50%) translateY(10px); }/* DIRECTIONAL REVEALS */
+
+.toast-enter-from, .toast-leave-to { opacity: 0; transform: translateX(-50%) translateY(10px); }
+
+/* DIRECTIONAL REVEALS */
 .reveal--left { transform: translateX(-30px); opacity: 0; }
 .reveal--right { transform: translateX(30px); opacity: 0; }
 .reveal--up { transform: translateY(40px); opacity: 0; }
@@ -1440,19 +1506,68 @@ onUnmounted(() => {
 }
 
 /* PARALLAX & INERTIA HELPERS */
-.parallax-layer {
-  will-change: transform;
-}
-
-.section-bg-art {
-  will-change: transform;
-}
-
-.anti-flow-track {
+.parallax-layer, .section-bg-art, .anti-flow-track {
   will-change: transform;
 }
 
 .service-card-premium {
   will-change: transform, opacity;
+  perspective: 1000px;
+}
+
+/* NEXT-GEN ANTIGRAVITY INTERACTION */
+.antigravity-tilt {
+  transition: transform 0.2s cubic-bezier(0.12, 0, 0.39, 0);
+}
+
+.antigravity-tilt.is-hovering {
+  z-index: 50;
+  transition: none;
+}
+
+/* Pulse Aura for Labels */
+.aura-pulse {
+  position: relative;
+}
+
+.aura-pulse::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  background: inherit;
+  filter: blur(8px);
+  opacity: 0.6;
+  border-radius: inherit;
+  z-index: -1;
+  animation: aura-breath 3s ease-in-out infinite;
+}
+
+@keyframes aura-breath {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.15); }
+}
+
+.service-badge-premium.aura-pulse {
+  background: var(--primary, #16a34a);
+  color: #fff;
+  font-size: 0.5rem;
+  padding: 2px 6px;
+  border-radius: 6px;
+  box-shadow: 0 4px 10px rgba(22, 163, 74, 0.3);
+}
+
+/* Dynamic Backdrop Material */
+.section--premium, .section--brand, .section--nexus {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 24px;
+  padding: 16px;
+}
+
+.dark .section--premium, .dark .section--brand, .dark .section--nexus {
+  background: rgba(22, 28, 45, 0.7);
+  border-color: rgba(255, 255, 255, 0.05);
 }
 </style>
