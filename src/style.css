@@ -348,6 +348,23 @@
   .stagger-4 { transition-delay: 0.6s; }
   .stagger-5 { transition-delay: 0.75s; }
 
+  /* Antigravity Style Utilities */
+  .dotted-circle {
+    position: absolute; border-radius: 50%;
+    border: 1.5px dashed rgba(37, 99, 235, 0.4);
+    animation: rotate-slow 22s linear infinite;
+    pointer-events: none; z-index: 0;
+  }
+  .dotted-circle--sm { width: 100px; height: 100px; }
+  .dotted-circle--md { width: 220px; height: 220px; }
+  .dotted-circle--lg { width: 420px; height: 420px; }
+  .dotted-circle--accent { border-color: rgba(22, 163, 74, 0.3); }
+
+  @keyframes rotate-slow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
   /* Modal Spring Animation */
   .modal-enter-active {
     animation: modal-in 0.5s var(--ease-spring);

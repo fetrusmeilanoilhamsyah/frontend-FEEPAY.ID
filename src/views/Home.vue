@@ -41,6 +41,10 @@
 
       <!-- BANNER -->
       <div class="banner-wrap">
+        <!-- Antigravity Decorations -->
+        <div class="dotted-circle dotted-circle--lg -top-20 -right-20 opacity-20"></div>
+        <div class="dotted-circle dotted-circle--md top-10 -left-10 dotted-circle--accent opacity-10"></div>
+        
         <span class="p p1"></span>
 <span class="p p2"></span>
 <span class="p p3"></span>
