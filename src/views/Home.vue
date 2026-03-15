@@ -489,6 +489,10 @@ const openChat = () => {
   if (chatWidgetRef.value) chatWidgetRef.value.toggleChat()
 }
 
+const handleScroll = () => {
+  targetScrollY.value = window.scrollY
+}
+
 const faqs = [
   { q: 'Apa itu FEEPAY.ID?', a: 'FEEPAY.ID adalah platform penyedia layanan top up game, pulsa, dan layanan digital (PPOB) termurah dan tercepat di Indonesia.' },
   { q: 'Apakah top up di FEEPAY aman?', a: 'Sangat aman! Kami menggunakan sistem otomatis yang terhubung langsung dengan provider resmi. Pembayaran juga menggunakan payment gateway terenkripsi.' },

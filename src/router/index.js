@@ -174,28 +174,29 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const { checkAuth, isAuthenticated } = useAuth()
 
-  // Cek jika route butuh authentication (admin)
-  if (to.meta.requiresAuth) {
-    const authenticated = await checkAuth()
-    if (!authenticated) {
-      next({ name: 'admin-login' })
-    } else {
-      next()
-    }
-  } 
-  // Cek jika route untuk guest only (login page)
-  else if (to.meta.requiresGuest) {
-    const authenticated = isAuthenticated.value || await checkAuth()
-    if (authenticated) {
-      next({ name: 'admin-dashboard' })
-    } else {
-      next()
-    }
-  } 
   // Dynamic Title
   const baseTitle = 'FEEPAY.ID'
   document.title = to.meta.title || baseTitle
 
+  // Cek jika route butuh authentication (admin)
+  if (to.meta.requiresAuth) {
+    const authenticated = await checkAuth()
+    if (!authenticated) {
+      return next({ name: 'admin-login' })
+    }
+    return next()
+  } 
+  
+  // Cek jika route untuk guest only (login page)
+  if (to.meta.requiresGuest) {
+    const authenticated = isAuthenticated.value || await checkAuth()
+    if (authenticated) {
+      return next({ name: 'admin-dashboard' })
+    }
+    return next()
+  } 
+
+  // Public route
   next()
 })
 
