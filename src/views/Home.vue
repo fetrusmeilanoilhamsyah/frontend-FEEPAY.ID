@@ -373,10 +373,16 @@ onMounted(async () => {
 /* HEADER */
 .home-header {
   position: sticky; top: 0; z-index: 40;
-  background: var(--card, #ffffff);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border, #e5e7eb);
-  padding: 10px 16px;
+  padding: 12px 16px;
   display: flex; align-items: center; justify-content: space-between;
+}
+.dark .home-header {
+  background: rgba(22, 28, 45, 0.85);
+  border-color: rgba(255, 255, 255, 0.05);
 }
 .header-brand {
   font-size: 1.25rem; font-weight: 900; letter-spacing: -0.03em;
@@ -394,12 +400,17 @@ onMounted(async () => {
 .header-btn {
   width: 40px; height: 40px;
   display: flex; align-items: center; justify-content: center;
-  border-radius: 10px; border: none; background: transparent;
+  border-radius: 12px; border: none; background: transparent;
   color: var(--muted-foreground, #6b7280); cursor: pointer;
-  transition: background 0.15s;
+  transition: all 0.3s var(--ease-out-expo);
   -webkit-tap-highlight-color: transparent;
 }
-.header-btn:hover { background: var(--muted, #f3f4f6); color: var(--foreground, #111827); }
+.header-btn:hover { 
+  background: var(--primary-muted, #f0fdf4); 
+  color: var(--primary, #16a34a);
+  transform: translateY(-2px);
+}
+.dark .header-btn:hover { background: rgba(22, 163, 74, 0.1); }
 
 /* HEADER BUTTONS — semua 3 tombol pakai sistem ini */
 .hbtn {
@@ -435,6 +446,10 @@ onMounted(async () => {
   0%   { transform: translate(-50%,-50%) scale(0.2); opacity: 0.5; }
   100% { transform: translate(-50%,-50%) scale(2.8); opacity: 0; }
 }
+
+/* Transition Scale */
+.scale-enter-active, .scale-leave-active { transition: all 0.3s var(--ease-spring); }
+.scale-enter-from, .scale-leave-to { transform: scale(0.6); opacity: 0; }
 
 /* Partikel titik */
 .dot {
@@ -544,19 +559,26 @@ onMounted(async () => {
 .trust-pills::-webkit-scrollbar { display: none; }
 
 .pill {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 7px 14px;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 16px;
   background: var(--card, #ffffff);
   border: 1px solid var(--border, #e5e7eb);
   border-radius: 999px;
-  font-size: 0.6875rem; font-weight: 700;
+  font-size: 0.75rem; font-weight: 700;
   color: var(--foreground, #374151);
   white-space: nowrap; flex-shrink: 0;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  transition: border-color 0.2s, background 0.2s;
+  transition: all 0.3s var(--ease-spring);
+  position: relative; z-index: 10;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.02);
 }
-.pill:hover { border-color: #16a34a; background: #f0fdf4; }
+.pill:hover {
+  border-color: var(--primary, #16a34a);
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 10px 20px rgba(22, 163, 74, 0.1);
+  background: var(--primary-muted, #f0fdf4);
+}
 
 .pill-img {
   width: 14px; height: 14px;
