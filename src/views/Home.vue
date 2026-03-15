@@ -298,10 +298,25 @@
           </div>
         </div>
 
-        <div class="faq-grid">
-          <div v-for="(f, i) in faqs" :key="i" class="faq-item">
-            <h3 class="faq-question">{{ f.q }}</h3>
-            <p class="faq-answer">{{ f.a }}</p>
+        <div class="faq-accordion">
+          <div 
+            v-for="(f, i) in faqs" 
+            :key="i" 
+            class="faq-card reveal reveal--up"
+            :class="{ 'faq-card--active': activeFaqIndex === i }"
+            v-reveal
+          >
+            <button class="faq-trigger" @click="toggleFaq(i)">
+              <span class="faq-question-text">{{ f.q }}</span>
+              <div class="faq-chevron-wrap">
+                <ChevronDown :size="18" class="faq-chevron" />
+              </div>
+            </button>
+            <div class="faq-content-wrap" :style="{ maxHeight: activeFaqIndex === i ? '200px' : '0' }">
+              <div class="faq-answer-inner">
+                <p class="faq-answer-text">{{ f.a }}</p>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -342,7 +357,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { Activity, Check, ChevronRight, Gamepad2, Clock } from 'lucide-vue-next'
+import { Activity, Check, ChevronRight, Gamepad2, Clock, ChevronDown } from 'lucide-vue-next'
 import BannerSlider from '@/components/BannerSlider.vue'
 import SkeletonBanner from '@/components/SkeletonBanner.vue'
 import HowItWorks from '@/components/home/HowItWorks.vue'
@@ -490,6 +505,12 @@ const openChat = () => {
 
 const handleScroll = () => {
   targetScrollY.value = window.scrollY
+}
+
+const activeFaqIndex = ref(null)
+
+const toggleFaq = (index) => {
+  activeFaqIndex.value = activeFaqIndex.value === index ? null : index
 }
 
 const faqs = [
@@ -1584,5 +1605,97 @@ onUnmounted(() => {
 .dark .section--premium, .dark .section--brand, .dark .section--nexus {
   background: rgba(22, 28, 45, 0.6);
   border-color: rgba(255, 255, 255, 0.05);
+}
+/* FAQ ACCORDION (Antigravity Style) */
+.faq-accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.faq-card {
+  background: var(--card, #fff);
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 18px;
+  overflow: hidden;
+  transition: all 0.5s var(--ease-spring);
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+}
+
+.faq-card:hover {
+  border-color: rgba(22, 163, 74, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
+}
+
+.faq-card--active {
+  border-color: var(--primary, #16a34a);
+  background: linear-gradient(135deg, var(--card, #fff) 0%, var(--primary-muted, #f0fdf4) 100%);
+  box-shadow: 0 15px 35px rgba(22, 163, 74, 0.1);
+}
+
+.faq-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.faq-question-text {
+  font-size: 0.875rem;
+  font-weight: 800;
+  color: var(--foreground, #111827);
+  letter-spacing: -0.01em;
+  line-height: 1.4;
+}
+
+.faq-chevron-wrap {
+  width: 32px;
+  height: 32px;
+  background: var(--muted, #f3f4f6);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.4s var(--ease-spring);
+}
+
+.faq-card--active .faq-chevron-wrap {
+  background: var(--primary, #16a34a);
+  color: #fff;
+  transform: rotate(180deg);
+}
+
+.faq-chevron {
+  transition: transform 0.4s var(--ease-spring);
+}
+
+.faq-content-wrap {
+  overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.faq-answer-inner {
+  padding: 0 20px 20px;
+}
+
+.faq-answer-text {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--muted-foreground, #6b7280);
+  line-height: 1.6;
+}
+
+.dark .faq-card--active {
+  background: linear-gradient(135deg, rgba(22, 28, 45, 0.8) 0%, rgba(22, 163, 74, 0.1) 100%);
 }
 </style>
