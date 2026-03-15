@@ -1,5 +1,6 @@
 import axios from 'axios'
-import router from '../router'
+// Hapus import router top-level untuk memutus circular dependency
+// import router from '../router'
 import { ref } from 'vue'
 
 // Global Loading State
@@ -65,14 +66,15 @@ api.interceptors.response.use(
           return Promise.reject({ type: 'pin_error', message: 'PIN Admin Salah Boss!' })
         }
 
-        // Hanya hapus auth storage jika endpoint atau route saat ini terindikasi /admin
-        if (error.config.url?.includes('/admin') || router.currentRoute.value.path.includes('/admin')) {
+        // Hanya hapus auth storage jika endpoint terindikasi /admin
+        if (error.config.url?.includes('/admin')) {
           localStorage.removeItem('feepay_token')
           localStorage.removeItem('feepay_token_expiry')
           sessionStorage.removeItem('feepay_admin_pin')
           
-          if (!router.currentRoute.value.path.includes('login')) {
-            router.push('/admin/login')
+          // Redirect ke login jika bukan di halaman login
+          if (!window.location.pathname.includes('login')) {
+            window.location.href = '/admin/login'
           }
         }
         break

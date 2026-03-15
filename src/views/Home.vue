@@ -306,20 +306,18 @@
         </div>
 
         <!-- FAQ Schema JSON-LD -->
-        <component :is="'script'" type="application/ld+json">
-        {{ JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "FAQPage",
-          "mainEntity": faqs.map(f => ({
-            "@type": "Question",
-            "name": f.q,
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": f.a
+        <component :is="'script'" type="application/ld+json" v-html="JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          'mainEntity': faqs.map(f => ({
+            '@type': 'Question',
+            'name': f.q,
+            'acceptedAnswer': {
+              '@type': 'Answer',
+              'text': f.a
             }
           }))
-        }) }}
-        </component>
+        })"></component>
       </section>
 
     </div>
@@ -353,6 +351,7 @@ import ChatWidget from '@/components/frontend_ChatWidget.vue'
 import { useProductStore } from '@/stores/productStore'
 import { useOrderStore } from '@/stores/orderStore'
 import { useTheme } from '@/composables/useTheme'
+import AntigravityParticles from '@/components/AntigravityParticles.vue'
 import { formatPrice as utilsFormatPrice } from '@/utils/format'
 
 const router = useRouter()
