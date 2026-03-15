@@ -75,6 +75,16 @@ const steps = [
   padding: 8px 16px;
   margin-bottom: 12px;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  perspective: 1000px;
+}
+
+.step.reveal {
+  transform: translateY(40px) scale(0.96) rotateX(10deg);
+}
+
+.step.reveal.active,
+.active .step.reveal {
+  transform: translateY(0) scale(1) rotateX(0deg);
 }
 
 .step { display: flex; gap: 16px; padding: 16px 0; }
