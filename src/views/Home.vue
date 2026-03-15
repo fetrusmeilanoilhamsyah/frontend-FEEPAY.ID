@@ -53,24 +53,25 @@
         <BannerSlider v-else @action="handleBannerAction" />
       </div>
 
-      <!-- TRUST PILLS -->
-      <div class="trust-pills" v-reveal>
+      <!-- ANTIGRAVITY FLOATING HUB -->
+      <div class="antigravity-hub reveal" v-reveal>
         <button
           v-for="(pill, idx) in trustPills"
           :key="pill.label"
-          class="pill pbtn"
-          :class="'stagger-' + ((idx % 5) + 1)"
-          @click="onPillTap($event)"
+          class="anti-pill"
+          :class="'wave-' + ((idx % 4) + 1)"
+          :style="{ '--delay': (idx * 0.4) + 's' }"
+          @click="onPillTap($event, pill)"
         >
-          <span class="ripple-ring pr1"></span>
-          <span class="ripple-ring pr2"></span>
-          <span class="pdot pd1"></span>
-          <span class="pdot pd2"></span>
-          <span class="pdot pd3"></span>
-          <span class="pdot pd4"></span>
-          <img :src="pill.icon" :alt="pill.label" class="pill-img"
-            @error="(e) => e.target.style.display='none'" />
-          <span>{{ pill.label }}</span>
+          <!-- Burst Dots (Preserved) -->
+          <span class="pdot pd1"></span><span class="pdot pd2"></span>
+          <span class="pdot pd3"></span><span class="pdot pd4"></span>
+          
+          <div class="anti-pill-glass">
+            <img :src="pill.icon" :alt="pill.label" class="anti-pill-img"
+              @error="(e) => e.target.style.display='none'" />
+          </div>
+          <span class="anti-pill-label">{{ pill.label }}</span>
         </button>
       </div>
 
@@ -296,19 +297,23 @@ const activeCategory = ref('all')
 const chatWidgetRef = ref(null)
 
 const trustPills = [
+  { icon: '/icons/nav/history.webp',    label: 'Riwayat'        , to: '/transactions' },
   { icon: '/icons/trust/support.webp',  label: 'CS 24 Jam'      },
   { icon: '/icons/trust/flash.webp',    label: 'Proses Instan'  },
   { icon: '/icons/trust/shield.webp',   label: '100% Aman'      },
   { icon: '/icons/trust/verified.webp', label: 'Terpercaya'     },
-  { icon: '/icons/trust/cheap.webp',    label: 'Harga Terbaik'  },
 ]
 
-const onPillTap = (e) => {
+const onPillTap = (e, pill) => {
   const btn = e.currentTarget
   btn.classList.remove('burst')
   void btn.offsetWidth
   btn.classList.add('burst')
   setTimeout(() => btn.classList.remove('burst'), 700)
+  
+  if (pill && pill.to) {
+    setTimeout(() => router.push(pill.to), 400)
+  }
 }
 
 const pendingOrders = computed(() => orderStore.pendingOrders || [])
@@ -589,86 +594,108 @@ onMounted(async () => {
   100% { transform: translateY(0px)   scale(1);   }
 }
 
-/* TRUST PILLS */
-.trust-pills { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding: 2px 0; }
-.trust-pills::-webkit-scrollbar { display: none; }
+/* ANTIGRAVITY FLOATING HUB */
+.antigravity-hub {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  padding: 30px 10px;
+  margin-bottom: 20px;
+  min-height: 120px;
+}
 
-.pill {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 8px 16px;
-  background: var(--card, #ffffff);
-  border: 1px solid var(--border, #e5e7eb);
-  border-radius: 999px;
-  font-size: 0.75rem; font-weight: 700;
-  color: var(--foreground, #374151);
-  white-space: nowrap; flex-shrink: 0;
+.anti-pill {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
   cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  transition: all 0.3s var(--ease-spring);
-  position: relative; z-index: 10;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.02);
-}
-.pill:hover {
-  border-color: var(--primary, #16a34a);
-  transform: translateY(-3px) scale(1.03);
-  box-shadow: 0 10px 20px rgba(22, 163, 74, 0.1);
-  background: var(--primary-muted, #f0fdf4);
+  animation: anti-float 4s ease-in-out infinite;
+  animation-delay: var(--delay);
+  transition: transform 0.3s var(--ease-spring);
 }
 
-.pill-img {
-  width: 14px; height: 14px;
-  object-fit: contain;
-  position: relative; z-index: 2;
-  flex-shrink: 0;
-}
-
-/* Pill burst — ripple + partikel */
-.pbtn { position: relative; overflow: visible; }
-
-.ripple-ring {
-  position: absolute;
+.anti-pill-glass {
+  width: 56px;
+  height: 56px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(22, 163, 74, 0.1);
   border-radius: 50%;
-  border: 1.5px solid rgba(22,163,74,0.3);
-  width: 16px; height: 16px;
-  top: 50%; left: 18px;
-  transform: translate(-50%, -50%) scale(0);
-  opacity: 0;
-  pointer-events: none;
-  z-index: 1;
-}
-.pbtn.burst .pr1 { animation: wave 0.5s ease-out forwards; }
-.pbtn.burst .pr2 { animation: wave 0.5s ease-out 0.1s forwards; }
-@keyframes wave {
-  0%   { transform: translate(-50%,-50%) scale(0.2); opacity: 0.5; }
-  100% { transform: translate(-50%,-50%) scale(3);   opacity: 0; }
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 
+    0 8px 20px rgba(0, 0, 0, 0.04),
+    inset 0 1px 1px rgba(255, 255, 255, 0.8);
+  transition: all 0.4s var(--ease-spring);
 }
 
+.anti-pill:hover .anti-pill-glass {
+  background: #fff;
+  transform: scale(1.15) translateY(-5px);
+  border-color: var(--primary, #16a34a);
+  box-shadow: 0 15px 30px rgba(22, 163, 74, 0.12);
+}
+
+.anti-pill-img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+}
+
+.anti-pill-label {
+  font-size: 0.625rem;
+  font-weight: 800;
+  color: var(--foreground, #111827);
+  white-space: nowrap;
+  opacity: 0.7;
+  transition: opacity 0.3s;
+}
+
+.anti-pill:hover .anti-pill-label {
+  opacity: 1;
+}
+
+/* WAVY OFFSET & ANIMATION */
+.wave-1 { --y: -8px; }
+.wave-2 { --y: 8px;  }
+.wave-3 { --y: -4px; }
+.wave-4 { --y: 4px;  }
+
+.anti-pill.wave-1, .anti-pill.wave-2, .anti-pill.wave-3, .anti-pill.wave-4 {
+  transform: translateY(var(--y));
+}
+
+@keyframes anti-float {
+  0%, 100% { transform: translateY(var(--y)); }
+  50% { transform: translateY(calc(var(--y) - 12px)); }
+}
+
+/* BURST EFFECT — PRESERVED */
 .pdot {
   position: absolute;
-  width: 3px; height: 3px;
+  width: 4px; height: 4px;
   border-radius: 50%;
-  background: #16a34a;
-  top: 50%; left: 18px;
+  background: var(--primary, #16a34a);
+  top: 40%; left: 50%;
   opacity: 0;
   pointer-events: none;
-  z-index: 1;
+  z-index: 10;
 }
-.pbtn.burst .pd1 { animation: pill-dot 0.45s ease-out forwards 0.00s; --a: 0deg;   }
-.pbtn.burst .pd2 { animation: pill-dot 0.45s ease-out forwards 0.02s; --a: 90deg;  }
-.pbtn.burst .pd3 { animation: pill-dot 0.45s ease-out forwards 0.04s; --a: 180deg; }
-.pbtn.burst .pd4 { animation: pill-dot 0.45s ease-out forwards 0.02s; --a: 270deg; }
+.anti-pill.burst .pd1 { animation: pill-dot 0.45s ease-out forwards 0.00s; --a: 0deg;   }
+.anti-pill.burst .pd2 { animation: pill-dot 0.45s ease-out forwards 0.02s; --a: 90deg;  }
+.anti-pill.burst .pd3 { animation: pill-dot 0.45s ease-out forwards 0.04s; --a: 180deg; }
+.anti-pill.burst .pd4 { animation: pill-dot 0.45s ease-out forwards 0.06s; --a: 270deg; }
+
 @keyframes pill-dot {
   0%   { transform: translate(-50%,-50%) rotate(var(--a)) translateY(0)    scale(1);  opacity: 0.7; }
-  100% { transform: translate(-50%,-50%) rotate(var(--a)) translateY(-11px) scale(0); opacity: 0; }
-}
-
-.pbtn.burst .pill-img {
-  animation: pill-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-}
-@keyframes pill-pop {
-  0%  { transform: scale(1); }
-  50% { transform: scale(1.3); }
-  100%{ transform: scale(1); }
+  100% { transform: translate(-50%,-50%) rotate(var(--a)) translateY(-15px) scale(0); opacity: 0;   }
 }
 
 /* NOTIF BAR (Restore Original) */
