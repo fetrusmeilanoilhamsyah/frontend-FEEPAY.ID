@@ -91,8 +91,8 @@
             <img src="/icons/section/layanan.webp" class="section-icon" alt=""
               @error="(e) => e.target.style.display='none'" />
             <div>
-              <h2 class="section-title">Layanan Kami</h2>
-              <p class="section-sub">Semua kebutuhan digital kamu</p>
+              <h2 class="section-title">Layanan Digital</h2>
+              <p class="section-sub">Solusi terintegrasi untuk seluruh kebutuhan transaksi Anda</p>
             </div>
           </div>
         </div>
@@ -117,7 +117,7 @@
               @error="(e) => e.target.style.display='none'" />
             <div>
               <h2 class="section-title">Top Up Game</h2>
-              <p class="section-sub">Harga terbaik, proses instan</p>
+              <p class="section-sub">Akses instan ke berbagai judul game populer dunia</p>
             </div>
           </div>
         </div>
@@ -186,8 +186,8 @@
             <img src="/icons/section/cs.webp" class="section-icon" alt=""
               @error="(e) => e.target.style.display='none'" />
             <div>
-              <h2 class="section-title">Butuh Bantuan?</h2>
-              <p class="section-sub">Tim CS kami siap 24/7 untuk kamu</p>
+              <h2 class="section-title">Pusat Bantuan</h2>
+              <p class="section-sub">Dukungan teknis responsif tersedia 24 jam setiap hari</p>
             </div>
           </div>
         </div>
@@ -682,10 +682,6 @@ onMounted(async () => {
   color: var(--foreground, #111827);
   letter-spacing: -0.02em;
   line-height: 1.2;
-  background: linear-gradient(135deg, var(--foreground,#111827) 0%, #16a34a 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
 }
 
 .section-sub {

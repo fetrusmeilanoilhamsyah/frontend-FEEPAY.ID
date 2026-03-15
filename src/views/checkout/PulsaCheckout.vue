@@ -14,11 +14,11 @@
           </div>
           <div>
             <h1 class="header-title">Pulsa Reguler</h1>
-            <p class="header-sub">Isi pulsa semua operator</p>
+            <p class="header-sub">Layanan pengisian pulsa instan untuk seluruh operator seluler</p>
           </div>
         </div>
         <router-link to="/checkout/data" class="switch-btn">
-          Beli Kuota →
+          Paket Data →
         </router-link>
       </div>
     </div>
@@ -83,7 +83,7 @@
 
             <!-- Popular badge -->
             <div v-if="['25rb','50rb'].includes(item.displayLabel) && !item.isDummy" class="popular-badge">
-              🔥 Populer
+              Populer
             </div>
 
             <div class="card-content">

@@ -14,11 +14,11 @@
           </div>
           <div>
             <h1 class="header-title">Paket Data</h1>
-            <p class="header-sub">Kuota internet super cepat</p>
+            <p class="header-sub">Layanan aktivasi paket data seketika untuk koneksi internet Anda</p>
           </div>
         </div>
         <router-link to="/checkout/pulsa" class="switch-btn">
-          Beli Pulsa →
+          Isi Pulsa →
         </router-link>
       </div>
     </div>

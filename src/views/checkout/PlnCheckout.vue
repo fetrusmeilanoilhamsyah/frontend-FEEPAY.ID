@@ -9,7 +9,7 @@
         </button>
         <div>
           <h1 class="header-title">Token PLN</h1>
-          <p class="header-sub">Beli token listrik prabayar</p>
+          <p class="header-sub">Layanan pengadaan token listrik prabayar secara instan</p>
         </div>
       </div>
     </div>
@@ -43,7 +43,7 @@
       <!-- Info email -->
       <div class="info-banner">
         <Info :size="16" class="info-icon" />
-        <p class="info-text">Token PLN dikirim otomatis ke email setelah pembayaran berhasil</p>
+        <p class="info-text">Token PLN akan didistribusikan secara otomatis segera setelah pembayaran Anda terverifikasi oleh sistem.</p>
       </div>
 
       <!-- Products -->

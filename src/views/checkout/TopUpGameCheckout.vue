@@ -9,7 +9,7 @@
         </button>
         <div>
           <h1 class="header-title">Top Up Game</h1>
-          <p class="header-sub">Isi diamond, UC, CP langsung ke akun</p>
+          <p class="header-sub">Layanan top up instan untuk kebutuhan mata uang game favorit Anda</p>
         </div>
       </div>
     </div>
@@ -67,8 +67,8 @@
 
         <div v-else class="empty-state">
           <Gamepad2 :size="64" class="empty-icon" />
-          <p class="empty-title">Game tidak ditemukan</p>
-          <p class="empty-sub">Coba kata kunci lain</p>
+          <p class="empty-title">Layanan Tidak Ditemukan</p>
+          <p class="empty-sub">Coba menggunakan kata kunci atau kategori lain</p>
         </div>
       </div>
 
@@ -157,7 +157,7 @@
 
         <div v-else class="empty-state">
           <Package :size="48" class="empty-icon" />
-          <p class="empty-title">Paket belum tersedia</p>
+          <p class="empty-title">Paket Layanan Belum Tersedia</p>
         </div>
       </div>
     </div>
