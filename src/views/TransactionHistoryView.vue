@@ -1,5 +1,5 @@
 <template>
-  <div class="tx-page">
+  <div class="tx-page" ref="txPageRef">
 
     <!-- Header -->
     <div class="tx-header">
@@ -13,6 +13,10 @@
     </div>
 
     <div class="page-content">
+      <!-- Background Particles -->
+      <div class="page-bg-art" style="transform: translate3d(0, calc(var(--scrollY) * 0.1px), 0)">
+        <AntigravityParticles absolute :particle-count="20" class="opacity-20" />
+      </div>
 
       <!-- Search -->
       <div class="search-wrap">
@@ -47,8 +51,12 @@
 
       <!-- Orders -->
       <div v-else class="orders-list">
-        <div v-for="order in filteredOrders" :key="order.order_id"
-          class="order-card" @click="viewOrderDetail(order)">
+        <div v-for="(order, idx) in filteredOrders" :key="order.order_id"
+          class="order-card reveal reveal--up" 
+          v-reveal
+          :style="{ '--p-delay': (Math.min(idx, 8) * 0.08) + 's' }"
+          style="transform: translate3d(0, calc(var(--velocity) * 2px), 0)"
+          @click="viewOrderDetail(order)">
 
           <div class="order-top">
             <div class="order-left">
@@ -301,7 +309,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import {
   ArrowLeft, Package, ChevronRight, RefreshCw, ShoppingBag,
@@ -312,6 +320,7 @@ import { useOrderStore } from '@/stores/orderStore'
 import { useMidtrans } from '@/composables/useMidtrans'
 import api from '@/services/api'
 import StatusBadge from '@/components/StatusBadge.vue'
+import AntigravityParticles from '@/components/AntigravityParticles.vue'
 
 const router     = useRouter()
 const orderStore = useOrderStore()
@@ -326,6 +335,29 @@ const toastMessage        = ref('')
 const searchQuery         = ref('')
 const isProcessingPayment = ref(false)
 const isSyncing           = ref(false)
+
+const txPageRef = ref(null)
+const targetScrollY = ref(0)
+const smoothScrollY = ref(0)
+const scrollVelocity = ref(0)
+let lastSmoothY = 0
+let rafId = null
+
+const handleScroll = () => {
+  targetScrollY.value = window.scrollY
+}
+
+const updatePhysics = () => {
+  smoothScrollY.value += (targetScrollY.value - smoothScrollY.value) * 0.12
+  scrollVelocity.value = smoothScrollY.value - lastSmoothY
+  lastSmoothY = smoothScrollY.value
+
+  if (txPageRef.value) {
+    txPageRef.value.style.setProperty('--scrollY', smoothScrollY.value.toFixed(2))
+    txPageRef.value.style.setProperty('--velocity', scrollVelocity.value.toFixed(2))
+  }
+  rafId = requestAnimationFrame(updatePhysics)
+}
 
 // ─── Payment Type Helpers ─────────────────────────────────────────────────────
 
@@ -505,9 +537,16 @@ const refreshOrders = async () => {
 }
 
 onMounted(async () => {
+  window.addEventListener('scroll', handleScroll, { passive: true })
+  updatePhysics()
   loading.value = true
   try { await syncOrdersFromBackend() }
   finally { loading.value = false }
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
+  if (rafId) cancelAnimationFrame(rafId)
 })
 </script>
 
@@ -637,4 +676,31 @@ onMounted(async () => {
 .toast-enter-from,.toast-leave-to { opacity:0; transform:translateX(-50%) translateY(10px); }
 .modal-enter-active,.modal-leave-active { transition:opacity 0.3s; }
 .modal-enter-from,.modal-leave-to { opacity:0; }
+
+/* ANTIGRAVITY REVEALS */
+.reveal {
+  opacity: 0;
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
+              transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+}
+.reveal--up { transform: translateY(30px) scale(0.95); }
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0) scale(1) !important;
+  transition-delay: var(--p-delay, 0s);
+}
+
+.page-bg-art {
+  position: fixed; inset: 0; 
+  pointer-events: none; z-index: 0;
+  will-change: transform;
+}
+
+.order-card {
+  will-change: transform, opacity;
+  position: relative;
+  z-index: 1;
+}
+</style>
 </style>

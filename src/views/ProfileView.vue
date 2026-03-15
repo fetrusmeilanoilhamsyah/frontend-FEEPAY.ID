@@ -1,5 +1,5 @@
 <template>
-  <div class="profile-page">
+  <div class="profile-page" ref="profilePageRef">
 
     <!-- HEADER — selaras HomeView -->
     <div class="profile-header">
@@ -26,9 +26,13 @@
 
     <!-- CONTENT -->
     <div v-else class="profile-content">
+      <!-- Background Particles -->
+      <div class="page-bg-art" style="transform: translate3d(0, calc(var(--scrollY) * 0.1px), 0)">
+        <AntigravityParticles absolute :particle-count="15" class="opacity-20" />
+      </div>
 
       <!-- Avatar + nama -->
-      <div class="avatar-section">
+      <div class="avatar-section reveal reveal--up" v-reveal style="transform: translate3d(0, calc(var(--velocity) * 3px), 0)">
         <div class="avatar-wrap">
           <div class="avatar-ring">
             <div class="avatar-inner">
@@ -49,7 +53,7 @@
       </div>
 
       <!-- Stats card — selaras HowItWorks -->
-      <div class="stats-card">
+      <div class="stats-card reveal reveal--up" v-reveal :style="{ '--p-delay': '0.1s' }" style="transform: translate3d(0, calc(var(--velocity) * 2px), 0)">
         <div class="stat-item">
           <img src="/icons/profile/transaction.webp" class="stat-icon" alt=""
             @error="(e) => e.target.style.display='none'" />
@@ -73,7 +77,7 @@
       </div>
 
       <!-- Menu section -->
-      <div class="menu-section">
+      <div class="menu-section reveal reveal--up" v-reveal :style="{ '--p-delay': '0.2s' }">
         <div class="section-title-wrap">
           <img src="/icons/profile/settings.webp" class="section-icon" alt=""
             @error="(e) => e.target.style.display='none'" />
@@ -127,7 +131,7 @@
       </div>
 
       <!-- Back button -->
-      <button class="back-btn mt-4" @click="$router.push('/')">
+      <button class="back-btn mt-4 reveal reveal--up" v-reveal :style="{ '--p-delay': '0.3s' }" @click="$router.push('/')">
         ← Kembali ke Beranda
       </button>
 
@@ -139,15 +143,39 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import LoginModal from '../components/LoginModal.vue'
 import { useCustomerAuth } from '../composables/useCustomerAuth'
+import AntigravityParticles from '@/components/AntigravityParticles.vue'
 
 const router = useRouter()
 const { user, isAuthenticated, logout } = useCustomerAuth()
 const loading = ref(true)
 const isLoginOpen = ref(false)
+
+const profilePageRef = ref(null)
+const targetScrollY = ref(0)
+const smoothScrollY = ref(0)
+const scrollVelocity = ref(0)
+let lastSmoothY = 0
+let rafId = null
+
+const handleScroll = () => {
+  targetScrollY.value = window.scrollY
+}
+
+const updatePhysics = () => {
+  smoothScrollY.value += (targetScrollY.value - smoothScrollY.value) * 0.12
+  scrollVelocity.value = smoothScrollY.value - lastSmoothY
+  lastSmoothY = smoothScrollY.value
+
+  if (profilePageRef.value) {
+    profilePageRef.value.style.setProperty('--scrollY', smoothScrollY.value.toFixed(2))
+    profilePageRef.value.style.setProperty('--velocity', scrollVelocity.value.toFixed(2))
+  }
+  rafId = requestAnimationFrame(updatePhysics)
+}
 
 const menuItems = [
   { icon: '/icons/profile/account.webp',      label: 'Informasi Akun',    bg: '#DBEAFE', route: 'account-info',  badge: null },
@@ -164,7 +192,14 @@ const navigateTo = (item) => {
 }
 
 onMounted(() => {
+  window.addEventListener('scroll', handleScroll, { passive: true })
+  updatePhysics()
   setTimeout(() => { loading.value = false }, 400)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
+  if (rafId) cancelAnimationFrame(rafId)
 })
 
 const handleLoginSuccess = (userData) => {
@@ -355,5 +390,38 @@ const doLogout = async () => {
   border-radius: 12px; padding: 16px; text-align: center;
 }
 .stats-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
-@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+/* ANTIGRAVITY REVEALS */
+.reveal {
+  opacity: 0;
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
+              transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+}
+.reveal--up { transform: translateY(30px) scale(0.95); }
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0) scale(1) !important;
+  transition-delay: var(--p-delay, 0s);
+}
+
+.page-bg-art {
+  position: fixed; inset: 0; 
+  pointer-events: none; z-index: 0;
+  will-change: transform;
+}
+
+.avatar-section, .stats-card, .menu-section {
+  position: relative;
+  z-index: 1;
+  will-change: transform;
+}
+
+.menu-item {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.menu-item:hover {
+  transform: translateX(8px);
+  background: rgba(22, 163, 74, 0.02);
+}
 </style>
