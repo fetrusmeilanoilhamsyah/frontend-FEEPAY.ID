@@ -5,7 +5,6 @@
     <div class="fixed inset-0 pointer-events-none overflow-hidden">
       <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-primary-500/5 dark:bg-primary-500/[0.02] rounded-full blur-[120px] transform translate-x-1/2 -translate-y-1/2"></div>
       <div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-accent-500/5 dark:bg-accent-500/[0.02] rounded-full blur-[100px] transform -translate-x-1/2 translate-y-1/2"></div>
-      <AntigravityParticles />
     </div>
 
     <div class="app-frame">
@@ -63,7 +62,6 @@ import { useTheme } from './composables/useTheme'
 import { useAuth } from './composables/useAuth'
 import ChatWidget from './components/frontend_ChatWidget.vue'
 import BottomNav from './components/BottomNav.vue'
-import AntigravityParticles from './components/AntigravityParticles.vue'
 
 const router = useRouter()
 const { toggleTheme, initTheme, isDark } = useTheme()

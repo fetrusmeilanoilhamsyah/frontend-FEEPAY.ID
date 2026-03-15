@@ -1,16 +1,20 @@
 <template>
-  <canvas ref="canvasRef" class="particle-canvas" />
+  <canvas ref="canvasRef" :class="['particle-canvas', { 'is-absolute': absolute }]" />
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, defineProps } from 'vue'
+
+const props = defineProps({
+  particleCount: { type: Number, default: 60 },
+  absolute: { type: Boolean, default: false }
+})
 
 const canvasRef = ref(null)
 let ctx = null
 let animationFrame = null
 let particles = []
 
-const PARTICLE_COUNT = 60
 const MAX_SPEED = 0.2
 
 class Particle {
@@ -48,15 +52,21 @@ const init = () => {
   if (!canvas) return
   ctx = canvas.getContext('2d')
   resize()
-  particles = Array.from({ length: PARTICLE_COUNT }, () => new Particle(canvas.width, canvas.height))
+  particles = Array.from({ length: props.particleCount }, () => new Particle(canvas.width, canvas.height))
   animate()
 }
 
 const resize = () => {
   const canvas = canvasRef.value
   if (!canvas) return
-  canvas.width = window.innerWidth
-  canvas.height = window.innerHeight
+  if (props.absolute) {
+    const parent = canvas.parentElement
+    canvas.width = parent.offsetWidth
+    canvas.height = parent.offsetHeight
+  } else {
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+  }
 }
 
 const animate = () => {
@@ -88,5 +98,10 @@ onUnmounted(() => {
   pointer-events: none;
   z-index: -1;
   opacity: 0.5;
+}
+
+.particle-canvas.is-absolute {
+  position: absolute;
+  width: 100%; height: 100%;
 }
 </style>
