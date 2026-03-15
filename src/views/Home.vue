@@ -74,37 +74,55 @@
         </button>
       </div>
 
-      <!-- PENDING ORDER NOTIF -->
-      <div v-if="pendingOrders.length > 0" class="notif-bar" @click="router.push('/transactions')">
-        <div class="notif-dot"></div>
-        <div class="notif-text">
-          <span class="notif-title">{{ pendingOrders.length }} Transaksi Diproses</span>
-          <span class="notif-sub">{{ pendingOrders[0].product_name }} · Lihat detail</span>
+      <!-- PENDING ORDER NOTIF (Antigravity Pulse Card) -->
+      <transition name="fade">
+        <div v-if="pendingOrders.length > 0" class="notif-card reveal" @click="router.push('/transactions')">
+          <div class="notif-card-glow"></div>
+          <div class="notif-card-content">
+            <div class="notif-icon-wrap">
+              <div class="pulse-ring"></div>
+              <Activity :size="20" class="text-primary-500" />
+            </div>
+            <div class="notif-text">
+              <div class="notif-badge">SEDANG DIPROSES</div>
+              <span class="notif-title">{{ pendingOrders.length }} Transaksi Aktif</span>
+              <span class="notif-sub">{{ pendingOrders[0].product_name }} · Klik untuk detail</span>
+            </div>
+            <ChevronRight :size="20" class="notif-card-arrow" />
+          </div>
         </div>
-        <ChevronRight :size="16" class="notif-arrow" />
-      </div>
+      </transition>
 
       <!-- LAYANAN SECTION -->
-      <div class="section section--brand" v-reveal>
+      <div class="section section--premium reveal" v-reveal>
+        <!-- Section Background Particles -->
+        <div class="section-bg-art">
+          <AntigravityParticles absolute :particle-count="15" class="opacity-20" />
+        </div>
+
         <div class="section-header">
           <div class="section-title-wrap">
-            <img src="/icons/section/layanan.webp" class="section-icon" alt=""
-              @error="(e) => e.target.style.display='none'" />
+            <div class="section-icon-bg">
+              <img src="/icons/section/layanan.webp" class="section-icon" alt=""
+                @error="(e) => e.target.style.display='none'" />
+            </div>
             <div>
               <h2 class="section-title">Layanan Digital</h2>
-              <p class="section-sub">Solusi terintegrasi untuk seluruh kebutuhan transaksi Anda</p>
+              <p class="section-sub">Solusi pembayaran instan 24/7</p>
             </div>
           </div>
         </div>
-        <div class="service-grid">
+        
+        <div class="service-grid-premium">
           <router-link v-for="(s, idx) in services" :key="s.to" :to="s.to" 
-            class="service-card reveal" :class="'stagger-' + ((idx % 5) + 1)">
-            <div class="service-icon-wrap" :style="{ background: s.bg }">
-              <img :src="s.img" :alt="s.label" class="service-icon" 
-                loading="lazy" decoding="async" />
+            class="service-card-premium reveal" :class="'stagger-' + ((idx % 4) + 1)">
+            <div class="service-icon-glass" :style="{ '--service-bg': s.bg }">
+              <img :src="s.img" :alt="s.label" class="service-img-premium" />
             </div>
-            <span class="service-label">{{ s.label }}</span>
-            <span v-if="s.badge" class="service-badge">{{ s.badge }}</span>
+            <div class="service-info-premium">
+              <span class="service-label-premium">{{ s.label }}</span>
+              <span v-if="s.badge" class="service-badge-premium">{{ s.badge }}</span>
+            </div>
           </router-link>
         </div>
       </div>
@@ -604,26 +622,147 @@ onMounted(async () => {
   100%{ transform: scale(1); }
 }
 
-/* NOTIF BAR */
-.notif-bar {
-  display: flex; align-items: center; gap: 10px;
-  padding: 12px 14px;
-  background: var(--info-light);
-  border: 1px solid var(--info);
-  border-left: 3px solid var(--primary);
+/* NOTIF CARD (Premium Antigravity Style) */
+.notif-card {
+  position: relative;
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  border-radius: 20px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: 0 12px 30px rgba(37, 99, 235, 0.25);
+  transition: all 0.4s var(--ease-out-expo);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.notif-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 20px 40px rgba(37, 99, 235, 0.35);
+}
+
+.notif-card-glow {
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 50%);
+  animation: rotate-slow 15s linear infinite;
+  pointer-events: none;
+}
+
+.notif-card-content {
+  display: flex; align-items: center; gap: 16px; position: relative; z-index: 2;
+}
+
+.notif-icon-wrap {
+  width: 52px; height: 52px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+
+.pulse-ring {
+  position: absolute;
+  width: 100%; height: 100%;
+  border-radius: inherit;
+  border: 4px solid rgba(255,255,255,0.5);
+  animation: pulse-ring 2s infinite;
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.9); opacity: 1; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
+.notif-badge {
+  font-size: 0.625rem; font-weight: 900;
+  color: #fff; background: rgba(255,255,255,0.15);
+  padding: 2px 8px; border-radius: 6px;
+  display: inline-block; margin-bottom: 4px;
+  letter-spacing: 0.05em;
+}
+
+.notif-title { font-size: 1rem; font-weight: 800; color: #fff; display: block; }
+.notif-sub { font-size: 0.8125rem; color: rgba(255, 255, 255, 0.7); display: block; margin-top: 2px; }
+.notif-card-arrow { color: #fff; opacity: 0.6; }
+
+/* SECTION PREMIUM (Dominant Section) */
+.section--premium {
+  background: var(--card, #fff);
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 24px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.03);
+  margin-bottom: 24px;
+}
+
+.section-bg-art {
+  position: absolute; inset: 0; 
+  pointer-events: none; opacity: 0.4;
+  background: radial-gradient(circle at top left, var(--primary-muted, #f0fdf4) 0%, transparent 40%);
+}
+
+.section-icon-bg {
+  width: 44px; height: 44px;
+  background: var(--muted, #f3f4f6);
   border-radius: 12px;
-  cursor: pointer; transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center;
 }
-.notif-bar:hover { background: var(--info-light); opacity: 0.9; }
-.notif-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--primary); flex-shrink: 0; animation: pulse-blue 2s infinite; }
-@keyframes pulse-blue {
-  0%,100% { box-shadow: 0 0 0 0 rgba(59,130,246,0.4); }
-  50%     { box-shadow: 0 0 0 4px rgba(59,130,246,0); }
+
+/* SERVICE GRID PREMIUM (3-4 Columns for dominance) */
+.service-grid-premium {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 16px;
 }
-.notif-text { flex: 1; display: flex; flex-direction: column; gap: 1px; }
-.notif-title { font-size: 0.8125rem; font-weight: 700; color: var(--foreground); }
-.notif-sub   { font-size: 0.6875rem; color: var(--info); }
-.notif-arrow { color: var(--info); flex-shrink: 0; opacity: 0.5; }
+
+.service-card-premium {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  background: var(--muted, #f9fafb);
+  border: 1px solid var(--border, #f3f4f6);
+  border-radius: 18px;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.service-card-premium:hover {
+  background: var(--card, #fff);
+  transform: translateY(-4px);
+  border-color: var(--primary, #16a34a);
+  box-shadow: 0 12px 24px rgba(22, 163, 74, 0.1);
+}
+
+.service-icon-glass {
+  width: 44px; height: 44px;
+  background: var(--service-bg, #f3f4f6);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  box-shadow: inset 0 0 10px rgba(255,255,255,0.5);
+}
+
+.service-img-premium { width: 28px; height: 28px; object-fit: contain; }
+
+.service-info-premium { flex: 1; }
+.service-label-premium { 
+  font-size: 0.875rem; font-weight: 800; 
+  color: var(--foreground, #111827); 
+  display: block;
+}
+
+.service-badge-premium {
+  font-size: 0.625rem; font-weight: 700;
+  background: #ef4444; color: #fff;
+  padding: 0 6px; border-radius: 4px;
+  margin-top: 2px; display: inline-block;
+}
 
 /* SECTION */
 .section { display: flex; flex-direction: column; gap: 12px; }
