@@ -901,24 +901,24 @@ onUnmounted(() => {
   display: flex; align-items: center; justify-content: center;
 }
 
-/* SERVICE GRID PREMIUM (4 Columns like GoPay) */
+/* SERVICE GRID PREMIUM (Next-Gen Holographic) */
 .service-grid-premium {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16px 8px;
-  margin-top: 20px;
+  gap: 20px 12px;
+  margin-top: 24px;
 }
 
 .service-card-premium {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   text-decoration: none;
-  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
-              transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   will-change: transform, opacity;
+  perspective: 1000px;
 }
 
 .service-card-premium.reveal--up {
@@ -933,61 +933,106 @@ onUnmounted(() => {
 }
 
 .service-card-premium:hover {
-  transform: translateY(-5px);
+  transform: translateY(-8px) rotateX(10deg) rotateY(10deg);
 }
 
 .service-icon-glass {
-  width: 64px; height: 64px;
-  background: var(--service-bg, #f3f4f6);
-  border-radius: 20px;
-  display: flex; align-items: center; justify-content: center;
+  width: 68px; 
+  height: 68px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 22px;
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
   flex-shrink: 0;
   position: relative;
-  transition: all 0.4s var(--ease-spring);
+  transition: all 0.5s var(--ease-spring);
   box-shadow: 
-    0 4px 12px rgba(0,0,0,0.05),
-    inset 0 0 12px rgba(255,255,255,0.6);
-  border: 1px solid rgba(255,255,255,0.2);
+    0 8px 16px rgba(0,0,0,0.03),
+    inset 0 1px 1px rgba(255,255,255,0.8);
+  border: 1px solid rgba(22, 163, 74, 0.1);
+  overflow: visible;
+}
+
+.dark .service-icon-glass {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255,255,255,0.05);
+}
+
+/* Antigravity Pulse Aura */
+.service-icon-glass::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: var(--primary, #16a34a);
+  opacity: 0;
+  filter: blur(8px);
+  transition: opacity 0.4s ease;
+  z-index: -1;
 }
 
 .service-card-premium:hover .service-icon-glass {
-  transform: scale(1.1) rotate(3deg);
-  box-shadow: 
-    0 10px 25px rgba(22, 163, 74, 0.2),
-    inset 0 0 15px rgba(255,255,255,0.8);
+  transform: scale(1.1) translateZ(20px);
   border-color: var(--primary, #16a34a);
+  box-shadow: 0 15px 35px rgba(22, 163, 74, 0.15);
+}
+
+.service-card-premium:hover .service-icon-glass::after {
+  opacity: 0.2;
 }
 
 .service-img-premium { 
-  width: 36px; height: 36px; 
+  width: 38px; 
+  height: 38px; 
   object-fit: contain; 
-  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.service-card-premium:hover .service-img-premium {
+  transform: translateY(-4px) scale(1.1);
+  animation: floating-icon 3s ease-in-out infinite;
+}
+
+@keyframes floating-icon {
+  0%, 100% { transform: translateY(-4px) scale(1.1); }
+  50% { transform: translateY(-8px) scale(1.1); }
 }
 
 .service-label-premium { 
-  font-size: 0.75rem; 
-  font-weight: 800; 
+  font-size: 0.8125rem; 
+  font-weight: 850; 
   color: var(--foreground, #111827); 
   text-align: center;
   line-height: 1.2;
   letter-spacing: -0.01em;
-  transition: color 0.3s;
+  transition: color 0.3s, transform 0.4s;
 }
 
 .service-card-premium:hover .service-label-premium {
   color: var(--primary, #16a34a);
+  transform: translateZ(10px);
 }
 
 .service-badge-premium {
   position: absolute;
-  top: -6px; right: -6px;
-  font-size: 0.625rem; font-weight: 900;
-  background: #ef4444; color: #fff;
-  padding: 2px 8px; border-radius: 8px;
-  border: 2.5px solid #fff;
-  box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
-  z-index: 5;
+  top: -8px; 
+  right: -8px;
+  font-size: 0.625rem; 
+  font-weight: 900;
+  background: #16a34a; 
+  color: #fff;
+  padding: 3px 8px; 
+  border-radius: 8px;
+  border: 2px solid #fff;
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
+  z-index: 10;
   white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+
+.dark .service-badge-premium {
+  border-color: #1a2234;
 }
 
 /* SECTION */
