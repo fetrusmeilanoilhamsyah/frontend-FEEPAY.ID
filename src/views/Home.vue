@@ -721,9 +721,9 @@ onUnmounted(() => {
 .antigravity-hub {
   position: relative;
   overflow: hidden;
-  padding: 30px 0;
-  margin-bottom: 20px;
-  min-height: 120px;
+  padding: 20px 0;
+  margin-bottom: 12px;
+  min-height: 100px;
   mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
   -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
 }
@@ -731,8 +731,8 @@ onUnmounted(() => {
 .anti-flow-track {
   display: flex;
   width: fit-content;
-  gap: 24px;
-  animation: anti-drift 25s linear infinite;
+  gap: 20px;
+  animation: anti-drift 30s linear infinite;
   padding-left: 20px;
 }
 
@@ -750,7 +750,7 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   background: transparent;
   border: none;
   cursor: pointer;
@@ -761,8 +761,8 @@ onUnmounted(() => {
 }
 
 .anti-pill-glass {
-  width: 58px;
-  height: 58px;
+  width: 48px;
+  height: 48px;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -772,21 +772,21 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   box-shadow: 
-    0 10px 25px rgba(0, 0, 0, 0.04),
-    inset 0 1px 1px rgba(255, 255, 255, 0.9);
+    0 8px 20px rgba(0, 0, 0, 0.03),
+    inset 0 1px 1px rgba(255, 255, 255, 0.8);
   transition: all 0.4s var(--ease-spring);
 }
 
 .anti-pill:hover .anti-pill-glass {
   background: #fff;
-  transform: scale(1.15) translateY(-5px);
+  transform: scale(1.1) translateY(-4px);
   border-color: var(--primary, #16a34a);
-  box-shadow: 0 15px 35px rgba(22, 163, 74, 0.15);
+  box-shadow: 0 12px 30px rgba(22, 163, 74, 0.12);
 }
 
 .anti-pill-img {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   object-fit: contain;
 }
 

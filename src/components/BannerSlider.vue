@@ -3,29 +3,47 @@
     class="banner-slider"
     @mouseenter="pauseAutoplay"
     @mouseleave="resumeAutoplay"
+    @mousemove="handleMouseMove"
+    @mouseleave.augment="resetTilt"
     @touchstart.passive="onTouchStart"
     @touchend.passive="onTouchEnd"
+    ref="sliderRef"
   >
+    <!-- Background Decor (Antigravity Style) -->
+    <div class="slider-bg-decor">
+      <div class="decor-ring ring-1"></div>
+      <div class="decor-ring ring-2"></div>
+    </div>
+
     <div class="cards-track">
       <div
         v-for="(banner, index) in banners"
         :key="index"
-        class="card"
+        class="card-wrapper"
         :style="getCardStyle(index)"
         @click="onCardClick(index)"
       >
-        <img :src="banner.image" :alt="banner.alt" class="card-img" draggable="false" />
+        <div class="card" :class="{ 'card--active': index === currentIndex }">
+          <img :src="banner.image" :alt="banner.alt" class="card-img" draggable="false" />
+          <div class="card-overlay"></div>
+          <div class="card-glass-shine"></div>
+        </div>
       </div>
     </div>
 
+    <!-- Navigation Dots (Premium Style) -->
     <div class="dots">
-      <button
-        v-for="(_, i) in banners"
-        :key="i"
-        @click="goTo(i)"
-        class="dot"
-        :class="{ 'dot--active': i === currentIndex }"
-      />
+      <div class="dots-container">
+        <button
+          v-for="(_, i) in banners"
+          :key="i"
+          @click="goTo(i)"
+          class="dot-pill"
+          :class="{ 'dot-pill--active': i === currentIndex }"
+        >
+          <span class="dot-inner"></span>
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -33,22 +51,54 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 
-defineEmits(['action'])
-
 const banners = [
-  { image: '/banners/banner1.webp', alt: 'Banner 1' },
-  { image: '/banners/banner2.webp', alt: 'Banner 2' },
-  { image: '/banners/banner3.webp', alt: 'Banner 3' },
-  { image: '/banners/banner4.webp', alt: 'Banner 4' },
-  { image: '/banners/banner5.webp', alt: 'Banner 5' },
+  { image: '/banners/banner1.webp', alt: 'Promo 1' },
+  { image: '/banners/banner2.webp', alt: 'Promo 2' },
+  { image: '/banners/banner3.webp', alt: 'Promo 3' },
+  { image: '/banners/banner4.webp', alt: 'Promo 4' },
+  { image: '/banners/banner5.webp', alt: 'Promo 5' },
 ]
 
+const sliderRef = ref(null)
 const currentIndex = ref(0)
+const total = banners.length
 let autoplayInterval = null
 let touchStartX = 0
-const total = banners.length
 
-// Hitung posisi relatif — hasilnya integer: -2,-1,0,1,2,...
+// Physics State
+const mouseX = ref(0)
+const mouseY = ref(0)
+const tiltX = ref(0)
+const tiltY = ref(0)
+const floatY = ref(0)
+let rafId = null
+
+// Animation Loop
+const updatePhysics = (time) => {
+  // Floating cycle (Antigravity Sine Wave)
+  floatY.value = Math.sin(time / 1500) * 8
+
+  // Smooth Lerp for Tilt
+  tiltX.value += (mouseX.value - tiltX.value) * 0.1
+  tiltY.value += (mouseY.value - tiltY.value) * 0.1
+
+  rafId = requestAnimationFrame(updatePhysics)
+}
+
+const handleMouseMove = (e) => {
+  if (!sliderRef.value) return
+  const rect = sliderRef.value.getBoundingClientRect()
+  const x = (e.clientX - rect.left) / rect.width - 0.5
+  const y = (e.clientY - rect.top) / rect.height - 0.5
+  mouseX.value = x * 15 // Max tilt 15deg
+  mouseY.value = y * -15
+}
+
+const resetTilt = () => {
+  mouseX.value = 0
+  mouseY.value = 0
+}
+
 const getRelPos = (index) => {
   let diff = index - currentIndex.value
   if (diff > total / 2)  diff -= total
@@ -56,146 +106,203 @@ const getRelPos = (index) => {
   return diff
 }
 
-// Semua posisi pakai translateX saja — TIDAK ada transisi left
 const getCardStyle = (index) => {
   const pos = getRelPos(index)
   const abs = Math.abs(pos)
+  
+  // Hide distant cards
+  if (abs > 2) return { opacity: 0, pointerEvents: 'none', transform: 'translateX(-50%) translateZ(-500px)' }
 
-  // Kartu terlalu jauh — sembunyikan
-  if (abs > 2) return { opacity: 0, pointerEvents: 'none', transform: 'translateX(-50%) translateY(-50%) scale(0.5)', left: '50%', top: '50%' }
+  const scale = pos === 0 ? 1 : abs === 1 ? 0.85 : 0.7
+  const opacity = pos === 0 ? 1 : abs === 1 ? 0.6 : 0.2
+  const zIndex = 10 - abs
+  
+  // Calculate horizontal position with perspective
+  const xOffset = pos * 65 // Spacing percentage
+  const zOffset = abs * -150 // Depth push
+  const rotation = pos * -15 // Fan effect
 
-  // Scale & opacity berdasar jarak
-  const scale   = pos === 0 ? 1 : abs === 1 ? 0.84 : 0.72
-  const opacity = pos === 0 ? 1 : abs === 1 ? 0.65 : 0.25
-  const zIndex  = pos === 0 ? 10 : abs === 1 ? 5 : 2
+  // Apply Float + Tilt only to active card
+  const activeTiltX = pos === 0 ? tiltY.value : 0
+  const activeTiltY = pos === 0 ? tiltX.value : 0
+  const activeFloat = floatY.value
 
-  // Offset horizontal: center=0%, side=±62%, far=±118%
-  const offsetMap = { '-2': -118, '-1': -62, 0: 0, 1: 62, 2: 118 }
-  const offset = offsetMap[pos] ?? 0
-
-  // Semua kartu anchor di center (left:50%), geser pakai translateX
   return {
-    left: '50%',
-    transform: `translateX(calc(-50% + ${offset}%)) translateY(-50%) scale(${scale})`,
-    opacity,
     zIndex,
-    pointerEvents: abs > 1 ? 'none' : 'auto',
+    opacity,
+    transform: `
+      translateX(calc(-50% + ${xOffset}%)) 
+      translateY(calc(-50% + ${activeFloat}px)) 
+      translateZ(${zOffset}px) 
+      rotateY(${rotation + activeTiltY}deg) 
+      rotateX(${activeTiltX}deg) 
+      scale(${scale})
+    `
   }
+}
+
+const next = () => { currentIndex.value = (currentIndex.value + 1) % total }
+const prev = () => { currentIndex.value = (currentIndex.value - 1 + total) % total }
+const goTo = (i) => { currentIndex.value = i }
+
+const startAutoplay = () => { autoplayInterval = setInterval(next, 5000) }
+const pauseAutoplay = () => { clearInterval(autoplayInterval) }
+const resumeAutoplay = () => startAutoplay()
+
+const onTouchStart = (e) => { touchStartX = e.changedTouches[0].clientX }
+const onTouchEnd = (e) => {
+  const diff = touchStartX - e.changedTouches[0].clientX
+  if (Math.abs(diff) > 50) diff > 0 ? next() : prev()
 }
 
 const onCardClick = (index) => {
   if (index !== currentIndex.value) goTo(index)
 }
 
-const next  = () => { currentIndex.value = (currentIndex.value + 1) % total }
-const prev  = () => { currentIndex.value = (currentIndex.value - 1 + total) % total }
-const goTo  = (i) => { currentIndex.value = i }
+onMounted(() => {
+  startAutoplay()
+  rafId = requestAnimationFrame(updatePhysics)
+})
 
-const startAutoplay  = () => { autoplayInterval = setInterval(next, 4000) }
-const pauseAutoplay  = () => { clearInterval(autoplayInterval) }
-const resumeAutoplay = () => { startAutoplay() }
-
-const onTouchStart = (e) => { touchStartX = e.changedTouches[0].clientX }
-const onTouchEnd   = (e) => {
-  const diff = touchStartX - e.changedTouches[0].clientX
-  if (Math.abs(diff) > 40) diff > 0 ? next() : prev()
-}
-
-onMounted(() => startAutoplay())
-onUnmounted(() => clearInterval(autoplayInterval))
+onUnmounted(() => {
+  clearInterval(autoplayInterval)
+  if (rafId) cancelAnimationFrame(rafId)
+})
 </script>
 
 <style scoped>
 .banner-slider {
   position: relative;
   width: 100%;
-  height: 280px;
-  overflow: hidden;
+  height: 220px;
+  overflow: visible;
   user-select: none;
-  border-radius: 18px;
-  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-  border: 1px solid rgba(22, 163, 74, 0.1);
+  perspective: 1200px;
+  margin: 10px 0 25px;
 }
 
-@media (min-width: 480px)  { .banner-slider { height: 300px; } }
-@media (min-width: 1024px) { .banner-slider { height: 320px; } }
+@media (min-width: 480px)  { .banner-slider { height: 240px; } }
+@media (min-width: 1024px) { .banner-slider { height: 260px; } }
 
-.banner-slider::before {
-  content: '';
-  position: absolute; inset: 0;
-  background-image: radial-gradient(circle, rgba(22,163,74,0.05) 1px, transparent 1px);
-  background-size: 24px 24px;
-  z-index: 0; pointer-events: none;
-  border-radius: 18px;
-}
-
-.banner-slider::after {
-  content: '';
+/* Background Decoration */
+.slider-bg-decor {
   position: absolute;
-  top: -40px; left: -40px;
-  width: 200px; height: 200px;
-  background: radial-gradient(circle, rgba(74, 222, 128, 0.15) 0%, transparent 70%);
-  z-index: 0; pointer-events: none;
+  inset: -20px;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  opacity: 0.5;
+}
+
+.decor-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(22, 163, 74, 0.1);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.ring-1 { width: 300px; height: 300px; animation: pulse-slow 8s ease-in-out infinite; }
+.ring-2 { width: 500px; height: 500px; animation: pulse-slow 12s ease-in-out infinite reverse; }
+
+@keyframes pulse-slow {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.3; }
+  50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.6; }
 }
 
 .cards-track {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   width: 100%; height: 100%;
-  perspective: 1000px;
+  transform-style: preserve-3d;
 }
+
+.card-wrapper {
+  position: absolute;
+  width: 80%;
+  top: 50%; left: 50%;
+  transform-origin: center center;
+  transition: 
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.6s ease;
+  will-change: transform, opacity;
+  aspect-ratio: 16 / 7;
+}
+
+@media (min-width: 480px) { .card-wrapper { width: 72%; } }
 
 .card {
-  position: absolute;
-  width: 82%;
-  top: 50%;
-  transform-origin: center center;
+  width: 100%; height: 100%;
   border-radius: 20px;
   overflow: hidden;
-  cursor: pointer;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.15);
-  transition:
-    transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1),
-    opacity   0.4s ease;
-  will-change: transform, opacity;
-  aspect-ratio: 16 / 9;
-  background: linear-gradient(135deg, #4ade80 0%, #16a34a 100%);
+  position: relative;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  background: #111;
+  transition: box-shadow 0.4s ease;
 }
 
-@media (min-width: 480px) { .card { width: 75%; } }
+.card--active {
+  box-shadow: 0 25px 60px rgba(22, 163, 74, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
 
 .card-img {
   width: 100%; height: 100%;
   object-fit: cover;
-  object-position: center;
   display: block;
-  pointer-events: none;
-  border-radius: 14px;
 }
 
+.card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.4) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.card-glass-shine {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 40%);
+  pointer-events: none;
+}
+
+/* Dots Styling */
 .dots {
   position: absolute;
-  bottom: 12px; left: 50%;
-  transform: translateX(-50%);
-  display: flex; gap: 6px;
-  z-index: 20;
+  bottom: -20px; left: 0; right: 0;
+  display: flex; justify-content: center;
+  z-index: 10;
 }
-.dot {
-  width: 8px; height: 8px;
+
+.dots-container {
+  display: flex;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 6px 12px;
   border-radius: 999px;
-  background: rgba(22, 163, 74, 0.3);
+  backdrop-filter: blur(4px);
+}
+
+.dark .dots-container { background: rgba(255, 255, 255, 0.05); }
+
+.dot-pill {
+  width: 6px; height: 6px;
+  border-radius: 10px;
+  background: rgba(22, 163, 74, 0.1);
   border: none; padding: 0;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.4s var(--ease-spring);
+  display: flex; align-items: center; justify-content: center;
 }
-.dot--active {
-  width: 24px;
+
+.dot-pill--active {
+  width: 20px;
   background: #16a34a;
 }
 
-@media (min-width: 768px) {
-  .dots { bottom: 16px; gap: 8px; }
-  .dot { width: 10px; height: 10px; }
-  .dot--active { width: 30px; }
+.dot-inner {
+  width: 100%; height: 100%;
+  border-radius: inherit;
+  background: inherit;
 }
 </style>
