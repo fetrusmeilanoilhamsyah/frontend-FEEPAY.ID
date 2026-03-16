@@ -75,6 +75,7 @@ let currentTiltY = 0
 let currentFloatY = 0
 let targetTiltX = 0
 let targetTiltY = 0
+let sliderRafId = null
 
 // Animation Loop
 const updatePhysics = (time) => {
@@ -92,7 +93,7 @@ const updatePhysics = (time) => {
     sliderRef.value.style.setProperty('--active-float-y', `${currentFloatY}px`)
   }
 
-  rafId = requestAnimationFrame(updatePhysics)
+  sliderRafId = requestAnimationFrame(updatePhysics)
 }
 
 const handleMouseMove = (e) => {
@@ -169,12 +170,12 @@ const onCardClick = (index) => {
 
 onMounted(() => {
   startAutoplay()
-  rafId = requestAnimationFrame(updatePhysics)
+  sliderRafId = requestAnimationFrame(updatePhysics)
 })
 
 onUnmounted(() => {
   clearInterval(autoplayInterval)
-  if (rafId) cancelAnimationFrame(rafId)
+  if (sliderRafId) cancelAnimationFrame(sliderRafId)
 })
 </script>
 
