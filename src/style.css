@@ -163,12 +163,6 @@
 
   @media (min-width: 768px) {
     .app-frame {
-      max-width: 480px;
-      box-shadow: 0 0 50px rgba(0,0,0,0.1);
-      border-left: 1px solid var(--border);
-      border-right: 1px solid var(--border);
-    }
-    .app-frame.is-admin-route {
       max-width: 100%;
       box-shadow: none;
       border: none;

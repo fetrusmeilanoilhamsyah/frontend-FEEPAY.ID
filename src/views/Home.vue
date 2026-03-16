@@ -673,12 +673,9 @@ onUnmounted(() => {
 
 @media (min-width: 768px) {
   .home-content {
-    max-width: 100%;
+    max-width: 1100px;
     margin: 0 auto;
-    padding: 20px 16px 80px;
-  }
-  .home-header {
-    display: flex !important; /* Always show in 480px frame */
+    padding: 24px 20px 100px;
   }
 }
 

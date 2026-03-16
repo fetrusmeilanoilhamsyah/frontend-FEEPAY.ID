@@ -629,6 +629,11 @@ const formatStatus = (s) => s === 'processing' ? 'Diproses' : s === 'pending' ? 
   align-items: center;
   gap: 14px;
 }
+@media (min-width: 768px) {
+  .header-inner {
+    max-width: 1000px;
+  }
+}
 
 .back-btn-premium {
   width: 40px;
@@ -692,6 +697,12 @@ const formatStatus = (s) => s === 'processing' ? 'Diproses' : s === 'pending' ? 
   gap: 20px;
   position: relative;
   z-index: 1;
+}
+@media (min-width: 768px) {
+  .page-content {
+    max-width: 1000px;
+    padding: 32px 24px;
+  }
 }
 
 /* PREMIUM SEARCH */

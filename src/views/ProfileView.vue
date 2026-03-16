@@ -218,6 +218,13 @@ const doLogout = async () => {
   display: flex; flex-direction: column; gap: 14px;
 }
 
+@media (min-width: 768px) {
+  .profile-content {
+    max-width: 800px;
+    padding: 32px 24px 120px;
+  }
+}
+
 /* AVATAR */
 .avatar-section {
   display: flex; flex-direction: column; align-items: center; gap: 6px;
