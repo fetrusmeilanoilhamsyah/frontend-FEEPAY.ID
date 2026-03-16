@@ -2,7 +2,7 @@
   <div class="home" ref="homeRef">
 
     <!-- TOP HEADER -->
-    <div class="home-header">
+    <div class="home-header md:hidden">
       <div class="header-brand">
         <img src="/icons/game.webp" class="brand-icon" alt=""
           @error="(e) => e.target.style.display='none'" />
@@ -54,6 +54,9 @@
         <SkeletonBanner v-if="productStore.loading" />
         <BannerSlider v-else @action="handleBannerAction" />
       </div>
+
+      <!-- LIVE TRANSACTION TICKER -->
+      <TransactionTicker class="reveal" v-reveal />
 
       <!-- ANTIGRAVITY FLOATING HUB (Infinite Flow) -->
       <div class="antigravity-hub reveal reveal--up" v-reveal>
@@ -361,6 +364,7 @@ import { useProductStore } from '@/stores/productStore'
 import { useOrderStore } from '@/stores/orderStore'
 import { useTheme } from '@/composables/useTheme'
 import AntigravityParticles from '@/components/AntigravityParticles.vue'
+import TransactionTicker from '@/components/home/TransactionTicker.vue'
 import { formatPrice as utilsFormatPrice } from '@/utils/format'
 
 const router = useRouter()
@@ -556,19 +560,22 @@ onUnmounted(() => {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border, #e5e7eb);
-  padding: 12px 16px;
+  padding: 8px 16px;
   display: flex; align-items: center; justify-content: space-between;
+}
+@media (min-width: 768px) {
+  .home-header { display: none; }
 }
 .dark .home-header {
   background: rgba(22, 28, 45, 0.85);
   border-color: rgba(255, 255, 255, 0.05);
 }
 .header-brand {
-  font-size: 1.25rem; font-weight: 900; letter-spacing: -0.03em;
-  display: flex; align-items: center; gap: 7px;
+  font-size: 1.125rem; font-weight: 900; letter-spacing: -0.03em;
+  display: flex; align-items: center; gap: 6px;
 }
 .brand-icon {
-  width: 28px; height: 28px;
+  width: 24px; height: 24px;
   object-fit: contain;
   flex-shrink: 0;
 }
@@ -577,7 +584,7 @@ onUnmounted(() => {
 .header-actions { display: flex; gap: 10px; }
 
 .header-btn {
-  width: 40px; height: 40px;
+  width: 36px; height: 36px;
   display: flex; align-items: center; justify-content: center;
   border-radius: 12px; border: none; background: transparent;
   color: var(--muted-foreground, #6b7280); cursor: pointer;

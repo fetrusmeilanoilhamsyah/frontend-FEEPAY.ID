@@ -129,8 +129,8 @@ const getWrapperStyle = (index) => {
   const zIndex = 10 - abs
   
   const xOffset = pos * 65 
-  const zOffset = abs * -150 
-  const rotation = pos * -15 
+  const zOffset = abs * -120 
+  const rotation = pos * -10 
 
   return {
     zIndex,
@@ -191,7 +191,7 @@ onUnmounted(() => {
 }
 
 @media (min-width: 480px)  { .banner-slider { height: 200px; } }
-@media (min-width: 1024px) { .banner-slider { height: 220px; } }
+@media (min-width: 1024px) { .banner-slider { height: 190px; } }
 
 /* Background Decoration */
 .slider-bg-decor {
@@ -239,6 +239,7 @@ onUnmounted(() => {
 }
 
 @media (min-width: 480px) { .card-wrapper { width: 72%; } }
+@media (min-width: 1024px) { .card-wrapper { width: 60%; } }
 
 .card {
   width: 100%; height: 100%;

@@ -11,10 +11,10 @@
       <!-- Top Navbar — HANYA DESKTOP -->
       <nav class="hidden md:block sticky top-0 z-50 backdrop-blur-xl bg-background/95 border-b border-border">
         <div class="max-w-7xl mx-auto px-6">
-          <div class="flex justify-between items-center h-16">
+          <div class="flex justify-between items-center h-14 md:h-14">
             <router-link v-if="!pageTitle" to="/" class="flex items-center select-none gap-2">
-              <span class="text-lg font-black tracking-tight text-foreground">FEE</span>
-              <span class="text-lg font-black tracking-tight text-green-600 -ml-1">PAY</span>
+              <span class="text-base font-black tracking-tight text-foreground">FEE</span>
+              <span class="text-base font-black tracking-tight text-green-600 -ml-1">PAY</span>
             </router-link>
             <div v-else class="flex items-center gap-4">
               <router-link to="/" class="flex items-center select-none gap-2 opacity-60 hover:opacity-100 transition-opacity">
@@ -26,7 +26,7 @@
             </div>
 
             <!-- desktop nav links -->
-            <div class="hidden lg:flex items-center gap-6 absolute left-1/2 -translate-x-1/2">
+            <div class="hidden lg:flex items-center gap-4 absolute left-1/2 -translate-x-1/2">
               <router-link to="/" class="text-sm font-bold transition-all hover:text-green-600" :class="route.path === '/' ? 'text-green-600' : 'text-foreground/60'">Beranda</router-link>
               <router-link to="/transactions" class="text-sm font-bold transition-all hover:text-green-600" :class="route.path.startsWith('/transactions') ? 'text-green-600' : 'text-foreground/60'">Riwayat</router-link>
               <router-link to="/profile" class="text-sm font-bold transition-all hover:text-green-600" :class="route.path.startsWith('/profile') ? 'text-green-600' : 'text-foreground/60'">Profil</router-link>
