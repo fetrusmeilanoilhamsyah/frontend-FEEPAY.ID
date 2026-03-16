@@ -452,7 +452,81 @@
         </div>
       </div>
 
+      <!-- WhatsApp Gateway Tab -->
+      <div v-if="activeTab === 'whatsapp'" class="reveal" v-reveal>
+        <div class="premium-card">
+          <div class="flex items-center justify-between mb-8">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
+                <MessageCircle :size="24" />
+              </div>
+              <div>
+                <h3 class="text-xl font-black tracking-tight">WhatsApp Gateway</h3>
+                <p class="text-xs text-muted-foreground font-medium uppercase tracking-widest">OTP & Notifikasi Otomatis</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="status-badge" :class="waStatus">
+                <span class="status-pulse" v-if="waStatus === 'connected' || waStatus === 'connecting'"></span>
+                {{ waStatus === 'connected' ? 'Aktif' : waStatus === 'connecting' ? 'Menghubungkan' : 'Terputus' }}
+              </div>
+              <button @click="fetchWAStatus" :disabled="waLoading" class="p-2 rounded-xl bg-muted hover:scale-110 transition-all">
+                <RefreshCw :size="16" :class="{ 'animate-spin': waLoading }" />
+              </button>
+            </div>
+          </div>
+
+          <!-- Connection Status -->
+          <div class="grid lg:grid-cols-2 gap-8">
+            <div class="space-y-6">
+              <div v-if="waStatus === 'connected'" class="p-6 rounded-3xl bg-emerald-500/5 border border-emerald-500/20">
+                <div class="flex items-center gap-4 mb-4">
+                  <div class="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center text-white">
+                    <CheckCircle :size="20" />
+                  </div>
+                  <div>
+                    <p class="text-[10px] font-black uppercase text-emerald-500">Tautan Perangkat Berhasil</p>
+                    <p class="text-sm font-bold">{{ waPhone || 'Nomor tidak terdeteksi' }}</p>
+                  </div>
+                </div>
+                <button @click="handleWADisconnect" :disabled="waDisconnecting" class="w-full py-3 rounded-2xl bg-red-500/10 text-red-500 font-black text-xs uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all">
+                  {{ waDisconnecting ? 'Memutuskan...' : 'Putuskan Koneksi' }}
+                </button>
+              </div>
+
+              <div v-else-if="waStatus === 'connecting' || !waQR" class="flex flex-col items-center justify-center py-10 rounded-3xl bg-muted/30 border border-dashed border-border">
+                <Loader2 class="animate-spin text-primary mb-4" :size="32" />
+                <p class="text-xs font-bold text-muted-foreground">Menyiapkan QR Code...</p>
+              </div>
+
+              <div v-else class="flex flex-col items-center gap-6 p-6 rounded-3xl bg-white dark:bg-dark-900 border border-border">
+                <div class="p-4 bg-white rounded-2xl">
+                  <img :src="waQR" alt="WA QR" class="w-64 h-64 object-contain" />
+                </div>
+                <div class="text-center">
+                  <p class="text-sm font-bold mb-1">Scan QR Code</p>
+                  <p class="text-xs text-muted-foreground">Buka WhatsApp > Perangkat Tertaut > Tautkan Perangkat</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="space-y-4">
+              <div class="p-4 rounded-2xl bg-muted/50 border border-border/50 flex items-center gap-4">
+                <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                  <Zap :size="18" />
+                </div>
+                <div>
+                  <p class="text-xs font-black uppercase">Kecepatan Tinggi</p>
+                  <p class="text-[10px] text-muted-foreground">Pengiriman OTP di bawah 3 detik.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </main>
+</div>
 
     <!-- Edit Price Modal -->
     <Teleport to="body">
