@@ -1,3 +1,4 @@
+<template>
   <div class="min-h-screen bg-slate-50 dark:bg-[#0b0f1a] transition-colors duration-500">
     <!-- Top Progress Bar (Visual Only) -->
     <div class="fixed top-0 left-0 right-0 h-1 bg-gradient-to-right from-primary to-blue-500 z-[100] opacity-50"></div>
@@ -12,7 +13,7 @@
             </div>
             <div>
               <h1 class="text-lg font-black tracking-tight leading-none text-foreground">ADMIN</h1>
-              <span class="text-[10px] font-bold text-primary tracking-[0.2em] uppercase">Control Panel</span>
+              <span class="text-[10px] font-bold text-primary tracking-[0.2em] uppercase">Panel Kontrol</span>
             </div>
           </div>
 
@@ -49,7 +50,7 @@
               </div>
             </div>
             <button @click="handleLogout" class="w-full py-2 rounded-xl bg-red-500/10 text-red-500 text-[10px] font-black uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all">
-              Sign Out Securely
+              Keluar Panel Admin
             </button>
           </div>
         </div>
@@ -461,12 +462,12 @@
             <div class="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-6 shadow-inner">
               <Zap :size="28" />
             </div>
-            <h2 class="text-2xl font-black tracking-tighter mb-1">Adjust Pricing</h2>
+            <h2 class="text-2xl font-black tracking-tighter mb-1">Ubah Harga</h2>
             <p class="text-sm text-muted-foreground font-medium mb-8">{{ editingProduct?.name }}</p>
             
             <div class="space-y-6 mb-8">
               <div>
-                <label class="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-2 block">Selling Price (IDR)</label>
+                <label class="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-2 block">Harga Jual (IDR)</label>
                 <div class="relative">
                   <div class="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-black text-muted-foreground">RP</div>
                   <input v-model="newSellingPrice" type="number" class="w-full pl-12 pr-4 py-4 rounded-2xl bg-muted border-none font-black text-xl outline-none focus:ring-2 ring-primary/30 transition-all" />
@@ -475,8 +476,8 @@
             </div>
 
             <div class="flex gap-4">
-              <button @click="closeEditPriceModal" class="flex-1 py-4 rounded-2xl bg-muted font-black text-[10px] uppercase tracking-widest transition-all hover:bg-muted-hover">Cancel</button>
-              <button @click="saveNewPrice" class="flex-1 py-4 rounded-2xl bg-primary text-white font-black text-[10px] uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-[1.05] transition-all">Save Changes</button>
+              <button @click="closeEditPriceModal" class="flex-1 py-4 rounded-2xl bg-muted font-black text-[10px] uppercase tracking-widest transition-all hover:bg-muted-hover">Batal</button>
+              <button @click="saveNewPrice" class="flex-1 py-4 rounded-2xl bg-primary text-white font-black text-[10px] uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-[1.05] transition-all">Simpan Perubahan</button>
             </div>
           </div>
         </div>
@@ -873,4 +874,3 @@ onUnmounted(() => {
   .max-w-7xl { max-width: 1400px; }
 }
 </style>
-```
