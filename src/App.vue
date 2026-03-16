@@ -36,7 +36,7 @@
       </nav>
 
       <!-- Main Content -->
-      <main class="relative z-10" :class="{ 'pb-16': true }">
+      <main class="relative z-10" :class="{ 'pb-16': !isAdminPage }">
         <router-view v-slot="{ Component, route }">
           <transition name="page" mode="out-in">
             <component :is="Component" :key="route.path" />
@@ -44,7 +44,7 @@
         </router-view>
       </main>
 
-      <BottomNav />
+      <BottomNav v-if="!isAdminPage" />
     </div>
 
     <!-- Scroll to Top (Outside frame, fixed to viewport or frame) -->
@@ -75,10 +75,11 @@ import BottomNav from './components/BottomNav.vue'
 const router = useRouter()
 const route  = useRoute()
 
+const isAdminPage = computed(() => route.path.startsWith('/admin'))
 const pageTitle = computed(() => {
   if (route.path.startsWith('/transactions')) return 'Riwayat Transaksi'
   if (route.path.startsWith('/profile'))      return 'Akun Saya'
-  if (route.path.startsWith('/admin'))        return 'Admin Dashboard'
+  if (isAdminPage.value)                      return 'Admin Dashboard'
   return ''
 })
 const { toggleTheme, initTheme, isDark } = useTheme()
