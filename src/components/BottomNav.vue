@@ -139,6 +139,7 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+/* HD Styles */
 .bottom-nav {
   position: fixed; bottom: 0; left: 50%;
   transform: translate3d(-50%, 0, 0);
@@ -147,8 +148,8 @@ onUnmounted(() => {
   border-top: 1px solid var(--border);
   z-index: 50;
   padding-bottom: env(safe-area-inset-bottom);
-  box-shadow: 0 -2px 16px rgba(0,0,0,0.06);
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-lg);
+  transition: transform 0.4s var(--ease-out-expo);
   will-change: transform;
 }
 
@@ -156,161 +157,87 @@ onUnmounted(() => {
   transform: translate3d(-50%, 100%, 0);
 }
 
-@media(min-width: 768px) { 
-  .bottom-nav { 
-    border-left: 1px solid var(--border);
-    border-right: 1px solid var(--border);
-  } 
-}
-
 .nav-inner {
-  max-width: 480px; margin: 0 auto;
-  display: flex; align-items: center; justify-content: space-around;
-  height: 62px; padding: 0 8px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 12px;
 }
 
 .nav-item {
   flex: 1;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  gap: 3px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
   text-decoration: none;
-  -webkit-tap-highlight-color: transparent;
   position: relative;
-  cursor: pointer;
-  background: none;
-  border: none;
+  transition: all 0.3s;
 }
 
-/* Logout button specific styling */
-.nav-logout .nav-icon-wrap {
-  background: rgba(239, 68, 68, 0.05) !important;
-}
-.nav-logout .nav-label {
-  color: #ef4444 !important;
-  font-weight: 700;
-}
-.nav-logout:active .nav-icon-wrap {
-  background: rgba(239, 68, 68, 0.12) !important;
+.nav-icon-wrap {
+  width: 42px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all 0.3s var(--ease-spring);
 }
 
-/* Top indicator */
-.nav-item::before {
+.nav-item.active .nav-icon-wrap {
+  transform: translateY(-2px);
+}
+
+/* Slim Indicator */
+.nav-item::after {
   content: '';
   position: absolute;
-  top: -1px; left: 50%;
-  transform: translateX(-50%) scaleX(0);
-  width: 22px; height: 2px;
-  background: #111827;
-  border-radius: 0 0 3px 3px;
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-.nav-item.active::before {
-  transform: translateX(-50%) scaleX(1);
-}
-.nav-logout::before {
-  background: #ef4444;
+  top: 0;
+  width: 24px;
+  height: 3px;
+  background: var(--primary);
+  border-radius: 0 0 4px 4px;
+  transform: scaleX(0);
+  transition: transform 0.3s var(--ease-spring);
 }
 
-/* ICON WRAP */
-.nav-icon-wrap {
-  width: 46px; height: 34px;
-  display: flex; align-items: center; justify-content: center;
-  border-radius: 12px;
-  position: relative;
-  overflow: visible;
-  transition: background 0.2s ease;
-}
-.nav-item.active .nav-icon-wrap {
-  background: rgba(17, 24, 39, 0.07);
+.nav-item.active::after {
+  transform: scaleX(1);
 }
 
-/* RIPPLE */
-.ripple-ring {
-  position: absolute;
-  border-radius: 50%;
-  border: 1.5px solid rgba(17,24,39,0.15);
-  width: 24px; height: 24px;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%) scale(0);
-  opacity: 0;
-  pointer-events: none;
-}
-.nav-icon-wrap.burst .r1 { animation: wave 0.5s ease-out forwards; }
-.nav-icon-wrap.burst .r2 { animation: wave 0.5s ease-out 0.1s forwards; }
-
-@keyframes wave {
-  0%   { transform: translate(-50%,-50%) scale(0.3); opacity: 0.4; }
-  100% { transform: translate(-50%,-50%) scale(2.6); opacity: 0; }
-}
-
-/* PARTIKEL 8 titik */
-.dot {
-  position: absolute;
-  width: 3px; height: 3px;
-  border-radius: 50%;
-  background: #111827;
-  top: 50%; left: 50%;
-  opacity: 0;
-  pointer-events: none;
-}
-.nav-icon-wrap.burst .d1 { animation: burst-dot 0.45s ease-out forwards 0.00s; --a: 0deg;   }
-.nav-icon-wrap.burst .d2 { animation: burst-dot 0.45s ease-out forwards 0.02s; --a: 45deg;  }
-.nav-icon-wrap.burst .d3 { animation: burst-dot 0.45s ease-out forwards 0.04s; --a: 90deg;  }
-.nav-icon-wrap.burst .d4 { animation: burst-dot 0.45s ease-out forwards 0.02s; --a: 135deg; }
-.nav-icon-wrap.burst .d5 { animation: burst-dot 0.45s ease-out forwards 0.00s; --a: 180deg; }
-.nav-icon-wrap.burst .d6 { animation: burst-dot 0.45s ease-out forwards 0.02s; --a: 225deg; }
-.nav-icon-wrap.burst .d7 { animation: burst-dot 0.45s ease-out forwards 0.04s; --a: 270deg; }
-.nav-icon-wrap.burst .d8 { animation: burst-dot 0.45s ease-out forwards 0.02s; --a: 315deg; }
-
-@keyframes burst-dot {
-  0%   { transform: translate(-50%,-50%) rotate(var(--a)) translateY(0)    scale(1);  opacity: 0.6; }
-  100% { transform: translate(-50%,-50%) rotate(var(--a)) translateY(-13px) scale(0); opacity: 0;   }
-}
-
-/* IMAGE */
 .nav-img {
-  width: 22px; height: 22px;
+  width: 22px;
+  height: 22px;
   object-fit: contain;
-  position: relative; z-index: 2;
-  filter: brightness(0) opacity(0.45);
-  transition: filter 0.2s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-.nav-item.active .nav-img {
-  filter: brightness(0) opacity(1);
-  animation: icon-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  filter: grayscale(1) opacity(0.4);
+  transition: all 0.3s;
 }
 
-/* Logout SVG icon */
-.nav-img-logout {
-  width: 22px; height: 22px;
-  color: #ef4444;
-  position: relative; z-index: 2;
-  opacity: 0.8;
-  transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-.nav-logout:active .nav-img-logout {
-  opacity: 1;
+.nav-item.active .nav-img {
+  filter: grayscale(0) opacity(1);
   transform: scale(1.1);
 }
 
-/* Pop ringan — cuma scale, gak naik turun */
-@keyframes icon-pop {
-  0%   { transform: scale(1);    }
-  50%  { transform: scale(1.18); }
-  100% { transform: scale(1.1);  }
+.nav-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--muted-foreground);
+  transition: color 0.3s;
 }
 
-/* LABEL */
-.nav-label {
-  font-size: 0.6rem;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  color: var(--muted-foreground);
-  transition: color 0.2s ease, font-weight 0.2s ease;
-}
 .nav-item.active .nav-label {
-  color: var(--foreground);
-  font-weight: 800;
+  color: var(--primary);
 }
+
+/* Logout */
+.nav-logout .nav-label { color: #EF4444 !important; }
+.nav-img-logout {
+  width: 20px;
+  height: 20px;
+  color: #EF4444;
+  opacity: 0.6;
+}
+.nav-logout:active .nav-img-logout { opacity: 1; }
 </style>

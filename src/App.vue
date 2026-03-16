@@ -1,10 +1,10 @@
 <template>
   <div class="min-h-screen transition-colors duration-300 relative">
 
-    <!-- Background blur decorations -->
-    <div class="fixed inset-0 pointer-events-none overflow-hidden">
-      <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-primary-500/5 dark:bg-primary-500/[0.02] rounded-full blur-[120px] transform translate-x-1/2 -translate-y-1/2"></div>
-      <div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-accent-500/5 dark:bg-accent-500/[0.02] rounded-full blur-[100px] transform -translate-x-1/2 translate-y-1/2"></div>
+    <!-- Background Decorations (Subtle HD) -->
+    <div class="fixed inset-0 pointer-events-none overflow-hidden translate-z-0">
+      <div class="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] bg-primary/5 rounded-full blur-[140px]"></div>
+      <div class="absolute bottom-[-5%] left-[-5%] w-[500px] h-[500px] bg-secondary/5 rounded-full blur-[120px]"></div>
     </div>
 
     <div class="app-frame">

@@ -134,16 +134,16 @@
             v-reveal
             :style="{ 
               '--idx': idx,
-              '--p-delay': (idx * 0.1) + 's',
-              '--p-factor': (0.01 + (idx % 2) * 0.015)
+              '--p-delay': (idx * 0.05) + 's'
             }"
-            style="transform: translate3d(0, calc(var(--scrollY) * var(--p-factor) * 1px), 0)"
           >
-            <div class="service-icon-glass" :style="{ '--service-bg': s.bg }">
-              <img :src="s.img" :alt="s.label" class="service-img-premium" />
-              <div v-if="s.badge" class="service-badge-premium">{{ s.badge }}</div>
+            <div class="service-icon-container">
+              <div class="service-squircle squircle" :style="{ background: s.bg || 'var(--primary-muted)' }">
+                <img :src="s.img" :alt="s.label" class="service-img-hd" />
+              </div>
+              <div v-if="s.badge" class="service-badge-hd">{{ s.badge }}</div>
             </div>
-            <span class="service-label-premium">{{ s.label }}</span>
+            <span class="service-label-hd">{{ s.label }}</span>
           </router-link>
         </div>
       </div>
@@ -921,11 +921,11 @@ onUnmounted(() => {
   display: flex; align-items: center; justify-content: center;
 }
 
-/* SERVICE GRID PREMIUM (Next-Gen Holographic) */
+/* SERVICE GRID HD (Gopay Style) */
 .service-grid-premium {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 20px 12px;
+  gap: 24px 12px;
   margin-top: 24px;
 }
 
@@ -933,126 +933,79 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   text-decoration: none;
-  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.4s var(--ease-spring), opacity 0.4s ease;
+}
+
+.service-icon-container {
   position: relative;
-  will-change: transform, opacity;
-  perspective: 1000px;
-}
-
-.service-card-premium.reveal--up {
-  opacity: 0;
-  transform: translateY(30px) scale(0.9);
-}
-
-.service-card-premium.reveal--up.active {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-  transition-delay: var(--p-delay, 0s);
-}
-
-.service-card-premium:hover {
-  transform: translateY(-8px) rotateX(10deg) rotateY(10deg);
-}
-
-.service-icon-glass {
-  width: 68px; 
-  height: 68px;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 22px;
-  display: flex; 
-  align-items: center; 
+  width: 62px;
+  height: 62px;
+  display: flex;
+  align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  position: relative;
-  transition: all 0.5s var(--ease-spring);
-  box-shadow: 
-    0 8px 16px rgba(0,0,0,0.03),
-    inset 0 1px 1px rgba(255,255,255,0.8);
-  border: 1px solid rgba(22, 163, 74, 0.1);
-  overflow: visible;
 }
 
-.dark .service-icon-glass {
-  background: rgba(255, 255, 255, 0.03);
-  border-color: rgba(255,255,255,0.05);
+.service-squircle {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary-muted);
+  box-shadow: var(--shadow-md);
+  transition: all 0.4s var(--ease-spring);
 }
 
-/* Antigravity Pulse Aura */
-.service-icon-glass::after {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  border-radius: inherit;
-  background: var(--primary, #16a34a);
-  opacity: 0;
-  filter: blur(8px);
-  transition: opacity 0.4s ease;
-  z-index: -1;
+.service-card-premium:hover .service-squircle {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: var(--shadow-lg);
 }
 
-.service-card-premium:hover .service-icon-glass {
-  transform: scale(1.1) translateZ(20px);
-  border-color: var(--primary, #16a34a);
-  box-shadow: 0 15px 35px rgba(22, 163, 74, 0.15);
+.service-img-hd {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.08));
+  transition: transform 0.4s var(--ease-spring);
 }
 
-.service-card-premium:hover .service-icon-glass::after {
-  opacity: 0.2;
+.service-card-premium:hover .service-img-hd {
+  transform: scale(1.1);
 }
 
-.service-img-premium { 
-  width: 38px; 
-  height: 38px; 
-  object-fit: contain; 
-  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.service-card-premium:hover .service-img-premium {
-  transform: translateY(-4px) scale(1.1);
-  animation: floating-icon 3s ease-in-out infinite;
-}
-
-@keyframes floating-icon {
-  0%, 100% { transform: translateY(-4px) scale(1.1); }
-  50% { transform: translateY(-8px) scale(1.1); }
-}
-
-.service-label-premium { 
-  font-size: 0.8125rem; 
-  font-weight: 850; 
-  color: var(--foreground, #111827); 
+.service-label-hd {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--foreground);
   text-align: center;
-  line-height: 1.2;
   letter-spacing: -0.01em;
-  transition: color 0.3s, transform 0.4s;
+  transition: color 0.3s;
 }
 
-.service-card-premium:hover .service-label-premium {
-  color: var(--primary, #16a34a);
-  transform: translateZ(10px);
+.service-card-premium:hover .service-label-hd {
+  color: var(--primary);
 }
 
-.service-badge-premium {
+.service-badge-hd {
   position: absolute;
-  top: -8px; 
-  right: -8px;
-  font-size: 0.625rem; 
-  font-weight: 900;
-  background: #16a34a; 
+  top: -4px;
+  right: -4px;
+  background: #EF4444; /* Standard Red for focus */
   color: #fff;
-  padding: 3px 8px; 
-  border-radius: 8px;
+  font-size: 0.55rem;
+  font-weight: 900;
+  padding: 2px 6px;
+  border-radius: 6px;
   border: 2px solid #fff;
-  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
-  z-index: 10;
-  white-space: nowrap;
-  letter-spacing: 0.02em;
+  box-shadow: 0 4px 8px rgba(239, 68, 68, 0.2);
+  z-index: 2;
+  transform: rotate(4deg);
 }
 
-.dark .service-badge-premium {
-  border-color: #1a2234;
+.dark .service-badge-hd {
+  border-color: var(--card);
 }
 
 /* SECTION */
@@ -1200,21 +1153,19 @@ onUnmounted(() => {
 .game-card-perspective {
   position: relative;
   width: 100%;
-  border-radius: 20px;
-  background: var(--card, #fff);
-  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 18px;
+  background: var(--card);
+  border: 1px solid var(--border);
   overflow: hidden;
-  transition: all 0.5s var(--ease-spring);
+  transition: all 0.4s var(--ease-spring);
   transform-style: preserve-3d;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+  box-shadow: var(--shadow-sm);
 }
 
 .game-card:hover .game-card-perspective {
-  transform: translateY(-8px) rotateX(4deg) rotateY(4deg);
-  border-color: var(--primary, #16a34a);
-  box-shadow: 
-    0 15px 35px rgba(0, 0, 0, 0.12),
-    0 0 0 1px rgba(22, 163, 74, 0.2);
+  transform: translateY(-6px);
+  border-color: var(--primary-light);
+  box-shadow: var(--shadow-lg);
 }
 
 /* Holographic Rotating Ring Decoration */
@@ -1309,15 +1260,15 @@ onUnmounted(() => {
 /* Game Logo with Glass container */
 .game-card-logo-glass {
   position: absolute;
-  bottom: 12px; left: 12px;
-  width: 32px; height: 32px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(4px);
-  border-radius: 10px;
-  padding: 5px;
+  bottom: 10px; left: 10px;
+  width: 30px; height: 30px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
+  border-radius: 8px;
+  padding: 4px;
   z-index: 10;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   transition: all 0.4s var(--ease-spring);
 }
 

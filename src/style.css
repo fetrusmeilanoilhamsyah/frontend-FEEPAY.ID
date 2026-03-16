@@ -60,42 +60,33 @@
     --info-foreground: #ffffff;
     --info-light: #dbeafe;
     
-    /* Component Tokens - Light Mode */
-    --background: #ffffff;
-    --foreground: #0f172a;
-    
-    --card: #ffffff;
-    --card-foreground: #0f172a;
-    --card-hover: #f8fafc;
-    
-    --popover: #ffffff;
-    --popover-foreground: #0f172a;
-    
-    --primary: #2563eb;
+    /* Premium Palette (Gopay/Gojek-ish HD) */
+    --primary: #00880D;         /* Deep Professional Green */
+    --primary-light: #00AA13;   /* Bright Vibrant Green */
+    --primary-muted: #F0FDF4;
     --primary-foreground: #ffffff;
-    --primary-hover: #1d4ed8;
     
-    --secondary: #f1f5f9;
-    --secondary-foreground: #0f172a;
-    --secondary-hover: #e2e8f0;
+    --secondary: #00AED6;       /* Clean Blue */
+    --secondary-muted: #F0F9FF;
     
-    --muted: #f1f5f9;
-    --muted-foreground: #64748b;
+    --background: #FFFFFF;
+    --foreground: #1C1E23;      /* Less harsh black */
     
-    --accent: #10b981;
-    --accent-foreground: #ffffff;
-    --accent-hover: #059669;
+    --card: #FFFFFF;
+    --card-border: #F1F3F5;
     
-    --destructive: #ef4444;
-    --destructive-foreground: #ffffff;
+    --muted: #F8F9FA;
+    --muted-foreground: #6B7280;
     
-    --border: #e2e8f0;
-    --input: #e2e8f0;
-    --input-background: #ffffff;
-    --input-focus: #2563eb;
-    --ring: #2563eb;
+    --border: #E9ECEF;
     
-    /* Animation Tokens - Antigravity Inspired */
+    /* HD Shadows (Gopay Style) */
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
+    --shadow-lg: 0 12px 32px rgba(0,0,0,0.08);
+    --shadow-premium: 0 20px 40px rgba(0,0,0,0.1);
+    
+    /* Animation Tokens */
     --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
     --ease-in-out-expo: cubic-bezier(1, 0, 0, 1);
     --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -104,61 +95,27 @@
   }
 
   .dark {
-    /* Semantic Colors - Dark Mode Refined */
-    --success: #10b981;
-    --success-foreground: #ffffff;
-    --success-light: rgba(16, 185, 129, 0.15);
+    /* Premium Night Palette (Refined) */
+    --primary: #00AA13;
+    --primary-light: #00C21A;
+    --primary-muted: rgba(0, 170, 19, 0.08);
     
-    --warning: #f59e0b;
-    --warning-foreground: #ffffff;
-    --warning-light: rgba(245, 158, 11, 0.15);
+    --background: #0B0E11;      /* Deep Professional Dark */
+    --foreground: #F8FAFC;
     
-    --error: #ef4444;
-    --error-foreground: #ffffff;
-    --error-light: rgba(239, 68, 68, 0.15);
+    --card: #15191C;
+    --card-border: rgba(255, 255, 255, 0.05);
     
-    --info: #3b82f6;
-    --info-foreground: #ffffff;
-    --info-light: rgba(59, 130, 246, 0.15);
+    --muted: #1E2328;
+    --muted-foreground: #94A3B8;
     
-    /* Component Tokens - Premium Night Mode */
-    --background: #0a0c10;      
-    --foreground: #f8fafc;       
+    --border: #24292E;
     
-    --card: #151921;             
-    --card-foreground: #f1f5f9;
-    --card-hover: #1c222d;       
-    
-    --popover: #151921;
-    --popover-foreground: #f1f5f9;
-    
-    --primary: #3b82f6;
-    --primary-foreground: #ffffff;
-    --primary-hover: #60a5fa;
-    
-    --secondary: #1e293b;        
-    --secondary-foreground: #f1f5f9;
-    --secondary-hover: #2d3139;  
-    
-    --muted: #1e293b;
-    --muted-foreground: #94a3b8;
-    
-    --accent: #10b981;
-    --accent-foreground: #ffffff;
-    --accent-hover: #34d399;
-    
-    --destructive: #ef4444;
-    --destructive-foreground: #ffffff;
-    
-    --border: #262c3a;           
-    --input: #262c3a;
-    --input-background: #0f172a; 
-    --input-focus: #3b82f6;
-    --ring: rgba(59, 130, 246, 0.3);
-
-    /* Glassmorphism Tokens - Optimized for performance */
-    --glass-bg: rgba(21, 25, 33, 0.75);
-    --glass-border: rgba(255, 255, 255, 0.06);
+    /* HD Dark Shadows */
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.2);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.3);
+    --shadow-lg: 0 12px 32px rgba(0,0,0,0.4);
+    --shadow-premium: 0 20px 40px rgba(0,0,0,0.5);
   }
 
   * {
@@ -255,10 +212,17 @@
     @apply font-mono font-semibold;
   }
 
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { @apply bg-neutral-100 dark:bg-neutral-900; }
-  ::-webkit-scrollbar-thumb { @apply bg-neutral-300 dark:bg-neutral-700 rounded-full; }
-  ::-webkit-scrollbar-thumb:hover { @apply bg-neutral-400 dark:bg-neutral-600; }
+  /* Squircle Primitive (Apple/Gopay Style) */
+  .squircle {
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M0 50C0 10 10 0 50 0S100 10 100 50 90 100 50 100 0 90 0 50z' fill='%23000'/%3E%3C/svg%3E");
+    mask-size: 100% 100%;
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M0 50C0 10 10 0 50 0S100 10 100 50 90 100 50 100 0 90 0 50z' fill='%23000'/%3E%3C/svg%3E");
+    -webkit-mask-size: 100% 100%;
+  }
+
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
 }
 
 @layer components {
