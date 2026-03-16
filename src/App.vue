@@ -12,10 +12,19 @@
       <nav class="hidden md:block sticky top-0 z-50 backdrop-blur-xl bg-background/95 border-b border-border">
         <div class="max-w-7xl mx-auto px-6">
           <div class="flex justify-between items-center h-16">
-            <router-link to="/" class="flex items-center select-none gap-2">
+            <router-link v-if="!pageTitle" to="/" class="flex items-center select-none gap-2">
               <span class="text-lg font-black tracking-tight text-foreground">FEE</span>
               <span class="text-lg font-black tracking-tight text-green-600 -ml-1">PAY</span>
             </router-link>
+            <div v-else class="flex items-center gap-4">
+              <router-link to="/" class="flex items-center select-none gap-2 opacity-60 hover:opacity-100 transition-opacity">
+                <span class="text-base font-black tracking-tight text-foreground">FEE</span>
+                <span class="text-base font-black tracking-tight text-green-600 -ml-1">PAY</span>
+              </router-link>
+              <div class="h-6 w-px bg-border"></div>
+              <span class="text-sm font-bold text-foreground">{{ pageTitle }}</span>
+            </div>
+
             <div class="flex items-center gap-2">
               <button @click="toggleTheme" class="p-2 rounded-lg bg-muted text-muted-foreground hover:bg-card-hover transition-all">
                 <Sun v-if="isDark()" :size="16" />
@@ -56,7 +65,7 @@
 
 <script setup>
 import { onMounted, onUnmounted, ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { Sun, Moon } from 'lucide-vue-next'
 import { useTheme } from './composables/useTheme'
 import { useAuth } from './composables/useAuth'
@@ -64,6 +73,14 @@ import ChatWidget from './components/frontend_ChatWidget.vue'
 import BottomNav from './components/BottomNav.vue'
 
 const router = useRouter()
+const route  = useRoute()
+
+const pageTitle = computed(() => {
+  if (route.path.startsWith('/transactions')) return 'Riwayat Transaksi'
+  if (route.path.startsWith('/profile'))      return 'Akun Saya'
+  if (route.path.startsWith('/admin'))        return 'Admin Dashboard'
+  return ''
+})
 const { toggleTheme, initTheme, isDark } = useTheme()
 const { isAuthenticated, logout } = useAuth()
 

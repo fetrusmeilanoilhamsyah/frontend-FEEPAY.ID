@@ -603,17 +603,10 @@ const formatStatus = (s) => s === 'processing' ? 'Diproses' : s === 'pending' ? 
 }
 
 /* PREMIUM HEADER (Gopay HD style) */
-.tx-header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(12px) saturate(180%);
-  border-bottom: 1px solid var(--border);
-  box-shadow: var(--shadow-sm);
-  transition: all 0.3s;
-  border-bottom-left-radius: 24px;
-  border-bottom-right-radius: 24px;
+@media (min-width: 768px) {
+  .tx-header {
+    display: none !important;
+  }
 }
 
 .dark .tx-header {
@@ -817,6 +810,14 @@ const formatStatus = (s) => s === 'processing' ? 'Diproses' : s === 'pending' ? 
   display: flex;
   flex-direction: column;
   gap: 14px;
+}
+
+@media (min-width: 768px) {
+  .orders-list-hd {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
 }
 
 .order-card-hd {

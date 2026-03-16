@@ -677,6 +677,9 @@ onUnmounted(() => {
     margin: 0 auto;
     padding: 24px 20px 100px;
   }
+  .home-header {
+    display: none !important; /* Hide redundant header on desktop */
+  }
 }
 
 .banner-wrap {
@@ -927,6 +930,13 @@ onUnmounted(() => {
   margin-top: 16px;
 }
 
+@media (min-width: 768px) {
+  .service-grid-premium {
+    grid-template-columns: repeat(8, 1fr);
+    gap: 24px 20px;
+  }
+}
+
 .service-card-premium {
   display: flex;
   flex-direction: column;
@@ -1136,6 +1146,13 @@ onUnmounted(() => {
   gap: 12px;
   margin-top: 16px;
   perspective: 1000px;
+}
+
+@media (min-width: 768px) {
+  .game-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
+  }
 }
 
 .game-card {

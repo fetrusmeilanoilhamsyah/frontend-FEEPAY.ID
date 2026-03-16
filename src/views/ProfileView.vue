@@ -199,12 +199,10 @@ const doLogout = async () => {
 }
 
 /* HEADER — persis HomeView */
-.profile-header {
-  position: sticky; top: 0; z-index: 40;
-  background: var(--card, #ffffff);
-  border-bottom: 1px solid var(--border, #e5e7eb);
-  padding: 10px 16px;
-  display: flex; align-items: center;
+@media (min-width: 768px) {
+  .profile-header {
+    display: none !important;
+  }
 }
 .header-brand { font-size: 1.25rem; font-weight: 900; letter-spacing: -0.03em; }
 .brand-fee { color: var(--foreground, #111827); }
