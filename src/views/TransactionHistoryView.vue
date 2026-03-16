@@ -51,7 +51,7 @@
       </div>
 
       <!-- Branded Empty State -->
-      <div v-else-if="filteredOrders.length === 0" class="empty-state reveal reveal--up" v-reveal>
+      <div v-else-if="filteredOrders.length === 0" class="empty-state reveal reveal--up">
         <div class="empty-icon-wrapper">
           <Package :size="56" class="empty-icon-hd" stroke-width="1.5" />
           <div class="empty-glow"></div>
@@ -68,7 +68,6 @@
       <div v-else class="orders-list-hd">
         <div v-for="(order, idx) in filteredOrders" :key="order.order_id"
           class="order-card-hd reveal reveal--up" 
-          v-reveal
           :style="{ '--p-delay': (Math.min(idx, 8) * 0.05) + 's' }"
           @click="viewOrderDetail(order)">
           
@@ -109,7 +108,7 @@
                 @click="continuePayment(order)"
                 :disabled="isProcessingPayment"
                 class="btn-pay-premium squircle">
-                <loader-inline v-if="isProcessingPayment" />
+                <Loader v-if="isProcessingPayment" class="spin" :size="14" />
                 <CreditCard v-else :size="14" />
                 {{ isProcessingPayment ? 'Memproses...' : 'Selesaikan Pembayaran' }}
               </button>
@@ -332,7 +331,7 @@ import { useRouter } from 'vue-router'
 import {
   ArrowLeft, Package, ChevronRight, RefreshCw, ShoppingBag,
   Check, X, Search, CreditCard, Loader, Copy, Info, Eye,
-  Smartphone, QrCode, Clock
+  Smartphone, QrCode, Clock, AlertCircle
 } from 'lucide-vue-next'
 import { useOrderStore } from '@/stores/orderStore'
 import { useMidtrans } from '@/composables/useMidtrans'
