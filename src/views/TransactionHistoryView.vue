@@ -2,7 +2,7 @@
   <div class="tx-page" ref="txPageRef">
 
     <!-- Premium Header -->
-    <div class="tx-header squircle-bottom">
+    <div class="tx-header">
       <div class="header-inner">
         <button @click="$router.push('/')" class="back-btn-premium">
           <ArrowLeft :size="22" stroke-width="2.5" />
@@ -57,7 +57,7 @@
         </div>
         <h3 class="empty-title-hd">{{ searchQuery ? 'Tidak ada hasil' : 'Belum ada transaksi' }}</h3>
         <p class="empty-sub-hd">{{ searchQuery ? 'Coba kata kunci lain atau periksa filter kamu.' : 'Mulai shopping sekarang di FEEPAY.' }}</p>
-        <button v-if="!searchQuery" @click="$router.push('/')" class="btn-shop-premium squircle">
+        <button v-if="!searchQuery" @click="$router.push('/')" class="btn-shop-premium">
           <ShoppingBag :size="18" stroke-width="2.5" />
           Belanja Sekarang
         </button>
@@ -123,12 +123,12 @@
               <button v-if="!order.midtrans_payment_type"
                 @click="continuePayment(order)"
                 :disabled="isProcessingPayment"
-                class="btn-pay-premium squircle">
+                class="btn-pay-premium">
                 <Loader v-if="isProcessingPayment" class="spin" :size="14" />
                 <CreditCard v-else :size="14" />
                 {{ isProcessingPayment ? 'Memproses...' : 'Selesaikan Pembayaran' }}
               </button>
-              <button v-else @click="viewOrderDetail(order)" class="btn-info-premium squircle">
+              <button v-else @click="viewOrderDetail(order)" class="btn-info-premium">
                 <Eye :size="14" />
                 Lanjut Bayar
               </button>
@@ -612,6 +612,8 @@ const formatStatus = (s) => s === 'processing' ? 'Diproses' : s === 'pending' ? 
   border-bottom: 1px solid var(--border);
   box-shadow: var(--shadow-sm);
   transition: all 0.3s;
+  border-bottom-left-radius: 24px;
+  border-bottom-right-radius: 24px;
 }
 
 .dark .tx-header {
@@ -1015,33 +1017,47 @@ const formatStatus = (s) => s === 'processing' ? 'Diproses' : s === 'pending' ? 
 
 .btn-pay-premium {
   width: 100%;
-  padding: 12px;
+  padding: 14px;
   background: var(--primary);
   color: #fff;
   border: none;
-  font-size: 0.8125rem;
-  font-weight: 900;
+  border-radius: 16px;
+  font-size: 0.875rem;
+  font-weight: 950;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 10px;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 136, 13, 0.2);
+  box-shadow: 0 8px 16px rgba(0, 136, 13, 0.25);
+  transition: all 0.3s var(--ease-spring);
+}
+
+.btn-pay-premium:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(0, 136, 13, 0.35);
 }
 
 .btn-info-premium {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   background: var(--primary-muted);
   color: var(--primary);
   border: 1.5px solid var(--primary);
+  border-radius: 16px;
   font-size: 0.8125rem;
-  font-weight: 900;
+  font-weight: 950;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   cursor: pointer;
+  transition: all 0.3s var(--ease-spring);
+}
+
+.btn-info-premium:hover {
+  background: var(--primary);
+  color: #fff;
 }
 
 /* MODAL & OTHERS */
