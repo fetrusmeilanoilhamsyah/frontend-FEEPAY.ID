@@ -1,14 +1,20 @@
 <template>
   <div class="tx-page" ref="txPageRef">
 
-    <!-- Header -->
-    <div class="tx-header">
+    <!-- Premium Header -->
+    <div class="tx-header squircle-bottom">
       <div class="header-inner">
-        <button @click="$router.push('/')" class="back-btn"><ArrowLeft :size="20" /></button>
-        <div>
-          <h1 class="header-title">Riwayat Transaksi</h1>
-          <p class="header-sub">Pantau status pesanan kamu</p>
+        <button @click="$router.push('/')" class="back-btn-premium">
+          <ArrowLeft :size="22" stroke-width="2.5" />
+        </button>
+        <div class="header-content">
+          <h1 class="header-title-hd">Riwayat Transaksi</h1>
+          <div class="header-sub-hd">
+            <Clock :size="12" />
+            <span>Pantau status pesanan kamu</span>
+          </div>
         </div>
+        <div class="header-brand-glass">FEE<span>PAY</span></div>
       </div>
     </div>
 
@@ -18,20 +24,24 @@
         <AntigravityParticles absolute :particle-count="20" class="opacity-20" />
       </div>
 
-      <!-- Search -->
-      <div class="search-wrap">
-        <Search :size="18" class="search-icon" />
-        <input v-model="searchQuery" type="text" placeholder="Cari order ID, produk, nomor..." class="search-input" />
-        <button v-if="searchQuery" @click="searchQuery = ''" class="search-clear"><X :size="16" /></button>
+      <!-- Premium Search -->
+      <div class="search-container-hd">
+        <div class="search-wrap-hd">
+          <Search :size="18" class="search-icon-hd" stroke-width="2.5" />
+          <input v-model="searchQuery" type="text" placeholder="Cari order ID, produk, nomor..." class="search-input-hd" />
+          <button v-if="searchQuery" @click="searchQuery = ''" class="search-clear-hd"><X :size="16" /></button>
+        </div>
       </div>
 
-      <!-- Filter Tabs -->
-      <div class="filter-wrap">
-        <button v-for="f in filters" :key="f.value" @click="activeFilter = f.value"
-          class="filter-tab" :class="{ active: activeFilter === f.value }">
-          {{ f.label }}
-          <span v-if="f.count > 0" class="filter-count" :class="{ active: activeFilter === f.value }">{{ f.count }}</span>
-        </button>
+      <!-- Premium Filter Tabs -->
+      <div class="filter-container-hd">
+        <div class="filter-wrap-hd">
+          <button v-for="f in filters" :key="f.value" @click="activeFilter = f.value"
+            class="filter-pill-hd" :class="{ active: activeFilter === f.value }">
+            {{ f.label }}
+            <span v-if="f.count > 0" class="filter-dot-hd" :class="{ active: activeFilter === f.value }">{{ f.count }}</span>
+          </button>
+        </div>
       </div>
 
       <!-- Loading -->
@@ -49,57 +59,54 @@
         </button>
       </div>
 
-      <!-- Orders -->
-      <div v-else class="orders-list">
+      <!-- Premium Orders List -->
+      <div v-else class="orders-list-hd">
         <div v-for="(order, idx) in filteredOrders" :key="order.order_id"
-          class="order-card reveal reveal--up" 
+          class="order-card-hd reveal reveal--up" 
           v-reveal
-          :style="{ '--p-delay': (Math.min(idx, 8) * 0.08) + 's' }"
-          style="transform: translate3d(0, calc(var(--velocity) * 2px), 0)"
+          :style="{ '--p-delay': (Math.min(idx, 8) * 0.05) + 's' }"
           @click="viewOrderDetail(order)">
+          
+          <!-- Identity Side Bar -->
+          <div class="status-indicator-hd" :class="'status--' + order.status"></div>
 
-          <div class="order-top">
-            <div class="order-left">
-              <div class="order-meta">
-                <span class="order-date">{{ formatDate(order.created_at) }}</span>
-                <StatusBadge :status="order.status" />
+          <div class="order-content-hd">
+            <div class="order-top-hd">
+              <div class="order-info-hd">
+                <div class="order-meta-hd">
+                  <Clock :size="10" />
+                  <span class="order-date-hd font-mono">{{ formatDate(order.created_at) }}</span>
+                </div>
+                <h3 class="order-product-hd">{{ order.product_name }}</h3>
               </div>
-              <p class="order-name">{{ order.product_name }}</p>
+              <StatusBadge :status="order.status" size="sm" />
             </div>
-            <ChevronRight :size="18" class="order-chevron" />
-          </div>
 
-          <div class="order-bottom">
-            <div>
-              <p class="detail-label">Order ID</p>
-              <p class="detail-value mono">{{ order.order_id }}</p>
+            <div class="order-details-hd">
+              <div class="order-id-chip font-mono">
+                <span>#{{ order.order_id }}</span>
+              </div>
+              <div class="order-price-hd font-mono">
+                <span class="currency-hd">Rp</span>
+                <span class="amount-hd">{{ formatPrice(order.total_price) }}</span>
+              </div>
             </div>
-            <div class="text-right">
-              <p class="detail-label">Total</p>
-              <p class="detail-price">Rp{{ formatPrice(order.total_price) }}</p>
+
+            <!-- Action button in card -->
+            <div v-if="order.status === 'pending'" class="order-action-hd" @click.stop>
+              <button v-if="!order.midtrans_payment_type"
+                @click="continuePayment(order)"
+                :disabled="isProcessingPayment"
+                class="btn-pay-premium squircle">
+                <loader-inline v-if="isProcessingPayment" />
+                <CreditCard v-else :size="14" />
+                {{ isProcessingPayment ? 'Memproses...' : 'Selesaikan Pembayaran' }}
+              </button>
+              <button v-else @click="viewOrderDetail(order)" class="btn-info-premium squircle">
+                <Eye :size="14" />
+                Lanjut Bayar
+              </button>
             </div>
-          </div>
-
-          <!-- Action button di card -->
-          <div v-if="order.status === 'pending'" class="order-action" @click.stop>
-            <button v-if="!order.midtrans_payment_type"
-              @click="continuePayment(order)"
-              :disabled="isProcessingPayment"
-              class="btn-pay">
-              <Loader v-if="isProcessingPayment" class="spin" :size="16" />
-              <CreditCard v-else :size="16" />
-              {{ isProcessingPayment ? 'Membuka...' : 'Pilih Pembayaran' }}
-            </button>
-            <button v-else @click="viewOrderDetail(order)" class="btn-va">
-              <Eye :size="16" />
-              {{ isEwallet(order.midtrans_payment_type) ? 'Lanjut Bayar' : 'Lihat Info Pembayaran' }}
-            </button>
-          </div>
-
-          <!-- Success actions -->
-          <div v-else-if="order.status === 'success'" class="order-action" @click.stop>
-            <button @click="repeatOrder" class="btn-secondary">Pesan Lagi</button>
-            <button v-if="order.sn" @click="copySN(order.sn)" class="btn-copy">Salin SN</button>
           </div>
         </div>
       </div>
@@ -507,168 +514,430 @@ const continuePaymentFromModal = async (order) => {
 
 // ─── Sync ─────────────────────────────────────────────────────────────────────
 
-const syncOrdersFromBackend = async () => {
-  if (isSyncing.value) return
-  isSyncing.value = true
-  try {
-    const toSync = orderStore.orderHistory.filter(o => {
-      if (!['success', 'failed'].includes(o.status)) return true
-      if (o.status === 'success' && !o.sn) return true
-      return false
-    })
-    if (toSync.length === 0) return
-    await Promise.allSettled(toSync.map(async (order) => {
-      try {
-        const latest = await api.orders.get(order.order_id, order.customer_email)
-        orderStore.addToHistory(latest)
-      } catch (err) {
-        if ((err?.status || err?.response?.status) === 404) orderStore.removeFromHistory(order.order_id)
-      }
-    }))
-  } finally {
-    isSyncing.value = false
-  }
+const syncOrdersF<style scoped>
+.tx-page { 
+  min-height: 100vh; 
+  background: var(--background); 
+  padding-bottom: 90px;
+  color: var(--foreground);
 }
 
-const refreshOrders = async () => {
-  refreshing.value = true
-  try { await syncOrdersFromBackend(); showToastMsg('Status berhasil diperbarui') }
-  finally { refreshing.value = false }
+/* PREMIUM HEADER (Gopay HD style) */
+.tx-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px) saturate(180%);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s;
 }
 
-onMounted(async () => {
-  window.addEventListener('scroll', handleScroll, { passive: true })
-  updatePhysics()
-  loading.value = true
-  try { await syncOrdersFromBackend() }
-  finally { loading.value = false }
-})
+.dark .tx-header {
+  background: rgba(11, 14, 17, 0.85);
+  border-color: rgba(255, 255, 255, 0.05);
+}
 
-onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll)
-  if (rafId) cancelAnimationFrame(rafId)
-})
-</script>
+.header-inner {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
 
-<style scoped>
-.tx-page { min-height:100vh; background:var(--background,#f8fafc); padding-bottom:80px; }
+.back-btn-premium {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--foreground);
+  cursor: pointer;
+  transition: all 0.3s var(--ease-spring);
+  box-shadow: var(--shadow-sm);
+}
 
-.tx-header { position:sticky; top:0; z-index:40; background:var(--card,#fff); border-bottom:1px solid var(--border,#e5e7eb); }
-.header-inner { max-width:720px; margin:0 auto; padding:12px 16px; display:flex; align-items:center; gap:12px; }
-.back-btn { width:36px; height:36px; display:flex; align-items:center; justify-content:center; border-radius:10px; border:none; background:transparent; color:var(--muted-foreground,#6b7280); cursor:pointer; transition:all 0.15s; flex-shrink:0; }
-.back-btn:hover { background:var(--muted,#f3f4f6); }
-.header-title { font-size:1.0625rem; font-weight:700; color:var(--foreground,#111827); margin:0; }
-.header-sub { font-size:0.75rem; color:var(--muted-foreground,#6b7280); margin:0; }
+.back-btn-premium:active {
+  transform: scale(0.9);
+}
 
-.page-content { max-width:720px; margin:0 auto; padding:20px 16px; display:flex; flex-direction:column; gap:16px; }
+.header-content {
+  flex: 1;
+}
 
-.search-wrap { position:relative; }
-.search-icon { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--muted-foreground,#6b7280); }
-.search-input { width:100%; height:46px; background:var(--card,#fff); border:1px solid var(--border,#e5e7eb); border-radius:12px; padding:0 40px 0 44px; font-size:0.9rem; color:var(--foreground,#111827); outline:none; transition:all 0.2s; box-sizing:border-box; }
-.search-input:focus { border-color:#16a34a; box-shadow:0 0 0 3px rgba(22,163,74,0.1); }
-.search-clear { position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:var(--muted-foreground,#6b7280); display:flex; padding:4px; border-radius:6px; }
+.header-title-hd {
+  font-size: 1.125rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  margin: 0;
+  line-height: 1.1;
+}
 
-.filter-wrap { display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; }
-.filter-wrap::-webkit-scrollbar { display:none; }
-.filter-tab { padding:7px 14px; border-radius:999px; font-size:0.8125rem; font-weight:600; color:var(--muted-foreground,#6b7280); background:var(--card,#fff); border:1px solid var(--border,#e5e7eb); cursor:pointer; white-space:nowrap; transition:all 0.2s; display:flex; align-items:center; gap:6px; }
-.filter-tab:hover { border-color:#16a34a; color:var(--foreground,#111827); }
-.filter-tab.active { background:#16a34a; color:#fff; border-color:#16a34a; }
-.filter-count { font-size:0.6875rem; padding:1px 6px; border-radius:999px; background:rgba(255,255,255,0.2); }
-.filter-count:not(.active) { background:var(--muted,#f3f4f6); color:var(--muted-foreground,#6b7280); }
+.header-sub-hd {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  margin-top: 2px;
+}
 
-.orders-list { display:flex; flex-direction:column; gap:10px; }
-.order-card { background:var(--card,#fff); border:1px solid var(--border,#e5e7eb); border-radius:16px; padding:16px; cursor:pointer; transition:all 0.2s; }
-.order-card:hover { border-color:#16a34a; box-shadow:0 4px 16px rgba(22,163,74,0.08); }
-.order-top { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin-bottom:12px; }
-.order-left { flex:1; }
-.order-meta { display:flex; align-items:center; gap:8px; margin-bottom:4px; flex-wrap:wrap; }
-.order-date { font-size:0.6875rem; color:var(--muted-foreground,#9ca3af); font-weight:500; }
-.order-name { font-size:0.9375rem; font-weight:700; color:var(--foreground,#111827); }
-.order-chevron { color:var(--muted-foreground,#9ca3af); flex-shrink:0; margin-top:2px; }
-.order-bottom { display:flex; justify-content:space-between; align-items:flex-end; padding-top:12px; border-top:1px solid var(--border,#e5e7eb); }
-.detail-label { font-size:0.6875rem; color:var(--muted-foreground,#9ca3af); margin-bottom:2px; }
-.detail-value { font-size:0.8125rem; font-weight:600; color:var(--foreground,#111827); }
-.detail-price { font-size:1rem; font-weight:800; color:#16a34a; }
-.mono { font-family:monospace; }
+.header-brand-glass {
+  font-size: 0.8rem;
+  font-weight: 900;
+  color: var(--foreground);
+  opacity: 0.8;
+  letter-spacing: -0.01em;
+}
 
-.order-action { margin-top:12px; padding-top:12px; border-top:1px solid var(--border,#e5e7eb); display:flex; gap:8px; }
-.btn-pay { flex:1; display:flex; align-items:center; justify-content:center; gap:8px; padding:10px 16px; background:#16a34a; color:#fff; border:none; border-radius:10px; font-size:0.8125rem; font-weight:700; cursor:pointer; transition:background 0.2s; }
-.btn-pay:hover:not(:disabled) { background:#15803d; }
-.btn-pay:disabled { opacity:0.6; cursor:not-allowed; }
-.btn-pay.full { width:100%; }
-.btn-va { flex:1; display:flex; align-items:center; justify-content:center; gap:8px; padding:10px 16px; background:rgba(22,163,74,0.1); color:#16a34a; border:1.5px solid #16a34a; border-radius:10px; font-size:0.8125rem; font-weight:700; cursor:pointer; transition:all 0.2s; }
-.btn-va:hover { background:#16a34a; color:#fff; }
-.btn-secondary { flex:1; padding:9px; background:var(--muted,#f3f4f6); color:var(--foreground,#374151); border:none; border-radius:10px; font-size:0.8125rem; font-weight:600; cursor:pointer; }
-.btn-copy { padding:9px 14px; background:rgba(22,163,74,0.08); color:#16a34a; border:none; border-radius:10px; font-size:0.8125rem; font-weight:600; cursor:pointer; }
+.header-brand-glass span {
+  color: var(--primary);
+}
 
-.order-skeleton { height:120px; background:var(--muted,#f3f4f6); border-radius:16px; overflow:hidden; position:relative; }
-.order-skeleton::after { content:''; position:absolute; inset:0; transform:translateX(-100%); background:linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent); animation:shimmer 1.5s infinite; }
-@keyframes shimmer { 100%{ transform:translateX(100%); } }
+.page-content {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: relative;
+  z-index: 1;
+}
 
-.empty-state { text-align:center; padding:48px 20px; }
-.empty-icon { color:var(--muted-foreground,#d1d5db); margin:0 auto 16px; display:block; }
-.empty-title { font-size:1rem; font-weight:700; color:var(--foreground,#111827); margin-bottom:6px; }
-.empty-sub { font-size:0.875rem; color:var(--muted-foreground,#6b7280); margin-bottom:20px; }
-.btn-shop { display:inline-flex; align-items:center; gap:8px; padding:10px 20px; background:#16a34a; color:#fff; border:none; border-radius:999px; font-size:0.875rem; font-weight:700; cursor:pointer; }
+/* PREMIUM SEARCH */
+.search-container-hd {
+  position: relative;
+}
 
-.refresh-wrap { display:flex; justify-content:center; }
-.btn-refresh { display:inline-flex; align-items:center; gap:8px; padding:10px 20px; background:var(--card,#fff); border:1px solid var(--border,#e5e7eb); border-radius:10px; font-size:0.875rem; font-weight:600; color:var(--foreground,#374151); cursor:pointer; transition:all 0.2s; }
-.btn-refresh:hover:not(:disabled) { border-color:#16a34a; color:#16a34a; }
-.btn-refresh:disabled { opacity:0.5; }
+.search-wrap-hd {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
 
-.modal-overlay { position:fixed; inset:0; z-index:50; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); display:flex; align-items:flex-end; justify-content:center; padding:16px; }
-@media(min-width:480px){ .modal-overlay { align-items:center; } }
-.modal-box { background:var(--card,#fff); border-radius:24px 24px 16px 16px; width:100%; max-width:480px; overflow:hidden; }
-@media(min-width:480px){ .modal-box { border-radius:20px; } }
-.modal-header { display:flex; align-items:center; justify-content:space-between; padding:20px 20px 0; }
-.modal-title { font-size:1.0625rem; font-weight:800; color:var(--foreground,#111827); }
-.modal-close { width:32px; height:32px; display:flex; align-items:center; justify-content:center; border-radius:8px; border:none; background:var(--muted,#f3f4f6); color:var(--muted-foreground,#6b7280); cursor:pointer; }
-.modal-body { padding:16px 20px; display:flex; flex-direction:column; gap:12px; max-height:70vh; overflow-y:auto; }
-.detail-row { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 0; border-bottom:1px solid var(--border,#e5e7eb); }
-.dr-label { font-size:0.75rem; color:var(--muted-foreground,#9ca3af); font-weight:500; flex-shrink:0; }
-.dr-value { font-size:0.875rem; font-weight:600; color:var(--foreground,#111827); text-align:right; }
-.small { font-size:0.75rem; }
-.sn-row { display:flex; align-items:center; gap:8px; }
-.btn-copy-sm { padding:4px 10px; background:#16a34a; color:#fff; border:none; border-radius:6px; font-size:0.6875rem; font-weight:700; cursor:pointer; white-space:nowrap; }
-.detail-total { display:flex; align-items:center; justify-content:space-between; padding-top:8px; }
-.total-price { font-size:1.25rem; font-weight:900; color:#16a34a; }
-.modal-footer { padding:12px 20px 20px; display:flex; flex-direction:column; gap:8px; }
-.btn-close-modal { width:100%; padding:12px; background:#16a34a; color:#fff; border:none; border-radius:12px; font-size:0.9375rem; font-weight:700; cursor:pointer; }
+.search-icon-hd {
+  position: absolute;
+  left: 14px;
+  color: var(--primary);
+  opacity: 0.7;
+}
 
-.payment-box { border-radius:16px; padding:16px; margin:4px 0; }
-.payment-header { display:flex; align-items:center; gap:8px; margin-bottom:12px; }
-.payment-header svg { color:#16a34a; }
-.payment-title { font-size:0.875rem; font-weight:700; color:#15803d; }
-.payment-note { display:flex; align-items:flex-start; gap:6px; font-size:0.6875rem; color:#16a34a; line-height:1.4; }
-.payment-note svg { flex-shrink:0; margin-top:1px; }
+.search-input-hd {
+  width: 100%;
+  height: 48px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 0 40px 0 44px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--foreground);
+  transition: all 0.3s var(--ease-out-expo);
+  box-shadow: var(--shadow-sm);
+}
 
-.va-box { background:linear-gradient(135deg,#f0fdf4 0%,#dcfce7 100%); border:1.5px solid #86efac; }
-.va-bank { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
-.bank-name { font-size:1rem; font-weight:800; color:#15803d; }
-.va-expires { font-size:0.6875rem; color:#16a34a; font-weight:600; }
-.va-number-box { background:#fff; border:1px solid #86efac; border-radius:12px; padding:12px; margin-bottom:12px; }
-.va-label { display:block; font-size:0.6875rem; color:#16a34a; font-weight:600; margin-bottom:6px; }
-.va-number-row { display:flex; align-items:center; justify-content:space-between; gap:8px; }
-.va-number { font-family:'Courier New',monospace; font-size:1.125rem; font-weight:700; color:#15803d; letter-spacing:0.5px; }
-.btn-copy-va { width:36px; height:36px; display:flex; align-items:center; justify-content:center; background:#16a34a; color:#fff; border:none; border-radius:8px; cursor:pointer; flex-shrink:0; transition:background 0.2s; }
-.btn-copy-va:hover { background:#15803d; }
-.va-amount { background:rgba(255,255,255,0.6); border-radius:10px; padding:10px 12px; display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
-.va-amount-label { font-size:0.75rem; color:#16a34a; font-weight:600; }
-.va-amount-value { font-size:1.125rem; font-weight:900; color:#15803d; }
+.search-input-hd:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px var(--primary-muted);
+  transform: translateY(-1px);
+}
 
-.ewallet-box { background:linear-gradient(135deg,#f0fdf4 0%,#dcfce7 100%); border:1.5px solid #86efac; }
-.ewallet-status { display:flex; align-items:center; gap:8px; margin-bottom:12px; }
-.ewallet-pulse { width:8px; height:8px; border-radius:50%; background:#16a34a; animation:pulse 1.5s ease-in-out infinite; flex-shrink:0; }
-@keyframes pulse { 0%,100%{ opacity:1; transform:scale(1); } 50%{ opacity:0.4; transform:scale(1.3); } }
-.ewallet-status-text { font-size:0.75rem; font-weight:600; color:#16a34a; }
-.ewallet-instruction { background:#fff; border:1px solid #86efac; border-radius:12px; padding:14px; margin-bottom:12px; }
-.ewallet-main { font-size:0.875rem; color:#15803d; font-weight:500; margin:0 0 12px; line-height:1.5; }
-.ewallet-amount { display:flex; justify-content:space-between; align-items:center; padding-top:10px; border-top:1px solid #bbf7d0; }
+.search-clear-hd {
+  position: absolute;
+  right: 12px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: var(--muted);
+  border: none;
+  color: var(--muted-foreground);
+  cursor: pointer;
+}
 
-.ewallet-cta { background:linear-gradient(135deg,#16a34a,#15803d); box-shadow:0 4px 12px rgba(22,163,74,0.3); }
-.ewallet-cta:hover:not(:disabled) { background:linear-gradient(135deg,#15803d,#166534); box-shadow:0 6px 16px rgba(22,163,74,0.4); }
+/* PREMIUM FILTERS */
+.filter-container-hd {
+  margin: -4px 0;
+}
 
-.spin { animation:spin 1s linear infinite; }
+.filter-wrap-hd {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 4px 2px;
+  scrollbar-width: none;
+}
+
+.filter-wrap-hd::-webkit-scrollbar { display: none; }
+
+.filter-pill-hd {
+  padding: 8px 16px;
+  border-radius: 99px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  white-space: nowrap;
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--muted-foreground);
+  transition: all 0.3s var(--ease-spring);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: var(--shadow-sm);
+}
+
+.filter-pill-hd.active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px rgba(0, 136, 13, 0.2);
+  transform: scale(1.05);
+}
+
+.filter-dot-hd {
+  font-size: 0.625rem;
+  background: var(--border);
+  color: var(--muted-foreground);
+  padding: 1px 6px;
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.filter-pill-hd.active .filter-dot-hd {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+/* PREMIUM ORDER CARDS */
+.orders-list-hd {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.order-card-hd {
+  background: var(--card);
+  border-radius: 18px;
+  display: flex;
+  overflow: hidden;
+  position: relative;
+  transition: all 0.4s var(--ease-spring);
+  box-shadow: var(--shadow-md);
+  cursor: pointer;
+  border: 1px solid var(--card-border);
+}
+
+.order-card-hd:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary-light);
+}
+
+.status-indicator-hd {
+  width: 5px;
+  flex-shrink: 0;
+}
+
+.status--success { background: var(--primary); }
+.status--pending { background: #FBBF24; }
+.status--failed { background: #EF4444; }
+.status--processing { background: #00AED6; }
+
+.order-content-hd {
+  flex: 1;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.order-top-hd {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.order-meta-hd {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--muted-foreground);
+  margin-bottom: 2px;
+}
+
+.order-date-hd {
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.order-product-hd {
+  font-size: 0.9375rem;
+  font-weight: 900;
+  color: var(--foreground);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.order-details-hd {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border);
+}
+
+.order-id-chip {
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 4px 10px;
+  background: var(--muted);
+  border-radius: 8px;
+  color: var(--muted-foreground);
+  letter-spacing: 0.05em;
+}
+
+.order-price-hd {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+}
+
+.currency-hd {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.amount-hd {
+  font-size: 1.125rem;
+  font-weight: 900;
+  color: var(--primary);
+  letter-spacing: -0.02em;
+}
+
+/* ACTIONS */
+.order-action-hd {
+  margin-top: 4px;
+}
+
+.btn-pay-premium {
+  width: 100%;
+  padding: 12px;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  font-size: 0.8125rem;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 136, 13, 0.2);
+}
+
+.btn-info-premium {
+  width: 100%;
+  padding: 10px;
+  background: var(--primary-muted);
+  color: var(--primary);
+  border: 1.5px solid var(--primary);
+  font-size: 0.8125rem;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+/* MODAL & OTHERS */
+.modal-box {
+  background: var(--card);
+  box-shadow: var(--shadow-premium);
+}
+
+.total-price {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--primary);
+}
+
+.dr-value.mono {
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.05em;
+  font-size: 0.8rem;
+}
+
+/* UTILS */
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.spin { animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* REVEALS */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s var(--ease-out-expo);
+  will-change: transform, opacity;
+}
+
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.page-bg-art {
+  position: fixed; inset: 0; 
+  pointer-events: none; z-index: 0;
+  opacity: 0.6;
+}
+
+.empty-state {
+  padding: 60px 20px;
+  text-align: center;
+  background: var(--card);
+  border-radius: 24px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.empty-icon { color: var(--primary-muted); margin-bottom: 20px; }
+.empty-title { font-size: 1.125rem; font-weight: 900; margin-bottom: 8px; }
+.empty-sub { font-size: 0.875rem; color: var(--muted-foreground); }
+
+.refresh-wrap { margin-top: 20px; display: flex; justify-content: center; }
+.btn-refresh {
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--primary);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+}
+</style>
+; }
 @keyframes spin { to{ transform:rotate(360deg); } }
 
 .toast { position:fixed; bottom:80px; left:50%; transform:translateX(-50%); background:#111827; color:#fff; padding:10px 20px; border-radius:999px; font-size:0.8125rem; font-weight:600; display:flex; align-items:center; gap:8px; z-index:100; white-space:nowrap; box-shadow:0 8px 24px rgba(0,0,0,0.2); }
