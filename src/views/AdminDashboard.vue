@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-background">
-    <!-- Header — HIDE ON DESKTOP (Global Navbar handles it) -->
-    <div class="border-b border-border bg-white dark:bg-dark-900 md:hidden">
+    <!-- Header -->
+    <div class="border-b border-border bg-white dark:bg-dark-900">
       <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
         <h1 class="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight mb-1">
           <span class="text-dark-800 dark:text-white">Dashboard </span>
@@ -13,17 +13,16 @@
       </div>
     </div>
 
-    <!-- Main Dashboard Container with Desktop Padding -->
-    <div class="admin-dashboard-container">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
       
       <!-- Stats Cards -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 reveal reveal--up" v-reveal>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
         <template v-if="loadingStats">
-          <div v-for="i in 3" :key="i" class="stat-card stat-skeleton">
-            <div class="stat-icon-skel" />
+          <div v-for="i in 3" :key="i" class="stat-card animate-pulse">
+            <div class="stat-icon blue opacity-50"></div>
             <div class="stat-info">
-              <div class="skeleton-line w-20 mb-2" />
-              <div class="skeleton-line w-16" />
+              <div class="h-3 bg-gray-300 dark:bg-gray-700 rounded w-20 mb-2"></div>
+              <div class="h-6 bg-gray-300 dark:bg-gray-700 rounded w-16"></div>
             </div>
           </div>
         </template>
@@ -72,9 +71,9 @@
       </div>
 
       <!-- Saldo Digiflazz Widget -->
-      <div class="mb-6 reveal reveal--up" v-reveal :style="{ '--p-delay': '0.1s' }">
+      <div class="mb-6">
         <div 
-          class="rounded-2xl border p-4 sm:p-5 transition-all duration-500"
+          class="rounded-2xl border p-4 sm:p-5"
           :class="digiflazzBalance?.is_low 
             ? 'bg-red-50 dark:bg-red-950/20 border-red-300 dark:border-red-800' 
             : 'bg-white dark:bg-dark-900 border-border'"
@@ -139,7 +138,7 @@
       </div>
 
       <!-- Tabs -->
-      <div class="mb-6 overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0 reveal reveal--up" v-reveal :style="{ '--p-delay': '0.15s' }">
+      <div class="mb-6 overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0">
         <div class="inline-flex min-w-full sm:w-auto bg-white dark:bg-dark-900 p-1 rounded-xl border border-border shadow-sm">
           <button
             v-for="tab in tabs"
@@ -198,7 +197,7 @@
         </div>
 
         <!-- Grouped Products - Desktop -->
-        <div class="hidden sm:block space-y-4 reveal reveal--up" v-reveal :style="{ '--p-delay': '0.2s' }">
+        <div class="hidden sm:block space-y-4">
           <div v-for="(group, category) in groupedProducts" :key="category" class="category-group">
             <div class="category-header">
               <h3 class="category-title">{{ category }}</h3>
@@ -277,7 +276,7 @@
       </div>
 
       <!-- Orders Tab -->
-      <div v-if="activeTab === 'orders'" class="reveal reveal--up" v-reveal>
+      <div v-if="activeTab === 'orders'">
         <!-- Desktop Table -->
         <div class="hidden sm:block card-table">
           <table class="w-full text-sm">
@@ -350,7 +349,8 @@
       </div>
 
       <!-- WhatsApp Gateway Tab -->
-      <div v-if="activeTab === 'whatsapp'">
+      <!-- WhatsApp Gateway Tab -->
+<div v-if="activeTab === 'whatsapp'">
   <div class="max-w-lg mx-auto">
 
     <!-- Status Card -->
@@ -474,7 +474,7 @@
           <Loader class="animate-spin text-primary-600" :size="32" />
         </div>
 
-        <div v-else class="reveal reveal--up" v-reveal :style="{ '--p-delay': '0.1s' }">
+        <div v-else>
           <!-- Desktop Users Table -->
           <div class="hidden sm:block card-table">
             <table class="w-full text-sm">
@@ -598,10 +598,6 @@ const showPinModal = ref(false)
 const pinModalTitle = ref('')
 const pinModalSubtitle = ref('')
 const pendingAction = ref(null)
-
-// Performance optimization: Instantiate audio once
-const notificationSound = new Audio('/notification.mp3/2869-preview.mp3')
-notificationSound.load()
 const showEditPriceModal = ref(false)
 const editingProduct = ref(null)
 const newSellingPrice = ref(0)
@@ -702,7 +698,7 @@ const fetchAllData = async (silent = false) => {
     const currentOrders = o.data || o
 
     if (lastOrderCount.value > 0 && currentOrders.length > lastOrderCount.value) {
-      notificationSound.play().catch(() => {})
+      new Audio('/notification.mp3/2869-preview.mp3').play().catch(() => {})
       showToastNotification('Pesanan Baru Masuk!')
     }
 
@@ -884,31 +880,7 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* Admin Dashboard Centering */
-.admin-dashboard-container {
-  max-width: 1240px;
-  margin: 0 auto;
-  padding: 1.5rem 1rem 5rem;
-  width: 100%;
-}
-
-/* Reveal Animations (GPU Accelerated) */
-.reveal {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: transform, opacity;
-}
-
-.reveal.active {
-  opacity: 1;
-  transform: translateY(0) !important;
-  transition-delay: var(--p-delay, 0s);
-}
-
-.reveal--up { transform: translateY(30px); }
-.reveal--left { transform: translateX(-20px); }
-
+/* (CSS tetap sama, hanya hapus style yang related ke USDT seperti .bank-info, .proof-image jika tidak digunakan lagi) */
 /* Stats Cards */
 .stat-card {
   display: flex;
