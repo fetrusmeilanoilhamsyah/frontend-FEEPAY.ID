@@ -9,7 +9,7 @@
 
     <div class="hiw-header reveal relative z-10">
       <h2 class="section-title">Panduan Transaksi</h2>
-      <p class="section-sub">Empat langkah sederhana untuk layanan instan</p>
+      <p class="section-sub">Cuma 4 langkah, langsung masuk!</p>
     </div>
 
     <div v-reveal class="steps reveal relative z-10">
@@ -17,7 +17,6 @@
            class="step group cursor-pointer"
            :class="[
              { 'active-step': activeStep === i }, 
-             { 'locked-step': i >= unlockedCount },
              'stagger-' + ((i % 4) + 1)
            ]"
            @click="handleStepClick($event, i)">
@@ -34,28 +33,22 @@
             <span class="dot d7"></span>
             <span class="dot d8"></span>
 
-            
             <div class="step-icon">
-              <div v-if="i >= unlockedCount" class="step-lock">
-                <Lock :size="14" class="opacity-40" />
-              </div>
-              <img v-else :src="step.img" :alt="step.title" class="step-img"
+              <img :src="step.img" :alt="step.title" class="step-img"
                 @error="(e) => e.target.style.opacity='0'" />
             </div>
           </div>
-          <div v-if="i < steps.length - 1" class="step-line" :class="{ 'line-active': i < unlockedCount - 1 }" />
+          <div v-if="i < steps.length - 1" class="step-line" :class="{ 'line-active': activeStep > i }" />
         </div>
 
-        <transition name="reveal-content">
-          <div v-if="i < unlockedCount" class="step-body">
-            <div class="step-badge">{{ String(i + 1).padStart(2, '0') }}</div>
-            <h3 class="step-title">{{ step.title }}</h3>
-            <p class="step-desc">{{ step.desc }}</p>
-            <div class="step-tags">
-              <span v-for="tag in step.tags" :key="tag" class="tag">{{ tag }}</span>
-            </div>
+        <div class="step-body">
+          <div class="step-badge">{{ String(i + 1).padStart(2, '0') }}</div>
+          <h3 class="step-title">{{ step.title }}</h3>
+          <p class="step-desc">{{ step.desc }}</p>
+          <div class="step-tags">
+            <span v-for="tag in step.tags" :key="tag" class="tag">{{ tag }}</span>
           </div>
-        </transition>
+        </div>
 
       </div>
     </div>
@@ -64,36 +57,34 @@
 
 <script setup>
 import { ref } from 'vue'
-import { Lock } from 'lucide-vue-next'
 
 const activeStep = ref(0)
-const unlockedCount = ref(1)
 const hasInteracted = ref(false)
 
 const steps = [
   {
     img: '/icons/step-cart.webp',
-    title: 'Identifikasi Produk',
-    desc: 'Telusuri katalog lengkap kami dan tentukan layanan digital yang sesuai dengan kebutuhan Anda.',
-    tags: ['Pulsa', 'Token PLN', 'Top Up Game'],
+    title: 'Pilih Produk',
+    desc: 'Cari game atau layanan digital yang kamu mau. Semuanya lengkap di sini!',
+    tags: ['Game', 'Pulsa', 'Voucher'],
   },
   {
     img: '/icons/step-data.webp',
-    title: 'Input Detail Akun',
-    desc: 'Lengkapi informasi User ID atau nomor tujuan guna memastikan pengiriman produk yang presisi.',
-    tags: ['Nomor HP', 'ID Game', 'ID Pelanggan'],
+    title: 'Isi Detail',
+    desc: 'Masukkan User ID atau nomor tujuanmu. Pastikan sudah benar ya, Boss.',
+    tags: ['ID Game', 'Nomor HP'],
   },
   {
     img: '/icons/step-pay.webp',
-    title: 'Konfirmasi Pembayaran',
-    desc: 'Gunakan kanal pembayaran pilihan Anda untuk penyelesaian transaksi yang aman dan cepat.',
+    title: 'Bayar Instan',
+    desc: 'Pilih metode pembayaran favoritmu. Langsung diproses tanpa ribet.',
     tags: ['QRIS', 'E-Wallet', 'VA'],
   },
   {
     img: '/icons/step-done.webp',
-    title: 'Distribusi Otomatis',
-    desc: 'Sistem mengalokasikan produk secara seketika segera setelah verifikasi pembayaran berhasil.',
-    tags: ['Proses Instan', 'Automatisasi'],
+    title: 'Beres Deh!',
+    desc: 'Produk langsung meluncur ke akunmu dalam hitungan detik. Cek sekarang!',
+    tags: ['Proses Kilat', 'Otomatis'],
   },
 ]
 
@@ -109,14 +100,6 @@ const handleStepClick = (e, index) => {
 
   activeStep.value = index
   hasInteracted.value = true
-
-  // Progressive Unlock Logic
-  if (index === unlockedCount.value - 1 && unlockedCount.value < steps.length) {
-    setTimeout(() => {
-      unlockedCount.value++
-      activeStep.value = unlockedCount.value - 1
-    }, 400)
-  }
 }
 </script>
 

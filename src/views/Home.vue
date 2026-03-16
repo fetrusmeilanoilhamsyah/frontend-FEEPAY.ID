@@ -125,7 +125,7 @@
             </div>
             <div>
               <h2 class="section-title">Layanan Digital</h2>
-              <p class="section-sub">Solusi pembayaran instan 24/7</p>
+              <p class="section-sub">Bayar apa aja jadi gampang, kapanpun!</p>
             </div>
           </div>
         </div>
@@ -158,7 +158,7 @@
               @error="(e) => e.target.style.display='none'" />
             <div>
               <h2 class="section-title">Top Up Game</h2>
-              <p class="section-sub">Akses instan ke berbagai judul game populer dunia</p>
+              <p class="section-sub">Top up game favoritmu tanpa ribet.</p>
             </div>
           </div>
         </div>
