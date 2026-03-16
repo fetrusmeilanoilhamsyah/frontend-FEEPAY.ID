@@ -24,8 +24,7 @@
         <AntigravityParticles absolute :particle-count="20" class="opacity-20" />
       </div>
 
-      <!-- Premium Search -->
-      <div class="search-container-hd">
+      <div class="search-container-hd reveal reveal--up" v-reveal>
         <div class="search-wrap-hd">
           <Search :size="18" class="search-icon-hd" stroke-width="2.5" />
           <input v-model="searchQuery" type="text" placeholder="Cari order ID, produk, nomor..." class="search-input-hd" />
@@ -34,7 +33,7 @@
       </div>
 
       <!-- Premium Filter Tabs -->
-      <div class="filter-container-hd">
+      <div class="filter-container-hd reveal reveal--up" v-reveal :style="{ '--p-delay': '0.1s' }">
         <div class="filter-wrap-hd">
           <button v-for="f in filters" :key="f.value" @click="activeFilter = f.value"
             class="filter-pill-hd" :class="{ active: activeFilter === f.value }">
@@ -51,7 +50,7 @@
       </div>
 
       <!-- Branded Empty State -->
-      <div v-else-if="filteredOrders.length === 0" class="empty-state reveal reveal--up">
+      <div v-else-if="filteredOrders.length === 0" class="empty-state reveal reveal--up" v-reveal>
         <div class="empty-icon-wrapper">
           <Package :size="56" class="empty-icon-hd" stroke-width="1.5" />
           <div class="empty-glow"></div>
@@ -66,8 +65,8 @@
 
       <!-- Premium Orders List -->
       <div v-else class="orders-list-hd">
-        <div v-for="(order, idx) in filteredOrders" :key="order.order_id"
           class="order-card-hd reveal reveal--up" 
+          v-reveal
           :style="{ '--p-delay': (Math.min(idx, 8) * 0.05) + 's' }"
           @click="viewOrderDetail(order)">
           
@@ -93,12 +92,28 @@
             </div>
 
             <div class="order-details-hd">
-              <div class="order-id-chip font-mono">
-                <span>#{{ order.order_id }}</span>
+              <div class="order-info-group">
+                <div class="order-id-chip font-mono">#{{ order.order_id }}</div>
+                <div class="order-target-hd">
+                  <span class="target-label">Tujuan:</span>
+                  <span class="target-val mono">{{ order.target_number }}</span>
+                </div>
               </div>
               <div class="order-price-hd font-mono">
                 <span class="currency-hd">Rp</span>
                 <span class="amount-hd">{{ formatPrice(order.total_price) }}</span>
+              </div>
+            </div>
+
+            <!-- Payment Method Identifier -->
+            <div class="order-footer-hd">
+              <div v-if="order.midtrans_payment_type" class="payment-method-hd">
+                <component :is="getPaymentIcon(order.midtrans_payment_type)" :size="12" />
+                <span>{{ getPaymentName(order.midtrans_payment_type) }}</span>
+              </div>
+              <div v-else class="payment-method-hd opacity-40">
+                <CreditCard :size="12" />
+                <span>Belum Bayar</span>
               </div>
             </div>
 
@@ -157,6 +172,10 @@
               <div class="detail-row">
                 <span class="dr-label">Order ID</span>
                 <span class="dr-value mono small">{{ selectedOrder.order_id }}</span>
+              </div>
+              <div v-if="selectedOrder.midtrans_payment_type" class="detail-row">
+                <span class="dr-label">Metode Bayar</span>
+                <span class="dr-value">{{ getPaymentName(selectedOrder.midtrans_payment_type) }}</span>
               </div>
 
               <!-- ══════════════════════════════════════════════════════ -->
@@ -395,6 +414,13 @@ const getMandiriBillerCode = (transactionId) => {
 const getMandiriBillKey = (transactionId) => {
   if (!transactionId || !transactionId.includes('|')) return '-'
   return transactionId.split('|')[1]
+}
+
+// Global VA Number Helper
+const getVANumber = (order) => {
+  if (!order.midtrans_transaction_id) return null
+  if (order.midtrans_payment_type === 'echannel') return null // Handled separately
+  return order.midtrans_transaction_id
 }
 
 const getPaymentName = (type) => ({
@@ -885,27 +911,62 @@ const formatStatus = (s) => s === 'processing' ? 'Diproses' : s === 'pending' ? 
 
 .order-details-hd {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 12px;
   padding-top: 14px;
   border-top: 1px dashed var(--border);
 }
 
+.order-info-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
 .order-id-chip {
-  font-size: 0.725rem;
+  font-size: 0.65rem;
   font-weight: 800;
-  padding: 6px 12px;
+  padding: 4px 10px;
   background: var(--muted);
-  border-radius: 10px;
+  border-radius: 8px;
   color: var(--muted-foreground);
-  letter-spacing: 0.08em;
+  letter-spacing: 0.05em;
   border: 1px solid var(--border);
+  align-self: flex-start;
+}
+
+.order-target-hd {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+}
+
+.target-label {
+  color: var(--muted-foreground);
+  font-weight: 600;
+}
+
+.target-val {
+  color: var(--foreground);
+  font-weight: 800;
+  letter-spacing: 0.02em;
 }
 
 .order-price-hd {
   display: flex;
   align-items: baseline;
+  justify-content: flex-end;
   gap: 3px;
+  margin-top: -24px; /* Pull up to align with info group on desktop, but flex-direction is column here */
+}
+
+/* Mobile price alignment */
+@media (max-width: 480px) {
+  .order-price-hd {
+    margin-top: 0;
+    justify-content: flex-start;
+  }
 }
 
 .currency-hd {
@@ -922,9 +983,33 @@ const formatStatus = (s) => s === 'processing' ? 'Diproses' : s === 'pending' ? 
   letter-spacing: -0.04em;
 }
 
+.order-footer-hd {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  margin-top: 4px;
+  border-top: 1px solid rgba(0,0,0,0.03);
+}
+
+.payment-method-hd {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: var(--muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.payment-method-hd span {
+  opacity: 0.8;
+}
+
 /* ACTIONS */
 .order-action-hd {
-  margin-top: 4px;
+  margin-top: 0;
 }
 
 .btn-pay-premium {
