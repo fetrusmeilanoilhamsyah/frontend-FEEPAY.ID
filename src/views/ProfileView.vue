@@ -26,9 +26,10 @@
 
     <!-- CONTENT -->
     <div v-else class="profile-content">
-      <!-- Background Particles -->
+      <!-- Background Subtle Art (Static for Performance) -->
       <div class="page-bg-art">
-        <AntigravityParticles absolute :particle-count="12" class="opacity-10" />
+        <div class="bg-blur-circle bbc-1" />
+        <div class="bg-blur-circle bbc-2" />
       </div>
 
       <!-- Avatar + nama -->
@@ -154,30 +155,9 @@ const { user, isAuthenticated, logout } = useCustomerAuth()
 const loading = ref(true)
 const isLoginOpen = ref(false)
 
-const profilePageRef = ref(null)
-const targetScrollY = ref(0)
-const smoothScrollY = ref(0)
-const scrollVelocity = ref(0)
-let lastSmoothY = 0
-let profileRafId = null
-
 const handleScroll = () => {
-  targetScrollY.value = window.scrollY
-}
-
-const updatePhysics = () => {
-  const delta = (targetScrollY.value - smoothScrollY.value) * 0.15
-  
-  if (Math.abs(delta) > 0.01 || Math.abs(scrollVelocity.value) > 0.01) {
-    smoothScrollY.value += delta
-    scrollVelocity.value = smoothScrollY.value - lastSmoothY
-    lastSmoothY = smoothScrollY.value
-
-    if (profilePageRef.value) {
-      profilePageRef.value.style.setProperty('--scrollY', smoothScrollY.value.toFixed(1))
-    }
-  }
-  profileRafId = requestAnimationFrame(updatePhysics)
+  // Hanya simpan scroll jika benar-benar butuh di CSS (untuk parallax ringan via CSS)
+  document.documentElement.style.setProperty('--scrollY', window.scrollY + 'px');
 }
 
 const menuItems = [
@@ -196,13 +176,11 @@ const navigateTo = (item) => {
 
 onMounted(() => {
   window.addEventListener('scroll', handleScroll, { passive: true })
-  updatePhysics()
-  setTimeout(() => { loading.value = false }, 400)
+  setTimeout(() => { loading.value = false }, 300)
 })
 
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
-  if (profileRafId) cancelAnimationFrame(profileRafId)
 })
 
 const handleLoginSuccess = (userData) => {
@@ -400,31 +378,25 @@ const doLogout = async () => {
               transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform, opacity;
 }
-.reveal--up { transform: translateY(30px) scale(0.95); }
+.reveal--up { transform: translateY(15px); }
 .reveal.active {
   opacity: 1;
-  transform: translateY(0) scale(1) !important;
+  transform: translateY(0) !important;
   transition-delay: var(--p-delay, 0s);
 }
 
-.page-bg-art {
-  position: fixed; inset: 0; 
-  pointer-events: none; z-index: 0;
-  will-change: transform;
+.bg-blur-circle {
+  position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.15; z-index: -1;
 }
-
-.avatar-section, .stats-card, .menu-section {
-  position: relative;
-  z-index: 1;
-  will-change: transform;
-}
+.bbc-1 { width: 300px; height: 300px; top: -100px; right: -100px; background: #16a34a; }
+.bbc-2 { width: 250px; height: 250px; bottom: 50px; left: -100px; background: #2563eb; }
 
 .menu-item {
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.2s ease-out, background 0.2s ease;
 }
 
 .menu-item:hover {
-  transform: translateX(8px);
-  background: rgba(22, 163, 74, 0.02);
+  transform: translateX(4px);
+  background: rgba(22, 163, 74, 0.03);
 }
 </style>
