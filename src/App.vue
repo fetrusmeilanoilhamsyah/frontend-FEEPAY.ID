@@ -25,6 +25,14 @@
               <span class="text-sm font-bold text-foreground">{{ pageTitle }}</span>
             </div>
 
+            <!-- desktop nav links -->
+            <div class="hidden lg:flex items-center gap-6 absolute left-1/2 -translate-x-1/2">
+              <router-link to="/" class="text-sm font-bold transition-all hover:text-green-600" :class="route.path === '/' ? 'text-green-600' : 'text-foreground/60'">Beranda</router-link>
+              <router-link to="/transactions" class="text-sm font-bold transition-all hover:text-green-600" :class="route.path.startsWith('/transactions') ? 'text-green-600' : 'text-foreground/60'">Riwayat</router-link>
+              <router-link to="/profile" class="text-sm font-bold transition-all hover:text-green-600" :class="route.path.startsWith('/profile') ? 'text-green-600' : 'text-foreground/60'">Profil</router-link>
+              <router-link v-if="isAuthenticated" to="/admin/dashboard" class="text-sm font-bold transition-all hover:text-green-600" :class="isAdminPage ? 'text-green-600' : 'text-foreground/60'">Admin</router-link>
+            </div>
+
             <div class="flex items-center gap-2">
               <button @click="toggleTheme" class="p-2 rounded-lg bg-muted text-muted-foreground hover:bg-card-hover transition-all">
                 <Sun v-if="isDark()" :size="16" />
