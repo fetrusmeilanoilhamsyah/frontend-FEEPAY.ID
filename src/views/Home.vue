@@ -774,6 +774,15 @@ onUnmounted(() => {
   100% { transform: translateX(-50%); }
 }
 
+@media (min-width: 768px) {
+  .anti-flow-track {
+    animation: none;
+    transform: none !important;
+    width: auto;
+    justify-content: center;
+  }
+}
+
 .anti-pill {
   position: relative;
   display: flex;
@@ -932,8 +941,10 @@ onUnmounted(() => {
 
 @media (min-width: 768px) {
   .service-grid-premium {
-    grid-template-columns: repeat(8, 1fr);
-    gap: 24px 20px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 24px 30px;
   }
 }
 
@@ -1139,6 +1150,13 @@ onUnmounted(() => {
 .cat-pill:hover  { border-color: var(--accent); background: var(--accent-light); }
 .cat-pill.active { background: var(--accent); color: var(--accent-foreground); border-color: var(--accent); }
 
+@media (min-width: 768px) {
+  .cat-pills {
+    justify-content: center;
+    padding-bottom: 8px;
+  }
+}
+
 /* HOLOGRAPHIC FLOATING GRID (Top Up Game) */
 .game-grid {
   display: grid;
@@ -1150,8 +1168,14 @@ onUnmounted(() => {
 
 @media (min-width: 768px) {
   .game-grid {
-    grid-template-columns: repeat(5, 1fr);
-    gap: 20px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+  .game-card {
+    width: calc(20% - 20px);
+    min-width: 180px;
   }
 }
 

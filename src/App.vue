@@ -44,7 +44,7 @@
         </router-view>
       </main>
 
-      <BottomNav v-if="!isAdminPage" />
+      <BottomNav v-if="!isAdminPage" class="md:hidden" />
     </div>
 
     <!-- Scroll to Top (Outside frame, fixed to viewport or frame) -->
