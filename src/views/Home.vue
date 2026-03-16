@@ -670,8 +670,8 @@ onUnmounted(() => {
 
 /* CONTENT */
 .home-content {
-  padding: 16px 16px 90px;
-  display: flex; flex-direction: column; gap: 20px;
+  padding: 12px 16px 90px;
+  display: flex; flex-direction: column; gap: 14px;
   overflow: visible;
 }
 
@@ -689,7 +689,7 @@ onUnmounted(() => {
 .banner-wrap {
   border-radius: 18px;
   overflow: visible;
-  padding-bottom: 30px;
+  padding-bottom: 16px;
   position: relative;
   margin: 0 -2px;
 }
@@ -743,9 +743,9 @@ onUnmounted(() => {
 .antigravity-hub {
   position: relative;
   overflow: hidden;
-  padding: 20px 0;
-  margin-bottom: 12px;
-  min-height: 100px;
+  padding: 12px 0;
+  margin-bottom: 8px;
+  min-height: 80px;
   mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
   -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
 }
@@ -753,9 +753,9 @@ onUnmounted(() => {
 .anti-flow-track {
   display: flex;
   width: fit-content;
-  gap: 20px;
+  gap: 12px;
   animation: anti-drift 30s linear infinite;
-  padding-left: 20px;
+  padding-left: 12px;
 }
 
 .antigravity-hub:hover .anti-flow-track {
@@ -783,8 +783,8 @@ onUnmounted(() => {
 }
 
 .anti-pill-glass {
-  width: 48px;
-  height: 48px;
+  width: 42px;
+  height: 42px;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -807,8 +807,8 @@ onUnmounted(() => {
 }
 
 .anti-pill-img {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   object-fit: contain;
 }
 
@@ -871,7 +871,7 @@ onUnmounted(() => {
   border-left: 4px solid var(--primary, #16a34a);
   border-radius: 16px;
   cursor: pointer; transition: all 0.3s;
-  margin-bottom: 20px;
+  margin-bottom: 14px;
   position: relative; overflow: hidden;
 }
 .notif-bar:hover { background: rgba(22, 163, 74, 0.12); transform: translateX(4px); }
@@ -919,8 +919,8 @@ onUnmounted(() => {
 .service-grid-premium {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 24px 12px;
-  margin-top: 24px;
+  gap: 16px 10px;
+  margin-top: 16px;
 }
 
 .service-card-premium {
@@ -934,8 +934,8 @@ onUnmounted(() => {
 
 .service-icon-container {
   position: relative;
-  width: 62px;
-  height: 62px;
+  width: 54px;
+  height: 54px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1003,7 +1003,7 @@ onUnmounted(() => {
 }
 
 /* SECTION */
-.section { display: flex; flex-direction: column; gap: 12px; }
+.section { display: flex; flex-direction: column; gap: 8px; }
 
 /* Brand background subtle di section utama */
 .section--brand {
@@ -1542,7 +1542,7 @@ onUnmounted(() => {
   background: var(--card, #fff);
   border: 1px solid var(--border, #e5e7eb);
   border-radius: 20px;
-  padding: 18px;
+  padding: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
 }
 

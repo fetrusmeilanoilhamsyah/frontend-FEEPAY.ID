@@ -183,15 +183,15 @@ onUnmounted(() => {
 .banner-slider {
   position: relative;
   width: 100%;
-  height: 220px;
+  height: 180px;
   overflow: visible;
   user-select: none;
   perspective: 1200px;
-  margin: 10px 0 25px;
+  margin: 5px 0 15px;
 }
 
-@media (min-width: 480px)  { .banner-slider { height: 240px; } }
-@media (min-width: 1024px) { .banner-slider { height: 260px; } }
+@media (min-width: 480px)  { .banner-slider { height: 200px; } }
+@media (min-width: 1024px) { .banner-slider { height: 220px; } }
 
 /* Background Decoration */
 .slider-bg-decor {
