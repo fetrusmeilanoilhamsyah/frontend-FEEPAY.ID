@@ -373,17 +373,18 @@ const productStore = useProductStore()
 const orderStore = useOrderStore()
 const { toggleTheme, isDark } = useTheme()
 
+// Animation Loop Reference
+let animationRequestId = null
+
 const showToast = ref(false)
 const toastMessage = ref('')
 const activeCategory = ref('all')
 const chatWidgetRef = ref(null)
-// Physics State
 const homeRef = ref(null)
 const targetScrollY = ref(0)
 const smoothScrollY = ref(0)
 const scrollVelocity = ref(0)
 let lastSmoothY = 0
-const rafId = ref(null)
 
 const updatePhysics = () => {
   // Smooth LERP (Linear Interpolation)
@@ -399,7 +400,7 @@ const updatePhysics = () => {
     homeRef.value.style.setProperty('--velocity', scrollVelocity.value.toFixed(2))
   }
   
-  rafId.value = requestAnimationFrame(updatePhysics)
+  animationRequestId = requestAnimationFrame(updatePhysics)
 }
 
 const trustPills = [
@@ -529,7 +530,7 @@ onMounted(async () => {
 
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
-  if (rafId.value) cancelAnimationFrame(rafId.value)
+  if (animationRequestId) cancelAnimationFrame(animationRequestId)
 })
 </script>
 
