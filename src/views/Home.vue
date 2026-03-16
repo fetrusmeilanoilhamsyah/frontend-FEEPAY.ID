@@ -57,6 +57,8 @@
 
       <!-- LIVE TRANSACTION TICKER -->
       <TransactionTicker class="reveal" v-reveal />
+      
+      <div class="section-divider"></div>
 
       <!-- ANTIGRAVITY FLOATING HUB (Infinite Flow) -->
       <div class="antigravity-hub reveal reveal--up" v-reveal>
@@ -98,6 +100,8 @@
           </button>
         </div>
       </div>
+
+      <div class="section-divider"></div>
 
       <!-- PENDING ORDER NOTIF (Original Style) -->
       <div v-if="pendingOrders.length > 0" class="notif-bar" @click="router.push('/transactions')">
@@ -149,6 +153,8 @@
           </router-link>
         </div>
       </div>
+
+      <div class="section-divider"></div>
 
       <!-- TOP GAME SECTION -->
       <div class="section section--brand reveal reveal--right" v-reveal>
@@ -234,6 +240,8 @@
         </div>
       </div>
 
+      <div class="section-divider"></div>
+
       <!-- CS HELP BUTTON -->
       <!-- CS SECTION -->
       <div class="section section--nexus reveal reveal--up" v-reveal>
@@ -277,6 +285,8 @@
           <div class="cs-nexus-glow"></div>
         </div>
       </div>
+
+      <div class="section-divider"></div>
 
       <!-- HOW IT WORKS -->
       <HowItWorks />
@@ -331,6 +341,8 @@
           }))
         })"></component>
       </section>
+
+      <div class="section-divider"></div>
 
     </div>
 
@@ -537,7 +549,21 @@ onUnmounted(() => {
 <style scoped>
 .home {
   min-height: 100vh;
-  background: var(--background, #f8fafc);
+  background: #f1f5f9; /* Gopay light background */
+}
+.dark .home {
+  background: #0f172a; /* Gopay dark background */
+}
+
+.section-divider {
+  height: 10px;
+  background: #f1f5f9;
+  margin: 0 -16px;
+  position: relative;
+  z-index: 5;
+}
+.dark .section-divider {
+  background: #0f172a;
 }
 
 /* Accessibility: Visually Hidden but readable by SEO */
@@ -1554,12 +1580,33 @@ onUnmounted(() => {
 }
 
 /* Section Refinement ( Sharp & Clean ) */
-.section--premium, .section--brand, .section--nexus {
-  background: var(--card, #fff);
-  border: 1px solid var(--border, #e5e7eb);
-  border-radius: 20px;
-  padding: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+.section--premium, .section--brand, .section--nexus, .section--faq {
+  background: #ffffff;
+  border-bottom: 1px solid #f1f5f9;
+  border-radius: 0;
+  padding: 24px 16px;
+  box-shadow: none;
+}
+
+@media (min-width: 1024px) {
+  .section--premium, .section--brand, .section--nexus, .section--faq {
+    border-radius: 20px;
+    margin: 12px 0;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+  }
+}
+
+.dark .section--premium, .dark .section--brand, .dark .section--nexus, .dark .section--faq {
+  background: #1e293b;
+  border-bottom-color: rgba(255,255,255,0.05);
+}
+
+.dark .section--premium:last-of-type,
+.dark .section--brand:last-of-type,
+.dark .section--nexus:last-of-type,
+.dark .section--faq:last-of-type {
+  border-bottom: none;
 }
 
 .dark .section--premium, .dark .section--brand, .dark .section--nexus {
