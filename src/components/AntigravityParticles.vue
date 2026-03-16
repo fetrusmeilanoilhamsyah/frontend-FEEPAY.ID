@@ -6,7 +6,7 @@
 import { ref, onMounted, onUnmounted, defineProps } from 'vue'
 
 const props = defineProps({
-  particleCount: { type: Number, default: 60 },
+  particleCount: { type: Number, default: 25 },
   absolute: { type: Boolean, default: false }
 })
 
@@ -15,7 +15,7 @@ let ctx = null
 let animationFrame = null
 let particles = []
 
-const MAX_SPEED = 0.2
+const MAX_SPEED = 0.15
 
 class Particle {
   constructor(w, h) {
@@ -25,22 +25,22 @@ class Particle {
   resett(w, h) {
     this.x = Math.random() * w
     this.y = Math.random() * h
-    this.size = Math.random() * 1.5 + 0.5
+    this.size = Math.random() * 1.2 + 0.3
     this.speedX = (Math.random() - 0.5) * MAX_SPEED
     this.speedY = (Math.random() - 0.5) * MAX_SPEED
-    this.opacity = Math.random() * 0.4 + 0.1
+    this.opacity = Math.random() * 0.3 + 0.05
+    this.color = `rgba(100, 116, 139, ${this.opacity})`
   }
 
-  update(w, h) {
+  updateAndDraw(w, h) {
     this.x += this.speedX
     this.y += this.speedY
+    
     if (this.x < 0 || this.x > w || this.y < 0 || this.y > h) {
       this.resett(w, h)
     }
-  }
 
-  draw() {
-    ctx.fillStyle = `rgba(100, 116, 139, ${this.opacity})`
+    ctx.fillStyle = this.color
     ctx.beginPath()
     ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2)
     ctx.fill()
@@ -50,7 +50,7 @@ class Particle {
 const init = () => {
   const canvas = canvasRef.value
   if (!canvas) return
-  ctx = canvas.getContext('2d')
+  ctx = canvas.getContext('2d', { alpha: true })
   resize()
   particles = Array.from({ length: props.particleCount }, () => new Particle(canvas.width, canvas.height))
   animate()
@@ -59,23 +59,28 @@ const init = () => {
 const resize = () => {
   const canvas = canvasRef.value
   if (!canvas) return
+  
+  const dpr = window.devicePixelRatio || 1
   if (props.absolute) {
     const parent = canvas.parentElement
-    canvas.width = parent.offsetWidth
-    canvas.height = parent.offsetHeight
+    canvas.width = parent.offsetWidth * dpr
+    canvas.height = parent.offsetHeight * dpr
   } else {
-    canvas.width = window.innerWidth
-    canvas.height = window.innerHeight
+    canvas.width = window.innerWidth * dpr
+    canvas.height = window.innerHeight * dpr
   }
+  ctx.scale(dpr, dpr)
 }
 
 const animate = () => {
   if (!ctx) return
-  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
-  particles.forEach(p => {
-    p.update(ctx.canvas.width, ctx.canvas.height)
-    p.draw()
-  })
+  const { width, height } = ctx.canvas
+  ctx.clearRect(0, 0, width, height)
+  
+  for (let i = 0; i < particles.length; i++) {
+    particles[i].updateAndDraw(width, height)
+  }
+  
   animationFrame = requestAnimationFrame(animate)
 }
 

@@ -101,8 +101,8 @@ const handleMouseMove = (e) => {
   const rect = sliderRef.value.getBoundingClientRect()
   const x = (e.clientX - rect.left) / rect.width - 0.5
   const y = (e.clientY - rect.top) / rect.height - 0.5
-  targetTiltX = x * 15 // Max tilt 15deg
-  targetTiltY = y * -15
+  targetTiltX = x * 8 // Max tilt 8deg (More professional)
+  targetTiltY = y * -8
 }
 
 const resetTilt = () => {

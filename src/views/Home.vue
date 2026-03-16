@@ -11,8 +11,7 @@
       <div class="header-actions">
         <!-- Dark mode toggle — icon dari /public/icons/ -->
         <!-- Theme toggle -->
-        <button class="header-btn hbtn" @click="onBtnTap($event, toggleTheme)" aria-label="Toggle theme"
-          style="transform: translate3d(0, calc(var(--velocity) * 4px), 0)">
+        <button class="header-btn hbtn" @click="onBtnTap($event, toggleTheme)" aria-label="Toggle theme">
           <span class="ripple-ring tr1"></span><span class="ripple-ring tr2"></span>
           <span class="dot td1"></span><span class="dot td2"></span>
           <span class="dot td3"></span><span class="dot td4"></span>
@@ -68,8 +67,8 @@
             :style="{ '--delay': (idx * 0.4) + 's' }"
             @click="onPillTap($event, pill)"
           >
-            <!-- Enhanced Apple-Style Burst (12 Dots) -->
-            <span v-for="n in 12" :key="n" :class="'pdot pd' + n"></span>
+            <!-- Simplified Burst (4 Dots instead of 12) -->
+            <span v-for="n in 4" :key="n" :class="'pdot pd' + n"></span>
             
             <div class="anti-pill-glass">
               <img :src="pill.icon" :alt="pill.label" class="anti-pill-img"
@@ -87,7 +86,7 @@
             :style="{ '--delay': (idx * 0.4) + 's' }"
             @click="onPillTap($event, pill)"
           >
-            <span v-for="n in 12" :key="n" :class="'pdot pd' + n"></span>
+            <span v-for="n in 4" :key="n" :class="'pdot pd' + n"></span>
             <div class="anti-pill-glass">
               <img :src="pill.icon" :alt="pill.label" class="anti-pill-img"
                 @error="(e) => e.target.style.display='none'" />
@@ -387,17 +386,18 @@ const scrollVelocity = ref(0)
 let lastSmoothY = 0
 
 const updatePhysics = () => {
-  // Smooth LERP (Linear Interpolation)
-  smoothScrollY.value += (targetScrollY.value - smoothScrollY.value) * 0.12
+  const delta = (targetScrollY.value - smoothScrollY.value) * 0.12
   
-  // Detect Velocity for Inertia
-  scrollVelocity.value = smoothScrollY.value - lastSmoothY
-  lastSmoothY = smoothScrollY.value
+  // Only update if there's meaningful movement
+  if (Math.abs(delta) > 0.05 || Math.abs(scrollVelocity.value) > 0.05) {
+    smoothScrollY.value += delta
+    scrollVelocity.value = smoothScrollY.value - lastSmoothY
+    lastSmoothY = smoothScrollY.value
 
-  // Update root CSS variables (Avoids JS->DOM bottleneck)
-  if (homeRef.value) {
-    homeRef.value.style.setProperty('--scrollY', smoothScrollY.value.toFixed(2))
-    homeRef.value.style.setProperty('--velocity', scrollVelocity.value.toFixed(2))
+    if (homeRef.value) {
+      homeRef.value.style.setProperty('--scrollY', smoothScrollY.value.toFixed(1))
+      homeRef.value.style.setProperty('--velocity', scrollVelocity.value.toFixed(1))
+    }
   }
   
   animationRequestId = requestAnimationFrame(updatePhysics)
@@ -853,17 +853,9 @@ onUnmounted(() => {
 }
 
 .anti-pill.burst .pd1  { animation: apple-burst 0.5s ease-out forwards 0.00s; --a: 0deg;   }
-.anti-pill.burst .pd2  { animation: apple-burst 0.5s ease-out forwards 0.02s; --a: 30deg;  }
-.anti-pill.burst .pd3  { animation: apple-burst 0.5s ease-out forwards 0.04s; --a: 60deg;  }
-.anti-pill.burst .pd4  { animation: apple-burst 0.5s ease-out forwards 0.06s; --a: 90deg;  }
-.anti-pill.burst .pd5  { animation: apple-burst 0.5s ease-out forwards 0.00s; --a: 120deg; }
-.anti-pill.burst .pd6  { animation: apple-burst 0.5s ease-out forwards 0.02s; --a: 150deg; }
-.anti-pill.burst .pd7  { animation: apple-burst 0.5s ease-out forwards 0.04s; --a: 180deg; }
-.anti-pill.burst .pd8  { animation: apple-burst 0.5s ease-out forwards 0.06s; --a: 210deg; }
-.anti-pill.burst .pd9  { animation: apple-burst 0.5s ease-out forwards 0.00s; --a: 240deg; }
-.anti-pill.burst .pd10 { animation: apple-burst 0.5s ease-out forwards 0.02s; --a: 270deg; }
-.anti-pill.burst .pd11 { animation: apple-burst 0.5s ease-out forwards 0.04s; --a: 300deg; }
-.anti-pill.burst .pd12 { animation: apple-burst 0.5s ease-out forwards 0.06s; --a: 330deg; }
+.anti-pill.burst .pd2  { animation: apple-burst 0.5s ease-out forwards 0.05s; --a: 90deg;  }
+.anti-pill.burst .pd3  { animation: apple-burst 0.5s ease-out forwards 0.10s; --a: 180deg; }
+.anti-pill.burst .pd4  { animation: apple-burst 0.5s ease-out forwards 0.15s; --a: 270deg; }
 
 @keyframes apple-burst {
   0%   { transform: translate(-50%,-50%) rotate(var(--a)) translateY(0)    scale(1);  opacity: 0.8; }
