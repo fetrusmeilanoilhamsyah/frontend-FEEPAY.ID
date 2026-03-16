@@ -38,6 +38,7 @@
         <div class="filter-wrap-hd">
           <button v-for="f in filters" :key="f.value" @click="activeFilter = f.value"
             class="filter-pill-hd" :class="{ active: activeFilter === f.value }">
+            <component :is="f.icon" :size="14" stroke-width="2.5" />
             {{ f.label }}
             <span v-if="f.count > 0" class="filter-dot-hd" :class="{ active: activeFilter === f.value }">{{ f.count }}</span>
           </button>
@@ -49,13 +50,17 @@
         <div v-for="i in 4" :key="i" class="order-skeleton" />
       </div>
 
-      <!-- Empty -->
-      <div v-else-if="filteredOrders.length === 0" class="empty-state">
-        <Package :size="56" class="empty-icon" />
-        <p class="empty-title">{{ searchQuery ? 'Tidak ada hasil' : 'Belum ada transaksi' }}</p>
-        <p class="empty-sub">{{ searchQuery ? 'Coba kata kunci lain' : 'Mulai berbelanja sekarang' }}</p>
-        <button v-if="!searchQuery" @click="$router.push('/')" class="btn-shop">
-          <ShoppingBag :size="16" /> Belanja Sekarang
+      <!-- Branded Empty State -->
+      <div v-else-if="filteredOrders.length === 0" class="empty-state reveal reveal--up" v-reveal>
+        <div class="empty-icon-wrapper">
+          <Package :size="56" class="empty-icon-hd" stroke-width="1.5" />
+          <div class="empty-glow"></div>
+        </div>
+        <h3 class="empty-title-hd">{{ searchQuery ? 'Tidak ada hasil' : 'Belum ada transaksi' }}</h3>
+        <p class="empty-sub-hd">{{ searchQuery ? 'Coba kata kunci lain atau periksa filter kamu.' : 'Mulai shopping sekarang di FEEPAY.' }}</p>
+        <button v-if="!searchQuery" @click="$router.push('/')" class="btn-shop-premium squircle">
+          <ShoppingBag :size="18" stroke-width="2.5" />
+          Belanja Sekarang
         </button>
       </div>
 
@@ -70,6 +75,9 @@
           <!-- Identity Side Bar -->
           <div class="status-indicator-hd" :class="'status--' + order.status"></div>
 
+          <!-- Branded Watermark -->
+          <div class="card-brand-watermark">FEEPAY</div>
+
           <div class="order-content-hd">
             <div class="order-top-hd">
               <div class="order-info-hd">
@@ -79,7 +87,10 @@
                 </div>
                 <h3 class="order-product-hd">{{ order.product_name }}</h3>
               </div>
-              <StatusBadge :status="order.status" size="sm" />
+              <div class="flex flex-col items-end gap-1">
+                <StatusBadge :status="order.status" size="sm" />
+                <span v-if="order.status === 'success' && order.sn" class="text-[0.6rem] text-primary font-bold opacity-80 uppercase tracking-tighter">Verified Order</span>
+              </div>
             </div>
 
             <div class="order-details-hd">
@@ -422,11 +433,11 @@ const getPaymentCTA = (type) => ({
 // ─── Filters ──────────────────────────────────────────────────────────────────
 
 const filters = computed(() => [
-  { value: 'all',        label: 'Semua',    count: orderStore.orderHistory.length },
-  { value: 'pending',    label: 'Menunggu', count: orderStore.pendingOrders.length },
-  { value: 'processing', label: 'Diproses', count: orderStore.processingOrders.length },
-  { value: 'success',    label: 'Berhasil', count: orderStore.completedOrders.filter(o => o.status === 'success').length },
-  { value: 'failed',     label: 'Gagal',    count: orderStore.completedOrders.filter(o => o.status === 'failed').length },
+  { value: 'all',        label: 'Semua',    icon: ShoppingBag, count: orderStore.orderHistory.length },
+  { value: 'pending',    label: 'Menunggu', icon: Clock,       count: orderStore.pendingOrders.length },
+  { value: 'processing', label: 'Diproses', icon: AlertCircle, count: orderStore.processingOrders.length },
+  { value: 'success',    label: 'Berhasil', icon: Check,       count: orderStore.completedOrders.filter(o => o.status === 'success').length },
+  { value: 'failed',     label: 'Gagal',    icon: X,           count: orderStore.completedOrders.filter(o => o.status === 'failed').length },
 ])
 
 const filteredOrders = computed(() => {
@@ -728,7 +739,7 @@ const syncOrdersF<style scoped>
 
 .order-card-hd {
   background: var(--card);
-  border-radius: 18px;
+  border-radius: 20px;
   display: flex;
   overflow: hidden;
   position: relative;
@@ -740,92 +751,133 @@ const syncOrdersF<style scoped>
 
 .order-card-hd:hover {
   transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-premium);
   border-color: var(--primary-light);
 }
 
-.status-indicator-hd {
-  width: 5px;
-  flex-shrink: 0;
+/* Branded Watermark Identity */
+.card-brand-watermark {
+  position: absolute;
+  top: 15%;
+  right: -5%;
+  font-size: 5rem;
+  font-weight: 900;
+  color: var(--foreground);
+  opacity: 0.015; /* Extremely subtle Ghosting */
+  pointer-events: none;
+  z-index: 0;
+  transform: rotate(-12deg);
+  white-space: nowrap;
+  letter-spacing: -0.05em;
+  user-select: none;
 }
 
-.status--success { background: var(--primary); }
-.status--pending { background: #FBBF24; }
-.status--failed { background: #EF4444; }
-.status--processing { background: #00AED6; }
+.dark .card-brand-watermark {
+  opacity: 0.03;
+}
+
+.status-indicator-hd {
+  width: 6px;
+  flex-shrink: 0;
+  position: relative;
+}
+
+/* Gradient Status Bars with Glow */
+.status--success { 
+  background: linear-gradient(180deg, #00880D, #00AA13);
+  box-shadow: 2px 0 10px rgba(0, 136, 13, 0.2);
+}
+.status--pending { 
+  background: linear-gradient(180deg, #D97706, #FBBF24);
+  box-shadow: 2px 0 10px rgba(217, 119, 6, 0.2);
+}
+.status--failed { 
+  background: linear-gradient(180deg, #B91C1C, #EF4444);
+  box-shadow: 2px 0 10px rgba(185, 28, 28, 0.2);
+}
+.status--processing { 
+  background: linear-gradient(180deg, #0369A1, #00AED6);
+  box-shadow: 2px 0 10px rgba(3, 105, 161, 0.2);
+}
 
 .order-content-hd {
   flex: 1;
-  padding: 16px;
+  padding: 18px 20px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
+  position: relative;
+  z-index: 1;
 }
 
 .order-top-hd {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 10px;
+  gap: 12px;
 }
 
 .order-meta-hd {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   color: var(--muted-foreground);
-  margin-bottom: 2px;
+  margin-bottom: 4px;
 }
 
 .order-date-hd {
-  font-size: 0.625rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.05em;
+  opacity: 0.8;
 }
 
 .order-product-hd {
-  font-size: 0.9375rem;
+  font-size: 1rem;
   font-weight: 900;
   color: var(--foreground);
   margin: 0;
-  line-height: 1.2;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
 }
 
 .order-details-hd {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 12px;
+  padding-top: 14px;
   border-top: 1px dashed var(--border);
 }
 
 .order-id-chip {
-  font-size: 0.7rem;
+  font-size: 0.725rem;
   font-weight: 800;
-  padding: 4px 10px;
+  padding: 6px 12px;
   background: var(--muted);
-  border-radius: 8px;
+  border-radius: 10px;
   color: var(--muted-foreground);
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
+  border: 1px solid var(--border);
 }
 
 .order-price-hd {
   display: flex;
   align-items: baseline;
-  gap: 2px;
+  gap: 3px;
 }
 
 .currency-hd {
-  font-size: 0.75rem;
-  font-weight: 800;
+  font-size: 0.8rem;
+  font-weight: 900;
   color: var(--primary);
+  opacity: 0.9;
 }
 
 .amount-hd {
-  font-size: 1.125rem;
-  font-weight: 900;
+  font-size: 1.25rem;
+  font-weight: 950;
   color: var(--primary);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.04em;
 }
 
 /* ACTIONS */
@@ -889,7 +941,118 @@ const syncOrdersF<style scoped>
 .spin { animation: spin 1s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* REVEALS */
+/* EMPTY STATE HD */
+.empty-state {
+  padding: 80px 20px;
+  text-align: center;
+  background: var(--card);
+  border-radius: 32px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.empty-icon-wrapper {
+  position: relative;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-icon-hd { 
+  color: var(--primary); 
+  opacity: 0.8;
+  position: relative;
+  z-index: 2;
+}
+
+.empty-glow {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  background: var(--primary);
+  filter: blur(40px);
+  opacity: 0.15;
+  z-index: 1;
+}
+
+.empty-title-hd { 
+  font-size: 1.25rem; 
+  font-weight: 950; 
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.empty-sub-hd { 
+  font-size: 0.875rem; 
+  color: var(--muted-foreground); 
+  max-width: 260px;
+  line-height: 1.5;
+}
+
+.btn-shop-premium {
+  margin-top: 12px;
+  background: var(--primary);
+  color: #fff;
+  padding: 12px 28px;
+  border: none;
+  font-size: 0.875rem;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 8px 20px rgba(0, 136, 13, 0.25);
+  cursor: pointer;
+  transition: all 0.3s var(--ease-spring);
+}
+
+.btn-shop-premium:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(0, 136, 13, 0.3);
+}
+
+.refresh-wrap { margin-top: 24px; display: flex; justify-content: center; }
+.btn-refresh {
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: 12px 24px;
+  border-radius: 14px;
+  font-size: 0.875rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--primary);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: all 0.3s var(--ease-spring);
+}
+
+.btn-refresh:hover:not(:disabled) {
+  transform: scale(1.02);
+  border-color: var(--primary-light);
+}
+
+/* TOAST & REVEALS */
+.toast { 
+  position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); 
+  background: #111827; color: #fff; padding: 12px 28px; border-radius: 999px; 
+  font-size: 0.8125rem; font-weight: 800; display: flex; align-items: center; 
+  gap: 10px; z-index: 200; white-space: nowrap; box-shadow: var(--shadow-premium); 
+}
+
+.toast-enter-active, .toast-leave-active { transition: all 0.4s var(--ease-spring); }
+.toast-enter-from, .toast-leave-to { opacity: 0; transform: translateX(-50%) translateY(24px); }
+
+.modal-enter-active, .modal-leave-active { transition: opacity 0.3s; }
+.modal-enter-from, .modal-leave-to { opacity: 0; }
+
 .reveal {
   opacity: 0;
   transform: translateY(20px);
@@ -899,41 +1062,15 @@ const syncOrdersF<style scoped>
 
 .reveal.active {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(0) !important;
+  transition-delay: var(--p-delay, 0s);
 }
 
-.page-bg-art {
-  position: fixed; inset: 0; 
-  pointer-events: none; z-index: 0;
-  opacity: 0.6;
+.squircle-bottom {
+  clip-path: inset(0 0 0 0 round 0 0 24px 24px);
 }
-
-.empty-state {
-  padding: 60px 20px;
-  text-align: center;
-  background: var(--card);
-  border-radius: 24px;
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-sm);
-}
-
-.empty-icon { color: var(--primary-muted); margin-bottom: 20px; }
-.empty-title { font-size: 1.125rem; font-weight: 900; margin-bottom: 8px; }
-.empty-sub { font-size: 0.875rem; color: var(--muted-foreground); }
-
-.refresh-wrap { margin-top: 20px; display: flex; justify-content: center; }
-.btn-refresh {
-  background: var(--card);
-  border: 1px solid var(--border);
-  padding: 10px 20px;
-  border-radius: 12px;
-  font-size: 0.875rem;
-  font-weight: 800;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--primary);
-  box-shadow: var(--shadow-sm);
+</style>
+-sm);
   cursor: pointer;
 }
 
