@@ -140,7 +140,8 @@ onUnmounted(() => {
 
 <style scoped>
 .bottom-nav {
-  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+  position: fixed; bottom: 0; left: 50%;
+  transform: translate3d(-50%, 0, 0);
   width: 100%; max-width: 480px;
   background: var(--card);
   border-top: 1px solid var(--border);
@@ -148,10 +149,11 @@ onUnmounted(() => {
   padding-bottom: env(safe-area-inset-bottom);
   box-shadow: 0 -2px 16px rgba(0,0,0,0.06);
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
 }
 
 .bottom-nav.hidden {
-  transform: translateY(100%);
+  transform: translate3d(-50%, 100%, 0);
 }
 
 @media(min-width: 768px) { 

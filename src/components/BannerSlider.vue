@@ -20,10 +20,14 @@
         v-for="(banner, index) in banners"
         :key="index"
         class="card-wrapper"
-        :style="getCardStyle(index)"
+        :style="getWrapperStyle(index)"
         @click="onCardClick(index)"
       >
-        <div class="card" :class="{ 'card--active': index === currentIndex }">
+        <div 
+          class="card" 
+          :class="{ 'card--active': index === currentIndex }"
+          :style="getCardDynamicStyle(index)"
+        >
           <img :src="banner.image" :alt="banner.alt" class="card-img" draggable="false" />
           <div class="card-overlay"></div>
           <div class="card-glass-shine"></div>
@@ -65,22 +69,28 @@ const total = banners.length
 let autoplayInterval = null
 let touchStartX = 0
 
-// Physics State
-const mouseX = ref(0)
-const mouseY = ref(0)
-const tiltX = ref(0)
-const tiltY = ref(0)
-const floatY = ref(0)
-let rafId = null
+// Physics State (Non-reactive for performance)
+let currentTiltX = 0
+let currentTiltY = 0
+let currentFloatY = 0
+let targetTiltX = 0
+let targetTiltY = 0
 
 // Animation Loop
 const updatePhysics = (time) => {
   // Floating cycle (Antigravity Sine Wave)
-  floatY.value = Math.sin(time / 1500) * 8
+  currentFloatY = Math.sin(time / 1500) * 8
 
   // Smooth Lerp for Tilt
-  tiltX.value += (mouseX.value - tiltX.value) * 0.1
-  tiltY.value += (mouseY.value - tiltY.value) * 0.1
+  currentTiltX += (targetTiltX - currentTiltX) * 0.1
+  currentTiltY += (targetTiltY - currentTiltY) * 0.1
+
+  // Update CSS Variables directly on DOM (Avoids Vue re-render)
+  if (sliderRef.value) {
+    sliderRef.value.style.setProperty('--active-tilt-x', `${currentTiltY}deg`)
+    sliderRef.value.style.setProperty('--active-tilt-y', `${currentTiltX}deg`)
+    sliderRef.value.style.setProperty('--active-float-y', `${currentFloatY}px`)
+  }
 
   rafId = requestAnimationFrame(updatePhysics)
 }
@@ -90,13 +100,13 @@ const handleMouseMove = (e) => {
   const rect = sliderRef.value.getBoundingClientRect()
   const x = (e.clientX - rect.left) / rect.width - 0.5
   const y = (e.clientY - rect.top) / rect.height - 0.5
-  mouseX.value = x * 15 // Max tilt 15deg
-  mouseY.value = y * -15
+  targetTiltX = x * 15 // Max tilt 15deg
+  targetTiltY = y * -15
 }
 
 const resetTilt = () => {
-  mouseX.value = 0
-  mouseY.value = 0
+  targetTiltX = 0
+  targetTiltY = 0
 }
 
 const getRelPos = (index) => {
@@ -106,37 +116,35 @@ const getRelPos = (index) => {
   return diff
 }
 
-const getCardStyle = (index) => {
+const getWrapperStyle = (index) => {
   const pos = getRelPos(index)
   const abs = Math.abs(pos)
   
   // Hide distant cards
-  if (abs > 2) return { opacity: 0, pointerEvents: 'none', transform: 'translateX(-50%) translateZ(-500px)' }
+  if (abs > 2) return { opacity: 0, pointerEvents: 'none', transform: 'translate3d(-50%, -50%, -500px)' }
 
   const scale = pos === 0 ? 1 : abs === 1 ? 0.85 : 0.7
   const opacity = pos === 0 ? 1 : abs === 1 ? 0.6 : 0.2
   const zIndex = 10 - abs
   
-  // Calculate horizontal position with perspective
-  const xOffset = pos * 65 // Spacing percentage
-  const zOffset = abs * -150 // Depth push
-  const rotation = pos * -15 // Fan effect
-
-  // Apply Float + Tilt only to active card
-  const activeTiltX = pos === 0 ? tiltY.value : 0
-  const activeTiltY = pos === 0 ? tiltX.value : 0
-  const activeFloat = floatY.value
+  const xOffset = pos * 65 
+  const zOffset = abs * -150 
+  const rotation = pos * -15 
 
   return {
     zIndex,
     opacity,
+    transform: `translate3d(calc(-50% + ${xOffset}%), -50%, ${zOffset}px) rotateY(${rotation}deg) scale(${scale})`
+  }
+}
+
+const getCardDynamicStyle = (index) => {
+  if (index !== currentIndex.value) return {}
+  return {
     transform: `
-      translateX(calc(-50% + ${xOffset}%)) 
-      translateY(calc(-50% + ${activeFloat}px)) 
-      translateZ(${zOffset}px) 
-      rotateY(${rotation + activeTiltY}deg) 
-      rotateX(${activeTiltX}deg) 
-      scale(${scale})
+      translate3d(0, var(--active-float-y, 0px), 0)
+      rotateY(var(--active-tilt-y, 0deg))
+      rotateX(var(--active-tilt-x, 0deg))
     `
   }
 }
@@ -239,6 +247,7 @@ onUnmounted(() => {
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
   background: #111;
   transition: box-shadow 0.4s ease;
+  will-change: transform;
 }
 
 .card--active {
