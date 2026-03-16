@@ -525,7 +525,50 @@ const continuePaymentFromModal = async (order) => {
 
 // ─── Sync ─────────────────────────────────────────────────────────────────────
 
-const syncOrdersF<style scoped>
+const syncOrders = async () => {
+  if (isSyncing.value) return
+  isSyncing.value = true
+  try {
+    await orderStore.syncWithBackend()
+    showToastMsg('Riwayat diperbarui')
+  } catch (err) {
+    console.error('Sync failed', err)
+  } finally {
+    isSyncing.value = false
+  }
+}
+
+const refreshOrders = async () => {
+  if (refreshing.value) return
+  refreshing.value = true
+  try {
+    await orderStore.syncWithBackend()
+  } finally {
+    refreshing.value = false
+  }
+}
+
+onMounted(async () => {
+  window.addEventListener('scroll', handleScroll)
+  updatePhysics()
+  
+  if (orderStore.orderHistory.length === 0) {
+    loading.value = true
+    await orderStore.syncWithBackend()
+    loading.value = false
+  }
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
+  if (rafId) cancelAnimationFrame(rafId)
+})
+
+const formatStatus = (s) => s === 'processing' ? 'Diproses' : s === 'pending' ? 'Menunggu' : s === 'success' ? 'Selesai' : 'Gagal'
+
+</script>
+
+<style scoped>
 .tx-page { 
   min-height: 100vh; 
   background: var(--background); 
@@ -1040,11 +1083,11 @@ const syncOrdersF<style scoped>
 }
 
 /* TOAST & REVEALS */
-.toast { 
-  position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); 
-  background: #111827; color: #fff; padding: 12px 28px; border-radius: 999px; 
-  font-size: 0.8125rem; font-weight: 800; display: flex; align-items: center; 
-  gap: 10px; z-index: 200; white-space: nowrap; box-shadow: var(--shadow-premium); 
+.toast {
+  position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+  background: #111827; color: #fff; padding: 12px 28px; border-radius: 999px;
+  font-size: 0.8125rem; font-weight: 800; display: flex; align-items: center;
+  gap: 10px; z-index: 200; white-space: nowrap; box-shadow: var(--shadow-premium);
 }
 
 .toast-enter-active, .toast-leave-active { transition: all 0.4s var(--ease-spring); }
@@ -1068,43 +1111,5 @@ const syncOrdersF<style scoped>
 
 .squircle-bottom {
   clip-path: inset(0 0 0 0 round 0 0 24px 24px);
-}
-</style>
--sm);
-  cursor: pointer;
-}
-
-/* TOAST & ANIMATIONS */
-
-.toast { position:fixed; bottom:80px; left:50%; transform:translateX(-50%); background:#111827; color:#fff; padding:10px 20px; border-radius:999px; font-size:0.8125rem; font-weight:600; display:flex; align-items:center; gap:8px; z-index:100; white-space:nowrap; box-shadow:0 8px 24px rgba(0,0,0,0.2); }
-.toast-enter-active,.toast-leave-active { transition:all 0.3s cubic-bezier(0.4,0,0.2,1); }
-.toast-enter-from,.toast-leave-to { opacity:0; transform:translateX(-50%) translateY(10px); }
-.modal-enter-active,.modal-leave-active { transition:opacity 0.3s; }
-.modal-enter-from,.modal-leave-to { opacity:0; }
-
-/* ANTIGRAVITY REVEALS */
-.reveal {
-  opacity: 0;
-  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
-              transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: transform, opacity;
-}
-.reveal--up { transform: translateY(30px) scale(0.95); }
-.reveal.active {
-  opacity: 1;
-  transform: translateY(0) scale(1) !important;
-  transition-delay: var(--p-delay, 0s);
-}
-
-.page-bg-art {
-  position: fixed; inset: 0; 
-  pointer-events: none; z-index: 0;
-  will-change: transform;
-}
-
-.order-card {
-  will-change: transform, opacity;
-  position: relative;
-  z-index: 1;
 }
 </style>
