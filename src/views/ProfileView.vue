@@ -32,7 +32,7 @@
       </div>
 
       <!-- Avatar + nama -->
-      <div class="avatar-section reveal reveal--up" v-reveal style="transform: translate3d(0, calc(var(--velocity) * 3px), 0)">
+      <div class="avatar-section reveal reveal--up" v-reveal>
         <div class="avatar-wrap">
           <div class="avatar-ring">
             <div class="avatar-inner">
@@ -53,7 +53,7 @@
       </div>
 
       <!-- Stats card — selaras HowItWorks -->
-      <div class="stats-card reveal reveal--up" v-reveal :style="{ '--p-delay': '0.1s' }" style="transform: translate3d(0, calc(var(--velocity) * 2px), 0)">
+      <div class="stats-card reveal reveal--up" v-reveal :style="{ '--p-delay': '0.1s' }">
         <div class="stat-item">
           <img src="/icons/profile/transaction.webp" class="stat-icon" alt=""
             @error="(e) => e.target.style.display='none'" />
@@ -166,13 +166,17 @@ const handleScroll = () => {
 }
 
 const updatePhysics = () => {
-  smoothScrollY.value += (targetScrollY.value - smoothScrollY.value) * 0.12
-  scrollVelocity.value = smoothScrollY.value - lastSmoothY
-  lastSmoothY = smoothScrollY.value
+  const delta = (targetScrollY.value - smoothScrollY.value) * 0.12
+  
+  if (Math.abs(delta) > 0.05 || Math.abs(scrollVelocity.value) > 0.05) {
+    smoothScrollY.value += delta
+    scrollVelocity.value = smoothScrollY.value - lastSmoothY
+    lastSmoothY = smoothScrollY.value
 
-  if (profilePageRef.value) {
-    profilePageRef.value.style.setProperty('--scrollY', smoothScrollY.value.toFixed(2))
-    profilePageRef.value.style.setProperty('--velocity', scrollVelocity.value.toFixed(2))
+    if (profilePageRef.value) {
+      profilePageRef.value.style.setProperty('--scrollY', smoothScrollY.value.toFixed(1))
+      profilePageRef.value.style.setProperty('--velocity', scrollVelocity.value.toFixed(1))
+    }
   }
   profileRafId = requestAnimationFrame(updatePhysics)
 }
@@ -233,8 +237,8 @@ const doLogout = async () => {
 .profile-content {
   max-width: 480px;
   margin: 0 auto;
-  padding: 20px 16px 100px;
-  display: flex; flex-direction: column; gap: 20px;
+  padding: 12px 16px 100px;
+  display: flex; flex-direction: column; gap: 14px;
 }
 
 /* AVATAR */
@@ -244,10 +248,10 @@ const doLogout = async () => {
 }
 .avatar-wrap { position: relative; margin-bottom: 4px; }
 .avatar-ring {
-  width: 80px; height: 80px;
+  width: 72px; height: 72px;
   border-radius: 50%;
-  padding: 3px;
-  background: linear-gradient(135deg, #16a34a, #4ade80);
+  padding: 2.5px;
+  background: var(--primary, #16a34a);
 }
 .avatar-inner {
   width: 100%; height: 100%;
@@ -280,7 +284,7 @@ const doLogout = async () => {
   background: var(--card, #fff);
   border: 1px solid var(--border, #e5e7eb);
   border-radius: 18px;
-  padding: 16px;
+  padding: 12px;
   display: flex; align-items: center; justify-content: space-around;
 }
 .stat-item {
@@ -314,7 +318,7 @@ const doLogout = async () => {
   background: var(--card, #fff);
   border: 1px solid var(--border, #e5e7eb);
   border-radius: 18px;
-  padding: 4px 16px;
+  padding: 0px 16px;
 }
 .menu-item {
   display: flex; align-items: center; gap: 12px;
@@ -348,8 +352,8 @@ const doLogout = async () => {
   border: 1px solid var(--border, #e5e7eb);
   border-left: 3px solid #16a34a;
   border-radius: 18px;
-  padding: 14px 16px;
-  display: flex; flex-direction: column; gap: 10px;
+  padding: 12px 16px;
+  display: flex; flex-direction: column; gap: 8px;
 }
 .coming-body {
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
