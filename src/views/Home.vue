@@ -186,9 +186,6 @@
           >
             <!-- 3D Holographic Container -->
             <div class="game-card-perspective">
-              <!-- Background Holographic Ring -->
-              <div class="game-hologram-ring"></div>
-              
               <div class="game-card-img-wrap">
                 <img
                   :src="getGameBanner(game.brand)"
@@ -239,8 +236,7 @@
       <div class="section section--nexus reveal reveal--up" v-reveal>
         <div class="section-header">
           <div class="section-title-wrap">
-            <div class="section-icon-wrap nexus-ring-wrap">
-              <div class="nexus-hologram-ring"></div>
+            <div class="section-icon-wrap">
               <img src="/icons/section/cs.webp" class="section-icon" alt=""
                 @error="(e) => e.target.style.display='none'" />
             </div>
@@ -1162,24 +1158,7 @@ onUnmounted(() => {
   box-shadow: var(--shadow-lg);
 }
 
-/* Holographic Rotating Ring Decoration */
-.game-hologram-ring {
-  position: absolute;
-  top: -20px; right: -20px;
-  width: 120px; height: 120px;
-  border: 2px dashed rgba(22, 163, 74, 0.15);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0;
-  transition: all 0.6s var(--ease-spring);
-  transform: scale(0.5) rotate(0deg);
-}
-
-.game-card:hover .game-hologram-ring {
-  opacity: 1;
-  transform: scale(1) rotate(180deg);
-}
+/* Holographic Rotating Ring Decoration REMOVED */
 
 .game-card-img-wrap {
   position: relative;
@@ -1331,26 +1310,7 @@ onUnmounted(() => {
   position: relative;
 }
 
-.nexus-ring-wrap {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.nexus-hologram-ring {
-  position: absolute;
-  inset: -6px;
-  border: 1.5px dashed rgba(22, 163, 74, 0.4);
-  border-radius: 50%;
-  animation: nexus-rotate 8s linear infinite;
-  opacity: 0.6;
-}
-
-@keyframes nexus-rotate {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
+/* Nexus Hologram Ring REMOVED */
 
 .cs-card-nexus {
   position: relative;

@@ -34,10 +34,6 @@
             <span class="dot d7"></span>
             <span class="dot d8"></span>
 
-            <!-- Antigravity Dotted Circle -->
-            <transition name="scale">
-              <div v-if="activeStep === i" class="dotted-circle dotted-circle--sm -inset-4 border-primary/30"></div>
-            </transition>
             
             <div class="step-icon">
               <div v-if="i >= unlockedCount" class="step-lock">
