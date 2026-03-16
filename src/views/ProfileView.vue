@@ -159,7 +159,7 @@ const targetScrollY = ref(0)
 const smoothScrollY = ref(0)
 const scrollVelocity = ref(0)
 let lastSmoothY = 0
-let rafId = null
+let profileRafId = null
 
 const handleScroll = () => {
   targetScrollY.value = window.scrollY
@@ -174,7 +174,7 @@ const updatePhysics = () => {
     profilePageRef.value.style.setProperty('--scrollY', smoothScrollY.value.toFixed(2))
     profilePageRef.value.style.setProperty('--velocity', scrollVelocity.value.toFixed(2))
   }
-  rafId = requestAnimationFrame(updatePhysics)
+  profileRafId = requestAnimationFrame(updatePhysics)
 }
 
 const menuItems = [
@@ -199,7 +199,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
-  if (rafId) cancelAnimationFrame(rafId)
+  if (profileRafId) cancelAnimationFrame(profileRafId)
 })
 
 const handleLoginSuccess = (userData) => {

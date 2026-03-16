@@ -359,7 +359,7 @@ const targetScrollY = ref(0)
 const smoothScrollY = ref(0)
 const scrollVelocity = ref(0)
 let lastSmoothY = 0
-let rafId = null
+let historyRafId = null
 
 const handleScroll = () => {
   targetScrollY.value = window.scrollY
@@ -374,7 +374,7 @@ const updatePhysics = () => {
     txPageRef.value.style.setProperty('--scrollY', smoothScrollY.value.toFixed(2))
     txPageRef.value.style.setProperty('--velocity', scrollVelocity.value.toFixed(2))
   }
-  rafId = requestAnimationFrame(updatePhysics)
+  historyRafId = requestAnimationFrame(updatePhysics)
 }
 
 // ─── Payment Type Helpers ─────────────────────────────────────────────────────
@@ -561,7 +561,7 @@ onMounted(async () => {
 
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
-  if (rafId) cancelAnimationFrame(rafId)
+  if (historyRafId) cancelAnimationFrame(historyRafId)
 })
 
 const formatStatus = (s) => s === 'processing' ? 'Diproses' : s === 'pending' ? 'Menunggu' : s === 'success' ? 'Selesai' : 'Gagal'
