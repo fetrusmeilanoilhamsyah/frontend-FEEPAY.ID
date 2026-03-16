@@ -7,7 +7,7 @@
       <div class="absolute bottom-[-5%] left-[-5%] w-[500px] h-[500px] bg-secondary/5 rounded-full blur-[120px]"></div>
     </div>
 
-    <div class="app-frame" :class="{ 'is-admin-route': $route.path.startsWith('/admin') }">
+    <div class="app-frame" :class="{ 'is-admin-route': route.path.startsWith('/admin') }">
       <!-- Top Navbar — HANYA DESKTOP (Constrained to frame) -->
       <nav class="hidden md:block sticky top-0 z-50 backdrop-blur-xl bg-background/95 border-b border-border">
         <div class="px-6">
@@ -56,7 +56,7 @@
 
 <script setup>
 import { onMounted, onUnmounted, ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { Sun, Moon } from 'lucide-vue-next'
 import { useTheme } from './composables/useTheme'
 import { useAuth } from './composables/useAuth'
@@ -64,6 +64,7 @@ import ChatWidget from './components/frontend_ChatWidget.vue'
 import BottomNav from './components/BottomNav.vue'
 
 const router = useRouter()
+const route = useRoute()
 const { toggleTheme, initTheme, isDark } = useTheme()
 const { isAuthenticated, logout } = useAuth()
 
