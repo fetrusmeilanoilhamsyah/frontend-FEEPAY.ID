@@ -746,9 +746,20 @@ onUnmounted(() => {
 .anti-flow-track {
   display: flex;
   width: fit-content;
-  gap: 12px;
+  gap: 16px;
   animation: anti-drift 30s linear infinite;
-  padding-left: 12px;
+  padding: 0 20px;
+}
+
+@media (min-width: 768px) {
+  .antigravity-hub {
+    display: flex;
+    justify-content: center;
+  }
+  .anti-flow-track {
+    gap: 40px;
+    padding: 0 40px;
+  }
 }
 
 .antigravity-hub:hover .anti-flow-track {
