@@ -145,6 +145,8 @@
           <p class="input-hint"><span class="hint-tip">Tips:</span> Buka game &rarr; Profile &rarr; angka di bawah username</p>
         </div>
 
+        <div class="section-divider"></div>
+
         <!-- Verification Button & Result -->
         <div class="verify-section" v-if="userId && (!needsZoneId || zoneId)">
           <button @click="verifyId" :disabled="verifying" class="verify-btn">
@@ -368,8 +370,11 @@ onMounted(async () => { await productStore.fetchProducts() })
 ══════════════════════════════ */
 .game-page {
   min-height: 100vh;
-  background: var(--background, #f8fafc);
+  background: #f1f5f9;
   padding-bottom: 80px;
+}
+.dark .game-page {
+  background: #0f172a;
 }
 
 /* ══════════════════════════════
@@ -431,6 +436,12 @@ onMounted(async () => { await productStore.fetchProducts() })
   max-width: 1120px;
   margin: 0 auto;
   padding: 20px 16px;
+}
+
+.section-divider {
+  height: 8px;
+  background: transparent;
+  margin: 4px 0;
 }
 
 /* ══════════════════════════════
@@ -951,6 +962,13 @@ onMounted(async () => { await productStore.fetchProducts() })
 @media (min-width: 768px) {
   .product-grid {
     grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .product-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
   }
 }
 

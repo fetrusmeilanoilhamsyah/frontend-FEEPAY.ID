@@ -58,6 +58,8 @@
         <p class="info-text">Token PLN akan didistribusikan secara otomatis segera setelah pembayaran Anda terverifikasi oleh sistem.</p>
       </div>
 
+      <div class="section-divider"></div>
+
       <!-- Products -->
       <div>
         <div class="section-header">
@@ -159,16 +161,19 @@ onMounted(async () => { await productStore.fetchProducts() })
 </script>
 
 <style scoped>
-.pln-page { min-height:100vh; background:var(--background,#f8fafc); padding-bottom:80px; }
+.pln-page { min-height:100vh; background:#f1f5f9; padding-bottom:80px; }
+.dark .pln-page { background:#0f172a; }
 
 .pln-header { position:sticky; top:0; z-index:40; background:var(--card,#fff); border-bottom:1px solid var(--border,#e5e7eb); }
-.header-inner { max-width:640px; margin:0 auto; padding:12px 16px; display:flex; align-items:center; gap:12px; }
+.header-inner { max-width:800px; margin:0 auto; padding:12px 16px; display:flex; align-items:center; gap:12px; }
 .back-btn { width:36px; height:36px; display:flex; align-items:center; justify-content:center; border-radius:10px; border:none; background:transparent; color:var(--muted-foreground,#6b7280); cursor:pointer; transition:all 0.15s; }
 .back-btn:hover { background:var(--muted,#f3f4f6); color:var(--foreground,#111827); }
 .header-title { font-size:1.0625rem; font-weight:700; color:var(--foreground,#111827); margin:0; }
 .header-sub { font-size:0.75rem; color:var(--muted-foreground,#6b7280); margin:0; }
 
-.page-content { max-width:640px; margin:0 auto; padding:20px 16px; display:flex; flex-direction:column; gap:16px; }
+.page-content { max-width:800px; margin:0 auto; padding:20px 16px; display:flex; flex-direction:column; gap:16px; }
+
+.section-divider { height: 8px; background: transparent; margin: 4px 0; }
 
 .input-card { background:var(--card,#fff); border:1px solid var(--border,#e5e7eb); border-radius:16px; padding:16px; }
 .input-label { display:block; font-size:0.8125rem; font-weight:600; color:var(--foreground,#374151); margin-bottom:8px; }
@@ -192,6 +197,7 @@ onMounted(async () => { await productStore.fetchProducts() })
 
 .product-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
 @media(min-width:480px){ .product-grid{ grid-template-columns:repeat(3,1fr); } }
+@media(min-width:1024px){ .product-grid{ grid-template-columns:repeat(4,1fr); gap:14px; } }
 
 .pln-card { position:relative; background:var(--card,#fff); border:1.5px solid var(--border,#e5e7eb); border-radius:16px; padding:14px 12px; cursor:pointer; transition:all 0.2s; text-align:left; overflow:hidden; }
 .pln-card::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; background:transparent; transition:all 0.2s; }

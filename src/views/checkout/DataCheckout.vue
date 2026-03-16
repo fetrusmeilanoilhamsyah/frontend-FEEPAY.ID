@@ -59,6 +59,8 @@
         @select="phoneNumber = $event.replace(/\D/g,'').replace(/^0+/,'')"
       />
 
+      <div class="section-divider"></div>
+
       <!-- Data Grid -->
       <div class="nominal-section">
         <div class="nominal-section-header">
@@ -190,8 +192,11 @@ onMounted(async () => { await productStore.fetchProducts() })
 <style scoped>
 .data-page {
   min-height: 100vh;
-  background: var(--background, #f8fafc);
+  background: #f1f5f9;
   padding-bottom: 80px;
+}
+.dark .data-page {
+  background: #0f172a;
 }
 
 .data-header {
@@ -200,7 +205,7 @@ onMounted(async () => { await productStore.fetchProducts() })
   border-bottom: 1px solid var(--border, #e5e7eb);
 }
 .header-inner {
-  max-width: 640px; margin: 0 auto;
+  max-width: 800px; margin: 0 auto;
   padding: 12px 16px;
   display: flex; align-items: center; gap: 12px;
 }
@@ -243,9 +248,15 @@ onMounted(async () => { await productStore.fetchProducts() })
 .switch-btn:hover { background: rgba(22,163,74,0.15); }
 
 .page-content {
-  max-width: 640px; margin: 0 auto;
+  max-width: 800px; margin: 0 auto;
   padding: 16px 16px;
   display: flex; flex-direction: column; gap: 16px;
+}
+
+.section-divider {
+  height: 8px;
+  background: transparent;
+  margin: 4px 0;
 }
 
 .phone-card {
@@ -309,6 +320,9 @@ onMounted(async () => { await productStore.fetchProducts() })
   gap: 10px;
 }
 @media (min-width: 480px) { .data-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 1024px) {
+  .data-grid { grid-template-columns: repeat(4, 1fr); gap: 14px; }
+}
 
 .data-card {
   position: relative;

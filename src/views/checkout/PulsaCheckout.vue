@@ -59,6 +59,8 @@
         @select="phoneNumber = $event.replace(/\D/g,'').replace(/^0+/,'')"
       />
 
+      <div class="section-divider"></div>
+
       <!-- Nominal Grid -->
       <div class="nominal-section">
         <div class="nominal-section-header">
@@ -195,8 +197,11 @@ onMounted(async () => { await productStore.fetchProducts() })
 <style scoped>
 .pulsa-page {
   min-height: 100vh;
-  background: var(--background, #f8fafc);
+  background: #f1f5f9;
   padding-bottom: 80px;
+}
+.dark .pulsa-page {
+  background: #0f172a;
 }
 
 /* HEADER */
@@ -206,7 +211,7 @@ onMounted(async () => { await productStore.fetchProducts() })
   border-bottom: 1px solid var(--border, #e5e7eb);
 }
 .header-inner {
-  max-width: 640px; margin: 0 auto;
+  max-width: 800px; margin: 0 auto;
   padding: 12px 16px;
   display: flex; align-items: center; gap: 12px;
 }
@@ -250,9 +255,15 @@ onMounted(async () => { await productStore.fetchProducts() })
 
 /* CONTENT */
 .page-content {
-  max-width: 640px; margin: 0 auto;
+  max-width: 800px; margin: 0 auto;
   padding: 16px 16px;
   display: flex; flex-direction: column; gap: 16px;
+}
+
+.section-divider {
+  height: 8px;
+  background: transparent;
+  margin: 4px 0;
 }
 
 /* PHONE CARD */
@@ -330,6 +341,9 @@ onMounted(async () => { await productStore.fetchProducts() })
 }
 @media (min-width: 480px) {
   .nominal-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (min-width: 1024px) {
+  .nominal-grid { grid-template-columns: repeat(4, 1fr); gap: 14px; }
 }
 
 .nominal-card {

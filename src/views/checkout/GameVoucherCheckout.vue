@@ -89,6 +89,8 @@
           <p class="info-text">Voucher dikirim otomatis ke email setelah pembayaran berhasil</p>
         </div>
 
+        <div class="section-divider"></div>
+
         <div v-if="productStore.loading" class="product-grid">
           <div v-for="i in 6" :key="i" class="product-skeleton" />
         </div>
@@ -214,7 +216,8 @@ onMounted(async () => { await productStore.fetchProducts() })
 </script>
 
 <style scoped>
-.game-page { min-height:100vh; background:var(--background,#f8fafc); padding-bottom:80px; }
+.game-page { min-height:100vh; background:#f1f5f9; padding-bottom:80px; }
+.dark .game-page { background:#0f172a; }
 .game-header { position:sticky; top:0; z-index:40; background:var(--card,#ffffff); border-bottom:1px solid var(--border,#e5e7eb); }
 .header-inner { max-width:1120px; margin:0 auto; padding:12px 16px; display:flex; align-items:center; gap:12px; }
 .back-btn { width:36px; height:36px; display:flex; align-items:center; justify-content:center; border-radius:10px; border:none; background:transparent; color:var(--muted-foreground,#6b7280); cursor:pointer; transition:all 0.15s; }
@@ -222,6 +225,8 @@ onMounted(async () => { await productStore.fetchProducts() })
 .header-title { font-size:1.125rem; font-weight:700; color:var(--foreground,#111827); margin:0; }
 .header-sub { font-size:0.75rem; color:var(--muted-foreground,#6b7280); margin:0; }
 .page-content { max-width:1120px; margin:0 auto; padding:20px 16px; }
+
+.section-divider { height: 8px; background: transparent; margin: 4px 0; }
 .search-wrap { position:relative; margin-bottom:20px; }
 .search-icon { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--muted-foreground,#6b7280); }
 .search-input { width:100%; height:46px; background:var(--card,#ffffff); border:1px solid var(--border,#e5e7eb); border-radius:12px; padding:0 40px 0 44px; color:var(--foreground,#111827); font-size:0.9rem; outline:none; transition:all 0.2s; box-sizing:border-box; }
@@ -266,6 +271,7 @@ onMounted(async () => { await productStore.fetchProducts() })
 .section-title { font-size:0.9375rem; font-weight:800; color:var(--foreground,#111827); margin-bottom:12px; letter-spacing:-0.02em; }
 .product-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
 @media(min-width:480px){.product-grid{grid-template-columns:repeat(3,1fr);}}
+@media(min-width:1024px){.product-grid{grid-template-columns:repeat(5,1fr); gap:14px;}}
 @media(min-width:768px){.product-grid{grid-template-columns:repeat(4,1fr);}}
 .product-card { position:relative; background:var(--card,#ffffff); border:1.5px solid var(--border,#e5e7eb); border-radius:14px; padding:14px 12px; cursor:pointer; transition:all 0.2s; text-align:left; }
 .product-card:hover:not(:disabled) { background:rgba(22,163,74,0.05); border-color:#16a34a; transform:translateY(-2px); box-shadow:0 8px 20px rgba(22,163,74,0.1); }
