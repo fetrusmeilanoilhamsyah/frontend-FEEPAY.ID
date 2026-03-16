@@ -27,8 +27,8 @@
     <!-- CONTENT -->
     <div v-else class="profile-content">
       <!-- Background Particles -->
-      <div class="page-bg-art" style="transform: translate3d(0, calc(var(--scrollY) * 0.1px), 0)">
-        <AntigravityParticles absolute :particle-count="15" class="opacity-20" />
+      <div class="page-bg-art">
+        <AntigravityParticles absolute :particle-count="12" class="opacity-10" />
       </div>
 
       <!-- Avatar + nama -->
@@ -166,16 +166,15 @@ const handleScroll = () => {
 }
 
 const updatePhysics = () => {
-  const delta = (targetScrollY.value - smoothScrollY.value) * 0.12
+  const delta = (targetScrollY.value - smoothScrollY.value) * 0.15
   
-  if (Math.abs(delta) > 0.05 || Math.abs(scrollVelocity.value) > 0.05) {
+  if (Math.abs(delta) > 0.01 || Math.abs(scrollVelocity.value) > 0.01) {
     smoothScrollY.value += delta
     scrollVelocity.value = smoothScrollY.value - lastSmoothY
     lastSmoothY = smoothScrollY.value
 
     if (profilePageRef.value) {
       profilePageRef.value.style.setProperty('--scrollY', smoothScrollY.value.toFixed(1))
-      profilePageRef.value.style.setProperty('--velocity', scrollVelocity.value.toFixed(1))
     }
   }
   profileRafId = requestAnimationFrame(updatePhysics)

@@ -7,7 +7,7 @@
       <div class="absolute bottom-[-5%] left-[-5%] w-[500px] h-[500px] bg-secondary/5 rounded-full blur-[120px]"></div>
     </div>
 
-    <div class="app-frame">
+    <div class="app-frame" :class="{ 'is-admin-route': $route.path.startsWith('/admin') }">
       <!-- Top Navbar — HANYA DESKTOP (Constrained to frame) -->
       <nav class="hidden md:block sticky top-0 z-50 backdrop-blur-xl bg-background/95 border-b border-border">
         <div class="px-6">

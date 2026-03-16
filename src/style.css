@@ -168,6 +168,11 @@
       border-left: 1px solid var(--border);
       border-right: 1px solid var(--border);
     }
+    .app-frame.is-admin-route {
+      max-width: 100%;
+      box-shadow: none;
+      border: none;
+    }
   }
 
   h1, h2, h3, h4, h5, h6 {
