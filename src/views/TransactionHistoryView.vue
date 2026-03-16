@@ -65,6 +65,7 @@
 
       <!-- Premium Orders List -->
       <div v-else class="orders-list-hd">
+        <div v-for="(order, idx) in filteredOrders" :key="order.order_id"
           class="order-card-hd reveal reveal--up" 
           v-reveal
           :style="{ '--p-delay': (Math.min(idx, 8) * 0.05) + 's' }"
