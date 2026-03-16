@@ -936,9 +936,8 @@ const syncOrdersF<style scoped>
   box-shadow: var(--shadow-sm);
   cursor: pointer;
 }
-</style>
-; }
-@keyframes spin { to{ transform:rotate(360deg); } }
+
+/* TOAST & ANIMATIONS */
 
 .toast { position:fixed; bottom:80px; left:50%; transform:translateX(-50%); background:#111827; color:#fff; padding:10px 20px; border-radius:999px; font-size:0.8125rem; font-weight:600; display:flex; align-items:center; gap:8px; z-index:100; white-space:nowrap; box-shadow:0 8px 24px rgba(0,0,0,0.2); }
 .toast-enter-active,.toast-leave-active { transition:all 0.3s cubic-bezier(0.4,0,0.2,1); }
