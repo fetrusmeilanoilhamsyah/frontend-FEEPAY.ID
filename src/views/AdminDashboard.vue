@@ -350,8 +350,7 @@
       </div>
 
       <!-- WhatsApp Gateway Tab -->
-      <!-- WhatsApp Gateway Tab -->
-<div v-if="activeTab === 'whatsapp'">
+      <div v-if="activeTab === 'whatsapp'">
   <div class="max-w-lg mx-auto">
 
     <!-- Status Card -->
@@ -533,8 +532,6 @@
       </div>
 
     </div>
-
-    </div><!-- end .admin-dashboard-container -->
 
     <!-- Edit Price Modal -->
     <Teleport to="body">
